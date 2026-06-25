@@ -51,11 +51,11 @@ function AboutPage() {
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse at 30% 0%, oklch(0.50 0.18 295 / 0.35) 0%, transparent 60%), linear-gradient(180deg, oklch(0.12 0.06 290 / 0.55) 0%, oklch(0.10 0.05 290 / 0.92) 100%)",
+                "radial-gradient(ellipse at 0% 50%, oklch(0.10 0.05 290 / 0.92) 0%, oklch(0.10 0.05 290 / 0.55) 55%, transparent 80%), linear-gradient(180deg, oklch(0.12 0.06 290 / 0.75) 0%, oklch(0.10 0.05 290 / 0.97) 100%)",
             }}
           />
         </div>
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:px-10">
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:px-10">
           <div>
             <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
               <span className="h-px w-12 bg-champagne/50" />

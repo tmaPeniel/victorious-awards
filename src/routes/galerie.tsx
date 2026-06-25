@@ -49,17 +49,17 @@ function GaleriePage() {
             src={galerieHero}
             alt=""
             aria-hidden="true"
-            className="size-full object-cover opacity-40"
+            className="size-full object-cover opacity-20"
           />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse at 50% 0%, oklch(0.50 0.16 295 / 0.30) 0%, transparent 60%), linear-gradient(180deg, oklch(0.10 0.05 290 / 0.55) 0%, oklch(0.10 0.05 290 / 0.95) 100%)",
+                "radial-gradient(ellipse at 0% 50%, oklch(0.10 0.05 290 / 0.92) 0%, oklch(0.10 0.05 290 / 0.55) 55%, transparent 80%), linear-gradient(180deg, oklch(0.10 0.05 290 / 0.80) 0%, oklch(0.10 0.05 290 / 0.97) 100%)",
             }}
           />
         </div>
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
             <span className="h-px w-12 bg-champagne/50" />
             Galerie
