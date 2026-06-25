@@ -80,7 +80,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Victorious — La Nuit de l'Excellence | ICC Rouen" },
+      { title: "Victorious — La Nuit de l'Excellence" },
       {
         name: "description",
         content:
@@ -97,6 +97,12 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:url", content: "/" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#0B0A08" },
+      { name: "twitter:title", content: "Victorious — La Nuit de l'Excellence" },
+      { name: "description", content: "Victorious est une soirée gala unique, pensée pour célébrer et honorer les parcours de vie marqués par la fidélité de Dieu. Plus qu’un simple événement, c’est u" },
+      { property: "og:description", content: "Victorious est une soirée gala unique, pensée pour célébrer et honorer les parcours de vie marqués par la fidélité de Dieu. Plus qu’un simple événement, c’est u" },
+      { name: "twitter:description", content: "Victorious est une soirée gala unique, pensée pour célébrer et honorer les parcours de vie marqués par la fidélité de Dieu. Plus qu’un simple événement, c’est u" },
+      { property: "og:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/1058c7cb-ecc3-4ec5-b9f4-b9fa25c8dae6" },
+      { name: "twitter:image", content: "https://storage.googleapis.com/gpt-engineer-file-uploads/attachments/og-images/1058c7cb-ecc3-4ec5-b9f4-b9fa25c8dae6" },
     ],
     links: [{ rel: "stylesheet", href: appCss }],
   }),
