@@ -59,7 +59,7 @@ function GaleriePage() {
             }}
           />
         </div>
-        <div className="mx-auto max-w-7xl px-6 lg:px-10">
+        <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
             <span className="h-px w-12 bg-champagne/50" />
             Galerie
