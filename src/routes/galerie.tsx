@@ -139,10 +139,13 @@ function GaleriePage() {
           ))}
         </div>
 
-        {items.length === 0 && (
+        {!isLoading && items.length === 0 && (
           <p className="py-24 text-center text-ivory/50">
-            Aucun contenu dans cette catégorie.
+            Aucun contenu publié pour le moment.
           </p>
+        )}
+        {isLoading && (
+          <p className="py-24 text-center text-ivory/50">Chargement…</p>
         )}
       </Section>
 
