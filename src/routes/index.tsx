@@ -16,6 +16,15 @@ import { pillars } from "@/content/pillars";
 import { categories } from "@/content/categories";
 import { faq } from "@/content/faq";
 import { gallery } from "@/content/gallery";
+import introBand from "@/assets/home/categories-trophies.jpg";
+import pillarGratitude from "@/assets/home/pillar-gratitude.jpg";
+import pillarInspire from "@/assets/home/pillar-inspire.jpg";
+import pillarConnect from "@/assets/home/pillar-connect.jpg";
+import eventHall from "@/assets/home/event-hall.jpg";
+import ctaStage from "@/assets/home/cta-stage.jpg";
+
+const pillarImages = [pillarGratitude, pillarInspire, pillarConnect];
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -81,6 +90,34 @@ function HomePage() {
         intro="Chaque trophée représente une histoire. Chaque histoire témoigne de la fidélité de Dieu. Notre objectif n'est pas simplement de remettre des récompenses — c'est de rendre grâce, d'inspirer et de connecter."
       />
 
+      {/* Bandeau visuel éditorial */}
+      <div className="relative -mt-8 mb-8 px-6 lg:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-15% 0px" }}
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mx-auto aspect-[21/9] max-w-7xl overflow-hidden shadow-frame"
+        >
+          <img
+            src={introBand}
+            alt="Trophées Victorious dans une mise en scène cinématographique violet et or"
+            loading="lazy"
+            width={1920}
+            height={800}
+            className="size-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, transparent 50%, oklch(0.13 0.06 290 / 0.6) 100%)",
+            }}
+          />
+        </motion.div>
+      </div>
+
+
       {/* Trois piliers */}
       <Section
         id="piliers"
@@ -103,12 +140,31 @@ function HomePage() {
               }}
               className="group relative flex flex-col gap-6 bg-obsidian p-10 lg:p-12"
             >
+              <div className="relative -mx-10 -mt-10 mb-2 aspect-[4/3] overflow-hidden lg:-mx-12 lg:-mt-12">
+                <img
+                  src={pillarImages[i]}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  width={1024}
+                  height={1024}
+                  className="size-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, oklch(0.13 0.06 290 / 0.35) 0%, oklch(0.16 0.07 295) 100%)",
+                  }}
+                />
+              </div>
               <div className="flex items-baseline gap-4">
                 <span className="font-display text-5xl text-gold">
                   {p.numeral}
                 </span>
                 <span className="h-px flex-1 bg-champagne/20" />
               </div>
+
               <h3 className="font-display text-3xl text-ivory lg:text-4xl">
                 {p.title}
               </h3>
@@ -165,6 +221,43 @@ function HomePage() {
           </p>
         </div>
       </Section>
+
+      {/* Aperçu visuel du lieu */}
+      <div className="relative px-6 pb-8 lg:px-10">
+        <motion.figure
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-15% 0px" }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mx-auto aspect-[21/9] max-w-7xl overflow-hidden shadow-elegant"
+        >
+          <img
+            src={eventHall}
+            alt="Vue panoramique d'une salle de gala richement décorée — atmosphère ICC Rouen Isneauville"
+            loading="lazy"
+            width={1920}
+            height={800}
+            className="size-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, oklch(0.13 0.06 290 / 0.25) 0%, transparent 40%, oklch(0.13 0.06 290 / 0.7) 100%)",
+            }}
+          />
+          <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-6 lg:p-10">
+            <span className="font-display-italic text-lg text-champagne/90 lg:text-2xl">
+              ICC Rouen — Isneauville
+            </span>
+            <span className="hidden text-[0.65rem] uppercase tracking-[0.3em] text-ivory/60 sm:block">
+              Le théâtre d'une nuit pas comme les autres
+            </span>
+          </figcaption>
+        </motion.figure>
+      </div>
+
+
 
       {/* Catégories */}
       <Section
@@ -300,14 +393,24 @@ function HomePage() {
       </Section>
 
       {/* CTA final */}
-      <section className="relative isolate overflow-hidden border-t border-champagne/15 bg-obsidian py-32 lg:py-48">
+      <section className="relative isolate overflow-hidden border-t border-champagne/15 bg-obsidian-deep py-32 lg:py-48">
+        <img
+          src={ctaStage}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          width={1920}
+          height={1088}
+          className="absolute inset-0 size-full object-cover opacity-40"
+        />
         <div
-          className="absolute inset-0 opacity-60"
+          className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 50%, oklch(0.68 0.13 75 / 0.25), transparent 60%)",
+              "radial-gradient(ellipse at 50% 40%, oklch(0.80 0.135 85 / 0.18) 0%, transparent 55%), linear-gradient(180deg, oklch(0.11 0.055 290 / 0.7) 0%, oklch(0.11 0.055 290 / 0.95) 100%)",
           }}
         />
+
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <motion.p
             initial={{ opacity: 0 }}
