@@ -142,7 +142,7 @@ export function Hero() {
               className="absolute inset-0"
               style={{
                 background:
-                  "linear-gradient(180deg, transparent 60%, oklch(0.14 0.012 60 / 0.5) 100%)",
+                  "linear-gradient(180deg, transparent 55%, oklch(0.11 0.055 290 / 0.6) 100%)",
               }}
             />
           </div>
