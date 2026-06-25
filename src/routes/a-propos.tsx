@@ -185,17 +185,35 @@ function AboutPage() {
           {team.map((m) => (
             <div key={m.name} className="bg-obsidian p-8">
               <div className="relative aspect-square overflow-hidden bg-velvet/60">
-                <img
-                  src={teamPlaceholder}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  className="size-full object-cover opacity-60 mix-blend-overlay"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-velvet/30 via-obsidian/40 to-obsidian/80" />
-                <span className="absolute inset-0 grid place-items-center font-display-italic text-5xl text-champagne/40">
-                  {m.name.charAt(0)}
-                </span>
+                {m.photo ? (
+                  <>
+                    <img
+                      src={m.photo}
+                      alt={`Portrait de ${m.name}, ${m.role.toLowerCase()} de Victorious.`}
+                      loading="lazy"
+                      className="size-full object-cover"
+                    />
+                    {m.visionary && (
+                      <span className="absolute left-3 top-3 border border-gold/60 bg-obsidian/70 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
+                        Visionnaire
+                      </span>
+                    )}
+                  </>
+                ) : (
+                  <>
+                    <img
+                      src={teamPlaceholder}
+                      alt=""
+                      aria-hidden="true"
+                      loading="lazy"
+                      className="size-full object-cover opacity-60 mix-blend-overlay"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-b from-velvet/30 via-obsidian/40 to-obsidian/80" />
+                    <span className="absolute inset-0 grid place-items-center font-display-italic text-5xl text-champagne/40">
+                      {m.name.charAt(0)}
+                    </span>
+                  </>
+                )}
               </div>
               <h3 className="mt-6 font-display text-xl text-ivory">{m.name}</h3>
               <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">
