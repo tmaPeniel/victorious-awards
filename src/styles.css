@@ -46,9 +46,13 @@
 
   /* Victorious tokens */
   --color-obsidian: var(--obsidian);
+  --color-obsidian-deep: var(--obsidian-deep);
   --color-velvet: var(--velvet);
+  --color-velvet-soft: var(--velvet-soft);
+  --color-lavender: var(--lavender);
   --color-champagne: var(--champagne);
   --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
   --color-ivory: var(--ivory);
   --color-brick: var(--brick);
 }
