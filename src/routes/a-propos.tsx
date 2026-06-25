@@ -55,7 +55,7 @@ function AboutPage() {
             }}
           />
         </div>
-        <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:px-10">
+        <div className="relative z-10 mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:px-10">
           <div>
             <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
               <span className="h-px w-12 bg-champagne/50" />
