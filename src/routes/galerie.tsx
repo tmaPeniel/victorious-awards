@@ -3,7 +3,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { X, Play } from "lucide-react";
 import { Section } from "@/components/victorious/Section";
-import { gallery, type GalleryItem } from "@/content/gallery";
+import { useGallery, type GalleryDBItem } from "@/lib/use-gallery";
 import { cn } from "@/lib/utils";
 import galerieHero from "@/assets/pages/galerie-hero.jpg";
 
@@ -37,7 +37,8 @@ const filters: { value: Filter; label: string }[] = [
 
 function GaleriePage() {
   const [filter, setFilter] = useState<Filter>("all");
-  const [open, setOpen] = useState<GalleryItem | null>(null);
+  const [open, setOpen] = useState<GalleryDBItem | null>(null);
+  const { items: gallery, isLoading } = useGallery();
 
   const items = gallery.filter((g) => filter === "all" || g.type === filter);
 
