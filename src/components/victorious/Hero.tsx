@@ -3,29 +3,30 @@ import { ArrowRight, MapPin } from "lucide-react";
 import { VLink } from "./VButton";
 import { Countdown } from "./Countdown";
 import { event } from "@/content/event";
-import heroBg from "@/assets/hero-bg.jpg";
-import heroPortrait from "@/assets/hero-portrait.jpg";
+import heroBg from "@/assets/home/hero-bg-violet.jpg";
+import heroPortrait from "@/assets/home/hero-portrait-violet.jpg";
 
 export function Hero() {
   return (
-    <section className="relative isolate min-h-[100svh] overflow-hidden bg-obsidian">
-      {/* Background — chandelier hall */}
+    <section className="relative isolate min-h-[100svh] overflow-hidden bg-obsidian-deep">
+      {/* Background — violet ceremonial stage */}
       <div className="absolute inset-0">
         <img
           src={heroBg}
           alt=""
           aria-hidden="true"
           fetchPriority="high"
-          className="size-full object-cover opacity-[0.35]"
+          className="size-full object-cover opacity-[0.55]"
         />
         <div
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse at 70% 30%, oklch(0.68 0.13 75 / 0.18), transparent 55%), linear-gradient(180deg, oklch(0.14 0.012 60 / 0.4) 0%, oklch(0.14 0.012 60) 80%)",
+              "radial-gradient(ellipse at 50% 0%, oklch(0.55 0.18 295 / 0.35) 0%, transparent 55%), radial-gradient(ellipse at 50% 100%, oklch(0.10 0.05 290 / 0.85) 0%, transparent 60%), linear-gradient(180deg, oklch(0.13 0.06 290 / 0.55) 0%, oklch(0.11 0.055 290 / 0.85) 70%, oklch(0.10 0.05 290) 100%)",
           }}
         />
       </div>
+
 
       <div className="relative mx-auto grid min-h-[100svh] max-w-7xl grid-cols-1 items-center gap-12 px-6 pt-32 pb-16 lg:grid-cols-[1.3fr_1fr] lg:gap-20 lg:px-10">
         <div>
