@@ -8,6 +8,7 @@ import { ArrowRight } from "lucide-react";
 import portrait from "@/assets/home/hero-portrait-violet.jpg";
 import aboutHero from "@/assets/pages/about-hero.jpg";
 import teamPlaceholder from "@/assets/pages/team-placeholder.jpg";
+import visionnairesCouple from "@/assets/team/visionnaires-couple.jpg";
 
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
@@ -92,24 +93,42 @@ function AboutPage() {
         eyebrow="Notre histoire"
         title="D'une intuition, à une nuit attendue."
       >
-        <div className="max-w-3xl space-y-6 text-lg leading-relaxed text-ivory/75">
-          <p>
-            Tout a commencé par une conversation. Un dimanche soir, autour
-            d'une table : combien d'histoires extraordinaires se vivent dans
-            notre communauté, et combien restent invisibles ?
-          </p>
-          <p>
-            Quelques mois plus tard, l'idée d'une cérémonie annuelle
-            prenait forme. Pas un service. Pas une conférence. Un gala. Une
-            soirée où l'on s'habille, où l'on dresse de belles tables, où
-            l'on prononce des discours — pour dire merci.
-          </p>
-          <p>
-            La première édition a réuni cent cinquante personnes. La
-            deuxième, trois cents. Aujourd'hui, Victorious est devenue
-            l'événement d'ouverture de l'été pour la communauté ICC Rouen
-            et bien au-delà.
-          </p>
+        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
+          <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
+            <p>
+              Tout a commencé par une conversation. Un dimanche soir, autour
+              d'une table, les Pasteurs Luka et Marie-Ange ANKOU posent une
+              question simple : combien d'histoires extraordinaires se vivent
+              dans notre communauté, et combien restent invisibles ?
+            </p>
+            <p>
+              Quelques mois plus tard, l'idée d'une cérémonie annuelle
+              prenait forme. Pas un service. Pas une conférence. Un gala. Une
+              soirée où l'on s'habille, où l'on dresse de belles tables, où
+              l'on prononce des discours — pour dire merci.
+            </p>
+            <p>
+              La première édition a réuni cent cinquante personnes. La
+              deuxième, trois cents. Aujourd'hui, Victorious est devenue
+              l'événement d'ouverture de l'été pour la communauté ICC Rouen
+              et bien au-delà.
+            </p>
+          </div>
+          <figure className="relative">
+            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
+            <img
+              src={visionnairesCouple}
+              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious, lors d'une édition de la cérémonie."
+              loading="lazy"
+              className="relative aspect-[4/5] w-full object-cover shadow-frame"
+            />
+            <figcaption className="mt-6 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/80">
+              Pasteurs Luka & Marie-Ange ANKOU
+              <span className="mt-1 block font-display-italic text-sm normal-case tracking-normal text-ivory/55">
+                Visionnaires de Victorious
+              </span>
+            </figcaption>
+          </figure>
         </div>
       </Section>
 
