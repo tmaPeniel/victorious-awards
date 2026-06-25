@@ -90,6 +90,34 @@ function HomePage() {
         intro="Chaque trophée représente une histoire. Chaque histoire témoigne de la fidélité de Dieu. Notre objectif n'est pas simplement de remettre des récompenses — c'est de rendre grâce, d'inspirer et de connecter."
       />
 
+      {/* Bandeau visuel éditorial */}
+      <div className="relative -mt-8 mb-8 px-6 lg:px-10">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-15% 0px" }}
+          transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mx-auto aspect-[21/9] max-w-7xl overflow-hidden shadow-frame"
+        >
+          <img
+            src={introBand}
+            alt="Trophées Victorious dans une mise en scène cinématographique violet et or"
+            loading="lazy"
+            width={1920}
+            height={800}
+            className="size-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, transparent 50%, oklch(0.13 0.06 290 / 0.6) 100%)",
+            }}
+          />
+        </motion.div>
+      </div>
+
+
       {/* Trois piliers */}
       <Section
         id="piliers"
