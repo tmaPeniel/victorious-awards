@@ -5,6 +5,7 @@ import { VLink } from "@/components/victorious/VButton";
 import { pillars } from "@/content/pillars";
 import { team } from "@/content/team";
 import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import portrait from "@/assets/home/hero-portrait-violet.jpg";
 import aboutHero from "@/assets/pages/about-hero.jpg";
 import teamPlaceholder from "@/assets/pages/team-placeholder.jpg";
