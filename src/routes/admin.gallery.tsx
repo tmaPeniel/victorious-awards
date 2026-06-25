@@ -7,7 +7,7 @@ import { signMany } from "@/lib/storage-urls";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/gallery")({
-  component: AdminGallery;
+  component: AdminGallery,
 });
 
 type GalleryRow = {
