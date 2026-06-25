@@ -7,6 +7,7 @@ import { Section } from "@/components/victorious/Section";
 import { VButton, VLink } from "@/components/victorious/VButton";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/candidater")({
   head: () => ({
@@ -49,8 +50,8 @@ type FormState = {
   email: string;
   phone: string;
   testimony: string;
-  photoName: string;
-  docName: string;
+  photoFile: File | null;
+  docFile: File | null;
   rgpd: boolean;
 };
 
@@ -61,8 +62,8 @@ const initial: FormState = {
   email: "",
   phone: "",
   testimony: "",
-  photoName: "",
-  docName: "",
+  photoFile: null,
+  docFile: null,
   rgpd: false,
 };
 
@@ -80,6 +81,8 @@ function CandidaterPage() {
   const [form, setForm] = useState<FormState>(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [done, setDone] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const update =
     <K extends keyof FormState>(key: K) =>
@@ -94,9 +97,9 @@ function CandidaterPage() {
     };
 
   const file =
-    (key: "photoName" | "docName") => (e: ChangeEvent<HTMLInputElement>) => {
-      const f = e.target.files?.[0];
-      if (f) setForm((s) => ({ ...s, [key]: f.name }));
+    (key: "photoFile" | "docFile") => (e: ChangeEvent<HTMLInputElement>) => {
+      const f = e.target.files?.[0] ?? null;
+      setForm((s) => ({ ...s, [key]: f }));
     };
 
   const validate = (): boolean => {
@@ -117,11 +120,66 @@ function CandidaterPage() {
   const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
 
-  const submit = (e: FormEvent) => {
+  const sanitize = (name: string) =>
+    name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
+
+  const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
-    setDone(true);
-    setStep(STEPS.length - 1);
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      // 1. Create application row
+      const { data: inserted, error: insertErr } = await supabase
+        .from("applications")
+        .insert({
+          category_slug: form.category,
+          first_name: form.firstName.trim(),
+          last_name: form.lastName.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          testimony: form.testimony.trim(),
+        })
+        .select("id")
+        .single();
+      if (insertErr || !inserted) throw insertErr ?? new Error("Insert failed");
+
+      const appId = inserted.id;
+      const paths: { photo_path?: string; document_path?: string } = {};
+
+      // 2. Upload files (best-effort)
+      if (form.photoFile) {
+        const path = `${appId}/photo-${sanitize(form.photoFile.name)}`;
+        const { error } = await supabase.storage
+          .from("application-files")
+          .upload(path, form.photoFile, { upsert: false });
+        if (!error) paths.photo_path = path;
+      }
+      if (form.docFile) {
+        const path = `${appId}/document-${sanitize(form.docFile.name)}`;
+        const { error } = await supabase.storage
+          .from("application-files")
+          .upload(path, form.docFile, { upsert: false });
+        if (!error) paths.document_path = path;
+      }
+
+      // 3. Patch application with file paths
+      if (paths.photo_path || paths.document_path) {
+        await supabase.from("applications").update(paths).eq("id", appId);
+      }
+
+      setDone(true);
+      setStep(STEPS.length - 1);
+    } catch (err) {
+      console.error(err);
+      setSubmitError(
+        err instanceof Error
+          ? err.message
+          : "Une erreur est survenue. Merci de réessayer.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
