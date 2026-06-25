@@ -46,21 +46,29 @@
 
   /* Victorious tokens */
   --color-obsidian: var(--obsidian);
+  --color-obsidian-deep: var(--obsidian-deep);
   --color-velvet: var(--velvet);
+  --color-velvet-soft: var(--velvet-soft);
+  --color-lavender: var(--lavender);
   --color-champagne: var(--champagne);
   --color-gold: var(--gold);
+  --color-gold-deep: var(--gold-deep);
   --color-ivory: var(--ivory);
   --color-brick: var(--brick);
 }
 
 :root {
-  /* Victorious palette — dark by default */
-  --obsidian: oklch(0.14 0.012 60);
-  --velvet: oklch(0.19 0.014 55);
-  --champagne: oklch(0.88 0.05 85);
-  --gold: oklch(0.68 0.13 75);
-  --ivory: oklch(0.95 0.018 80);
-  --brick: oklch(0.42 0.12 35);
+  /* Victorious palette — Violet nuit & Or champagne (affiche officielle) */
+  --obsidian: oklch(0.16 0.07 295);        /* violet nuit profond (fond principal) */
+  --obsidian-deep: oklch(0.11 0.055 290);  /* violet le plus sombre */
+  --velvet: oklch(0.23 0.085 295);         /* violet velours (cartes) */
+  --velvet-soft: oklch(0.30 0.095 298);    /* voile violet plus clair */
+  --lavender: oklch(0.72 0.13 300);        /* violet lavande lumineux */
+  --champagne: oklch(0.90 0.09 88);        /* or champagne lumineux */
+  --gold: oklch(0.80 0.135 85);            /* or principal */
+  --gold-deep: oklch(0.62 0.12 75);        /* or vieilli */
+  --ivory: oklch(0.97 0.015 300);          /* blanc lavande */
+  --brick: oklch(0.55 0.18 30);
 
   /* Semantic mapping */
   --background: var(--obsidian);
@@ -69,28 +77,32 @@
   --card-foreground: var(--ivory);
   --popover: var(--velvet);
   --popover-foreground: var(--ivory);
-  --primary: var(--champagne);
-  --primary-foreground: var(--obsidian);
-  --secondary: oklch(0.25 0.015 55);
+  --primary: var(--gold);
+  --primary-foreground: oklch(0.14 0.05 290);
+  --secondary: var(--velvet-soft);
   --secondary-foreground: var(--ivory);
-  --muted: oklch(0.22 0.013 55);
-  --muted-foreground: oklch(0.7 0.025 75);
-  --accent: var(--gold);
-  --accent-foreground: var(--obsidian);
-  --destructive: oklch(0.55 0.21 28);
+  --muted: oklch(0.26 0.07 295);
+  --muted-foreground: oklch(0.80 0.045 298);
+  --accent: var(--champagne);
+  --accent-foreground: oklch(0.14 0.05 290);
+  --destructive: oklch(0.58 0.21 25);
   --destructive-foreground: var(--ivory);
-  --border: oklch(0.3 0.018 70 / 40%);
-  --input: oklch(0.3 0.018 70 / 30%);
-  --ring: var(--gold);
+  --border: oklch(0.80 0.135 85 / 25%);
+  --input: oklch(0.80 0.135 85 / 18%);
+  --ring: oklch(0.80 0.135 85 / 60%);
 
   --radius: 4px;
 
   /* Signature gradients & shadows */
-  --gradient-gold: linear-gradient(135deg, oklch(0.88 0.05 85), oklch(0.68 0.13 75));
-  --gradient-veil: linear-gradient(180deg, transparent 0%, oklch(0.14 0.012 60 / 0.85) 70%, oklch(0.14 0.012 60) 100%);
-  --shadow-glow: 0 0 60px -10px oklch(0.68 0.13 75 / 0.35);
-  --shadow-elegant: 0 30px 60px -20px oklch(0 0 0 / 0.6);
-  --shadow-frame: 0 20px 40px -15px oklch(0 0 0 / 0.7), 0 0 0 1px oklch(0.88 0.05 85 / 0.2);
+  --gradient-gold: linear-gradient(135deg, oklch(0.62 0.12 75), oklch(0.90 0.09 88) 50%, oklch(0.62 0.12 75));
+  --gradient-violet: linear-gradient(160deg, oklch(0.23 0.085 295) 0%, oklch(0.13 0.06 290) 100%);
+  --gradient-hero: radial-gradient(ellipse at 50% 0%, oklch(0.35 0.12 298 / 0.55) 0%, oklch(0.16 0.07 295) 55%, oklch(0.10 0.05 290) 100%);
+  --gradient-surface: linear-gradient(180deg, oklch(0.23 0.085 295) 0%, oklch(0.18 0.07 293) 100%);
+  --gradient-veil: linear-gradient(180deg, transparent 0%, oklch(0.16 0.07 295 / 0.85) 70%, oklch(0.11 0.055 290) 100%);
+  --shadow-glow: 0 0 60px -10px oklch(0.80 0.135 85 / 0.45);
+  --shadow-gold: 0 0 80px oklch(0.80 0.135 85 / 0.25);
+  --shadow-elegant: 0 30px 80px -20px oklch(0.05 0.04 290 / 0.75);
+  --shadow-frame: 0 20px 50px -15px oklch(0.05 0.04 290 / 0.8), 0 0 0 1px oklch(0.80 0.135 85 / 0.28);
 }
 
 @layer base {
