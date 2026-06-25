@@ -1,17 +1,18 @@
 import { useEffect, useState } from "react";
 
 function useCountdown(target: Date) {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
+    setNow(Date.now());
     const i = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(i);
   }, []);
-  const diff = Math.max(0, target.getTime() - now);
+  const diff = now === null ? 0 : Math.max(0, target.getTime() - now);
   const days = Math.floor(diff / 86_400_000);
   const hours = Math.floor((diff / 3_600_000) % 24);
   const minutes = Math.floor((diff / 60_000) % 60);
   const seconds = Math.floor((diff / 1000) % 60);
-  return { days, hours, minutes, seconds };
+  return { days, hours, minutes, seconds, ready: now !== null };
 }
 
 const pad = (n: number) => n.toString().padStart(2, "0");
