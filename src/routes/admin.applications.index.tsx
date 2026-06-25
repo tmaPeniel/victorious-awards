@@ -72,12 +72,23 @@ function ApplicationsList() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="font-display text-3xl text-ivory">Candidatures</h1>
-        <p className="mt-2 text-sm text-ivory/60">
-          {data?.length ?? 0} dossier{(data?.length ?? 0) > 1 ? "s" : ""} reçu
-          {(data?.length ?? 0) > 1 ? "s" : ""}.
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl text-ivory">Candidatures</h1>
+          <p className="mt-2 text-sm text-ivory/60">
+            {data?.length ?? 0} dossier{(data?.length ?? 0) > 1 ? "s" : ""} reçu
+            {(data?.length ?? 0) > 1 ? "s" : ""}.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={exporting || !filtered?.length}
+          className="inline-flex items-center gap-2 border border-champagne/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-champagne transition-colors hover:bg-champagne hover:text-obsidian disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Download className="size-4" />
+          {exporting ? "Export…" : "Exporter Excel"}
+        </button>
       </header>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -103,6 +114,7 @@ function ApplicationsList() {
           className="ml-auto h-9 border border-champagne/20 bg-transparent px-3 text-sm text-ivory outline-none focus:border-champagne"
         />
       </div>
+
 
       <div className="border border-champagne/15">
         {isLoading ? (
