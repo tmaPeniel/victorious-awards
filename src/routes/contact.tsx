@@ -4,6 +4,7 @@ import { Mail, Phone, MapPin, Instagram, Facebook, Youtube, Send } from "lucide-
 import { Section } from "@/components/victorious/Section";
 import { VButton } from "@/components/victorious/VButton";
 import { event } from "@/content/event";
+import contactHero from "@/assets/pages/contact-hero.jpg";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -33,7 +34,22 @@ function ContactPage() {
 
   return (
     <>
-      <section className="bg-obsidian pt-40 pb-12">
+      <section className="relative isolate overflow-hidden pt-40 pb-12">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={contactHero}
+            alt=""
+            aria-hidden="true"
+            className="size-full object-cover opacity-35"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(90deg, oklch(0.10 0.05 290 / 0.92) 0%, oklch(0.10 0.05 290 / 0.55) 100%)",
+            }}
+          />
+        </div>
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
             <span className="h-px w-12 bg-champagne/50" />

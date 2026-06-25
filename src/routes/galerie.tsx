@@ -5,6 +5,7 @@ import { X, Play } from "lucide-react";
 import { Section } from "@/components/victorious/Section";
 import { gallery, type GalleryItem } from "@/content/gallery";
 import { cn } from "@/lib/utils";
+import galerieHero from "@/assets/pages/galerie-hero.jpg";
 
 export const Route = createFileRoute("/galerie")({
   head: () => ({
@@ -42,7 +43,22 @@ function GaleriePage() {
 
   return (
     <>
-      <section className="bg-obsidian pt-40 pb-12">
+      <section className="relative isolate overflow-hidden pt-40 pb-12">
+        <div className="absolute inset-0 z-0">
+          <img
+            src={galerieHero}
+            alt=""
+            aria-hidden="true"
+            className="size-full object-cover opacity-40"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse at 50% 0%, oklch(0.50 0.16 295 / 0.30) 0%, transparent 60%), linear-gradient(180deg, oklch(0.10 0.05 290 / 0.55) 0%, oklch(0.10 0.05 290 / 0.95) 100%)",
+            }}
+          />
+        </div>
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
             <span className="h-px w-12 bg-champagne/50" />
