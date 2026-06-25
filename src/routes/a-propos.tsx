@@ -39,7 +39,7 @@ function AboutPage() {
   return (
     <>
       {/* Hero éditorial */}
-      <section className="relative isolate min-h-[70svh] overflow-hidden bg-obsidian pt-32 pb-20">
+      <section className="relative isolate min-h-[70svh] overflow-hidden pt-32 pb-20">
         <div className="absolute inset-0 -z-10">
           <img
             src={aboutHero}

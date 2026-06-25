@@ -43,7 +43,7 @@ function GaleriePage() {
 
   return (
     <>
-      <section className="relative isolate overflow-hidden bg-obsidian pt-40 pb-12">
+      <section className="relative isolate overflow-hidden pt-40 pb-12">
         <div className="absolute inset-0 -z-10">
           <img
             src={galerieHero}
