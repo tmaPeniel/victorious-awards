@@ -16,6 +16,15 @@ import { pillars } from "@/content/pillars";
 import { categories } from "@/content/categories";
 import { faq } from "@/content/faq";
 import { gallery } from "@/content/gallery";
+import introBand from "@/assets/home/categories-trophies.jpg";
+import pillarGratitude from "@/assets/home/pillar-gratitude.jpg";
+import pillarInspire from "@/assets/home/pillar-inspire.jpg";
+import pillarConnect from "@/assets/home/pillar-connect.jpg";
+import eventHall from "@/assets/home/event-hall.jpg";
+import ctaStage from "@/assets/home/cta-stage.jpg";
+
+const pillarImages = [pillarGratitude, pillarInspire, pillarConnect];
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
