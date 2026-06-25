@@ -453,11 +453,20 @@ function CandidaterPage() {
                     Continuer <ArrowRight className="size-4" />
                   </VButton>
                 ) : (
-                  <VButton type="submit">
-                    Envoyer ma candidature <ArrowRight className="size-4" />
+                  <VButton type="submit" disabled={submitting}>
+                    {submitting ? "Envoi en cours…" : "Envoyer ma candidature"}{" "}
+                    <ArrowRight className="size-4" />
                   </VButton>
                 )}
               </div>
+            )}
+            {submitError && (
+              <p
+                role="alert"
+                className="text-center text-sm text-destructive"
+              >
+                {submitError}
+              </p>
             )}
           </form>
 
