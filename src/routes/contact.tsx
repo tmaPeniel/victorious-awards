@@ -35,7 +35,7 @@ function ContactPage() {
   return (
     <>
       <section className="relative isolate overflow-hidden pt-40 pb-12">
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 z-0">
           <img
             src={contactHero}
             alt=""

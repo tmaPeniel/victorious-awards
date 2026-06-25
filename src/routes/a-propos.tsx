@@ -40,7 +40,7 @@ function AboutPage() {
     <>
       {/* Hero éditorial */}
       <section className="relative isolate min-h-[70svh] overflow-hidden pt-32 pb-20">
-        <div className="absolute inset-0 -z-10">
+        <div className="absolute inset-0 z-0">
           <img
             src={aboutHero}
             alt=""
