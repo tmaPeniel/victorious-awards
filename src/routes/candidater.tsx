@@ -369,15 +369,15 @@ function CandidaterPage() {
                       <FileField
                         label="Photo"
                         name="photo"
-                        value={form.photoName}
-                        onChange={file("photoName")}
+                        value={form.photoFile?.name ?? ""}
+                        onChange={file("photoFile")}
                         accept="image/*"
                       />
                       <FileField
                         label="Justificatif"
                         name="doc"
-                        value={form.docName}
-                        onChange={file("docName")}
+                        value={form.docFile?.name ?? ""}
+                        onChange={file("docFile")}
                         accept="image/*,application/pdf"
                       />
                     </div>
