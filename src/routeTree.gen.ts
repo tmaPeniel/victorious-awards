@@ -21,7 +21,10 @@ import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
+import { Route as AdminCategoriesIndexRouteImport } from './routes/admin.categories.index'
 import { Route as AdminApplicationsIndexRouteImport } from './routes/admin.applications.index'
+import { Route as AdminCategoriesSlugRouteImport } from './routes/admin.categories.$slug'
 import { Route as AdminApplicationsIdRouteImport } from './routes/admin.applications.$id'
 
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
@@ -84,9 +87,24 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminGalleryRoute = AdminGalleryRouteImport.update({
+  id: '/gallery',
+  path: '/gallery',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesIndexRoute = AdminCategoriesIndexRouteImport.update({
+  id: '/categories/',
+  path: '/categories/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminApplicationsIndexRoute = AdminApplicationsIndexRouteImport.update({
   id: '/applications/',
   path: '/applications/',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminCategoriesSlugRoute = AdminCategoriesSlugRouteImport.update({
+  id: '/categories/$slug',
+  path: '/categories/$slug',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminApplicationsIdRoute = AdminApplicationsIdRouteImport.update({
@@ -104,12 +122,15 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/admin/applications/$id': typeof AdminApplicationsIdRoute
+  '/admin/categories/$slug': typeof AdminCategoriesSlugRoute
   '/admin/applications/': typeof AdminApplicationsIndexRoute
+  '/admin/categories/': typeof AdminCategoriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -118,12 +139,15 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/admin/applications/$id': typeof AdminApplicationsIdRoute
+  '/admin/categories/$slug': typeof AdminCategoriesSlugRoute
   '/admin/applications': typeof AdminApplicationsIndexRoute
+  '/admin/categories': typeof AdminCategoriesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -135,12 +159,15 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/admin/applications/$id': typeof AdminApplicationsIdRoute
+  '/admin/categories/$slug': typeof AdminCategoriesSlugRoute
   '/admin/applications/': typeof AdminApplicationsIndexRoute
+  '/admin/categories/': typeof AdminCategoriesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -153,12 +180,15 @@ export interface FileRouteTypes {
     | '/contact'
     | '/galerie'
     | '/mentions-legales'
+    | '/admin/gallery'
     | '/admin/login'
     | '/categories/$slug'
     | '/admin/'
     | '/categories/'
     | '/admin/applications/$id'
+    | '/admin/categories/$slug'
     | '/admin/applications/'
+    | '/admin/categories/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -167,12 +197,15 @@ export interface FileRouteTypes {
     | '/contact'
     | '/galerie'
     | '/mentions-legales'
+    | '/admin/gallery'
     | '/admin/login'
     | '/categories/$slug'
     | '/admin'
     | '/categories'
     | '/admin/applications/$id'
+    | '/admin/categories/$slug'
     | '/admin/applications'
+    | '/admin/categories'
   id:
     | '__root__'
     | '/'
@@ -183,12 +216,15 @@ export interface FileRouteTypes {
     | '/contact'
     | '/galerie'
     | '/mentions-legales'
+    | '/admin/gallery'
     | '/admin/login'
     | '/categories/$slug'
     | '/admin/'
     | '/categories/'
     | '/admin/applications/$id'
+    | '/admin/categories/$slug'
     | '/admin/applications/'
+    | '/admin/categories/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -288,11 +324,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/gallery': {
+      id: '/admin/gallery'
+      path: '/gallery'
+      fullPath: '/admin/gallery'
+      preLoaderRoute: typeof AdminGalleryRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories/': {
+      id: '/admin/categories/'
+      path: '/categories'
+      fullPath: '/admin/categories/'
+      preLoaderRoute: typeof AdminCategoriesIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/applications/': {
       id: '/admin/applications/'
       path: '/applications'
       fullPath: '/admin/applications/'
       preLoaderRoute: typeof AdminApplicationsIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/categories/$slug': {
+      id: '/admin/categories/$slug'
+      path: '/categories/$slug'
+      fullPath: '/admin/categories/$slug'
+      preLoaderRoute: typeof AdminCategoriesSlugRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/applications/$id': {
@@ -306,17 +363,23 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminGalleryRoute: typeof AdminGalleryRoute
   AdminLoginRoute: typeof AdminLoginRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminApplicationsIdRoute: typeof AdminApplicationsIdRoute
+  AdminCategoriesSlugRoute: typeof AdminCategoriesSlugRoute
   AdminApplicationsIndexRoute: typeof AdminApplicationsIndexRoute
+  AdminCategoriesIndexRoute: typeof AdminCategoriesIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminGalleryRoute: AdminGalleryRoute,
   AdminLoginRoute: AdminLoginRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminApplicationsIdRoute: AdminApplicationsIdRoute,
+  AdminCategoriesSlugRoute: AdminCategoriesSlugRoute,
   AdminApplicationsIndexRoute: AdminApplicationsIndexRoute,
+  AdminCategoriesIndexRoute: AdminCategoriesIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
