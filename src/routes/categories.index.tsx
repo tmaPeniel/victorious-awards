@@ -32,13 +32,13 @@ function CategoriesIndex() {
             src={categoriesHero}
             alt=""
             aria-hidden="true"
-            className="size-full object-cover opacity-35"
+            className="size-full object-cover opacity-20"
           />
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(180deg, oklch(0.10 0.05 290 / 0.70) 0%, oklch(0.10 0.05 290 / 0.95) 100%)",
+                "radial-gradient(ellipse at 0% 50%, oklch(0.10 0.05 290 / 0.92) 0%, oklch(0.10 0.05 290 / 0.55) 55%, transparent 80%), linear-gradient(180deg, oklch(0.10 0.05 290 / 0.80) 0%, oklch(0.10 0.05 290 / 0.97) 100%)",
             }}
           />
         </div>

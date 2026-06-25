@@ -51,7 +51,7 @@ function AboutPage() {
             className="absolute inset-0"
             style={{
               background:
-                "radial-gradient(ellipse at 30% 0%, oklch(0.50 0.18 295 / 0.35) 0%, transparent 60%), linear-gradient(180deg, oklch(0.12 0.06 290 / 0.55) 0%, oklch(0.10 0.05 290 / 0.92) 100%)",
+                "radial-gradient(ellipse at 0% 50%, oklch(0.10 0.05 290 / 0.92) 0%, oklch(0.10 0.05 290 / 0.55) 55%, transparent 80%), linear-gradient(180deg, oklch(0.12 0.06 290 / 0.75) 0%, oklch(0.10 0.05 290 / 0.97) 100%)",
             }}
           />
         </div>
