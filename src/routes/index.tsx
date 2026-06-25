@@ -140,12 +140,31 @@ function HomePage() {
               }}
               className="group relative flex flex-col gap-6 bg-obsidian p-10 lg:p-12"
             >
+              <div className="relative -mx-10 -mt-10 mb-2 aspect-[4/3] overflow-hidden lg:-mx-12 lg:-mt-12">
+                <img
+                  src={pillarImages[i]}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  width={1024}
+                  height={1024}
+                  className="size-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
+                />
+                <div
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      "linear-gradient(180deg, oklch(0.13 0.06 290 / 0.35) 0%, oklch(0.16 0.07 295) 100%)",
+                  }}
+                />
+              </div>
               <div className="flex items-baseline gap-4">
                 <span className="font-display text-5xl text-gold">
                   {p.numeral}
                 </span>
                 <span className="h-px flex-1 bg-champagne/20" />
               </div>
+
               <h3 className="font-display text-3xl text-ivory lg:text-4xl">
                 {p.title}
               </h3>
