@@ -1,111 +1,65 @@
+# Victorious — V2 : Back-office administrable
 
-# Victorious — Site officiel
+Activation de Lovable Cloud et bascule de tous les contenus en base, avec un espace admin protégé pour piloter le site sans toucher au code.
 
-## 1. Direction artistique proposée : "La Nuit de l'Excellence"
+## 1. Activation Lovable Cloud
+- Active Lovable Cloud (auth + base de données + storage).
+- Auth email/mot de passe pour les administrateurs uniquement (pas d'inscription publique).
 
-Univers cérémonial chaleureux, éditorial et intemporel — à l'opposé des codes religieux classiques et des "awards show" génériques noir+or néon. L'inspiration : le moment où le rideau d'un opéra se lève sous une pluie de lumière dorée.
+## 2. Modèle de données
+Tables créées par migration, RLS activée, GRANTs explicites :
+- `app_role` (enum : `admin`) + `user_roles` + fonction `has_role()` (sécurité anti-escalade).
+- `event_info` (singleton : date, heure, lieu, dress code, programme).
+- `pillars` (3 piliers : numéro, titre, sous-titre, texte, ordre).
+- `categories` (slug, titre, description, critères[], justificatifs[], image, ordre, visible).
+- `faq` (question, réponse, ordre, visible).
+- `team_members` (nom, rôle, photo, ordre).
+- `gallery_items` (type photo/vidéo/replay, src, alt, légende, aspect, ordre, visible).
+- `applications` (candidatures reçues : catégorie, identité, témoignage, statut, urls justificatifs, créé_le).
 
-### Palette
-- **Obsidienne** `#0B0A08` — fond principal nocturne, profond, légèrement chaud
-- **Encre velours** `#161310` — surfaces secondaires
-- **Champagne** `#E8D9B0` — accent principal (typo display, filets, lueurs)
-- **Or vieilli** `#B8893F` — accent secondaire (CTA, soulignements)
-- **Ivoire** `#F5EFE3` — texte principal sur fond sombre
-- **Brique chaude** `#7A2E1E` — accent émotionnel ponctuel (catégorie Famille, CTA final)
+Lectures publiques (anon SELECT) sur tout sauf `applications` et `user_roles`. Écritures réservées aux admins.
 
-Mode clair pour pages secondaires : ivoire `#F5EFE3` + obsidienne pour le texte, mêmes accents.
+## 3. Storage
+- Bucket `gallery` public en lecture, écriture admin (upload photos galerie + photos équipe).
+- Bucket `applications` privé (justificatifs des candidatures, accessible uniquement par admin).
 
-### Typographie
-- **Display** : Fraunces (serif éditorial moderne, axes optiques, italique expressif) — pour hero, titres de section, noms de catégorie
-- **Texte** : Inter Tight (sans-serif neutre, excellente lisibilité mobile) — pour le corps et l'UI
-- Pairing chargé en contraste : display en très grande taille avec tracking négatif, texte en taille modérée avec interlignage généreux
+## 4. Lecture côté site public
+- Les pages d'accueil, catégories, galerie, à propos, contact basculent du contenu statique `src/content/*` vers des `createServerFn` publics qui lisent via la clé publishable.
+- Loaders TanStack + TanStack Query pour SSR + SEO conservés.
+- Les fichiers `src/content/*` sont conservés en seed initial via migration (INSERT des données actuelles).
 
-### Signatures visuelles
-- **Filets dorés** 1px qui se dessinent au scroll (left-to-right) sous chaque titre
-- **Lueur radiale** champagne très douce derrière les éléments clés (countdown, CTA principal)
-- **Grain photographique** subtil sur les fonds sombres (≈3% opacité)
-- **Numérotation romaine** discrète pour les sections (I, II, III…) — clin d'œil cérémonial
-- **Cadres photo** avec liseré champagne 1px + ombre portée chaude, ratio 4/5 portrait par défaut pour sublimer les visages
-- **Boutons** : primaire = fond champagne, texte obsidienne, hover = lueur dorée pulsée ; secondaire = ghost avec bordure 1px champagne, hover = remplissage progressif
+## 5. Soumission de candidature
+- Le formulaire `/candidater` insère désormais dans `applications` et upload les justificatifs dans `applications/{id}/`.
+- Page de confirmation avec numéro de dossier.
+- Validation Zod côté client + server function avec rate-limiting basique (1 candidature/email/catégorie).
 
-### Animations
-- Apparitions au scroll feutrées (opacity + translateY 24px, 800ms cubic-bezier easing doux)
-- Countdown : chiffres qui flip verticalement à chaque changement
-- Cartes catégories : image qui zoome légèrement (scale 1.05) + voile dégradé qui se lève au hover
-- Liens texte : soulignement doré qui se dessine de gauche à droite
-- Pas de parallaxe agressive, pas de scroll hijacking — l'élégance prime
+## 6. Espace admin `/admin` (sous `_authenticated`)
+Layout admin minimaliste cohérent avec l'identité Victorious mais orienté productivité (sidebar sombre, tables denses, formulaires clairs).
 
-### Composants Design System (tokens dans `src/styles.css`)
-Boutons (primary, secondary, ghost), Cards (pillar, category, info), Badge ("Édition 2025"), Section (avec numérotation romaine), Countdown, Accordion (FAQ), Stepper (parcours candidature), Gallery item, Form fields, Navigation (sticky avec backdrop blur), Footer.
+Pages :
+- `/auth` — connexion email/mot de passe (publique).
+- `/admin` — tableau de bord (candidatures récentes, compteurs par catégorie).
+- `/admin/candidatures` — liste filtrable + détail + changement de statut (nouveau / en revue / retenu / refusé) + téléchargement justificatifs.
+- `/admin/categories` — CRUD complet, drag-to-reorder.
+- `/admin/event` — édition du singleton event_info.
+- `/admin/piliers` — CRUD 3 piliers.
+- `/admin/faq` — CRUD + réorganisation.
+- `/admin/equipe` — CRUD + upload photo.
+- `/admin/galerie` — upload multiple, tri, masquer/afficher, suppression.
 
-## 2. Architecture technique
+Sécurité : gate `_authenticated` (intégration gérée) + double-check `has_role('admin')` dans chaque server function d'écriture. Premier admin créé par migration (email à fournir par vous).
 
-- **Stack** : TanStack Start (déjà en place), Tailwind v4, shadcn/ui customisé aux tokens Victorious
-- **Fonts** : `@fontsource-variable/fraunces` + `@fontsource-variable/inter-tight`
-- **Animations** : Motion (framer-motion) pour les apparitions au scroll et micro-interactions
-- **Icônes** : Lucide pour l'UI, illustrations custom SVG pour les 3 piliers
-- **Images** : placeholders générés (portraits clair-obscur) à remplacer plus tard
+## 7. Notifications
+Edge function (server route `/api/public/notify-application`) déclenchée à la création d'une candidature → email récap à l'adresse admin via Resend (clé à fournir).
 
-## 3. Périmètre v1 (cette livraison) — site public complet
+## 8. Détails techniques
+- Server functions sous `src/lib/*.functions.ts` (lecture publique avec client publishable, écriture avec `requireSupabaseAuth` + check `has_role`).
+- Loaders publics utilisent les fns publiques (pas de bearer requis → compatible SSR/prerender).
+- Pages admin sous `src/routes/_authenticated/admin.*.tsx`.
+- Toasts via `sonner` déjà installé.
+- shadcn `Table`, `Dialog`, `Form`, `DropdownMenu` réutilisés pour le back-office.
 
-### Routes
-```
-/                    Accueil
-/a-propos            Histoire, vision, valeurs, équipe
-/categories          Liste des 9 catégories
-/categories/$slug    Fiche détail (bannière, description, critères, justificatifs, CTA)
-/candidater          Formulaire multi-étapes + confirmation
-/galerie             Photos / Vidéos / Replay avec filtres + lightbox
-/contact             Formulaire + coordonnées + Google Maps + réseaux
-/mentions-legales    Statique
-```
-
-Header sticky + footer présents sur toutes les pages. 404 et error boundaries soignés.
-
-### Page d'accueil — structure
-1. **Hero immersif** plein écran : "VICTORIOUS" en display monumentale, sous-titre "La Nuit de l'Excellence", date "25 Juillet" + lieu "ICC Rouen — Isneauville", countdown intégré typographiquement, 2 CTA
-2. **Présentation** courte de Victorious avec filet doré
-3. **Trois piliers** en triptyque numéroté (I. Rendre grâce, II. Inspirer, III. Connecter)
-4. **Informations événement** (date, heure, lieu, dress code, programme à venir)
-5. **Les 9 catégories** en mosaïque éditoriale (pas une grille banale)
-6. **Comment candidater** en timeline verticale 4 étapes
-7. **Aperçu galerie** (mosaïque 6-8 visuels) + CTA Voir toute la galerie
-8. **FAQ** accordéon
-9. **CTA final** très inspirant ("Et si votre histoire était la prochaine ?")
-
-### Formulaire de candidature
-Multi-étapes (Catégorie → Identité → Témoignage → Justificatifs → Confirmation), validation Zod, upload de fichiers en local-state (persistance branchée en v2 sur Lovable Cloud).
-
-### Données (en dur dans `src/content/` pour la v1)
-- 9 catégories (slug, titre, description, critères, justificatifs, image)
-- 3 piliers
-- Infos événement (date, heure, lieu, dress code)
-- Équipe (3-4 membres placeholders)
-- FAQ (8-10 questions)
-- Galerie (12-16 visuels placeholders)
-
-Structure pensée pour être migrée vers Supabase en v2 sans refonte des composants.
-
-## 4. v2 (livraison future, non incluse dans cette PR)
-- Activation Lovable Cloud (Supabase) avec auth admin
-- Tables : `categories`, `applications`, `event_info`, `gallery_items`, `faq`, `team_members`
-- Espace `/admin` protégé (RLS, rôle admin via table `user_roles`)
-- Upload Storage pour justificatifs et galerie
-- Edge function pour notification email à réception d'une candidature
-
-## 5. Accessibilité & SEO
-- Contrastes AA vérifiés (champagne sur obsidienne ≈ 10:1)
-- Navigation clavier, focus-visible doré, `aria-label` sur boutons icônes
-- Une `<main>` par page, hiérarchie H1→H2→H3 propre
-- `head()` par route avec title/description/og distincts, `og:image` sur les leaves
-- `lang="fr"`, alt descriptifs, lazy loading images, formats modernes
-- `sitemap.xml` + `robots.txt` propres
-
-## 6. Détails techniques
-- Tokens Victorious dans `src/styles.css` via `@theme` (couleurs en oklch, polices, radius, ombres dorées)
-- Composants réutilisables dans `src/components/victorious/` (Section, Pillar, CategoryCard, Countdown, Stepper, Gallery, FAQ, CTA)
-- Données typées dans `src/content/*.ts`
-- Routes TanStack file-based, navigation `<Link>` typée, pas de hash anchors pour les pages majeures
-- Motion utilisé en composants client-only pour les animations au scroll
-
-Une fois ce plan validé, je construis l'ensemble en une passe : tokens + fonts + composants DS d'abord, puis pages dans l'ordre Accueil → Catégories → Candidater → Galerie → À propos → Contact → Mentions.
+## Questions avant lancement
+1. **Email du premier administrateur** à pré-créer dans la migration ?
+2. **Notifications email** à la réception d'une candidature : on les inclut dans la V2 (nécessite une clé Resend) ou on remet à plus tard ?
+3. **Drag-to-reorder** dans l'admin : nice-to-have, ou simple champ "ordre" numérique suffit pour la V2 ?
