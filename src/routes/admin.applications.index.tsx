@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
+import { exportApplicationsToExcel } from "@/lib/excel-export";
 import type { Database } from "@/integrations/supabase/types";
 
 type Status = Database["public"]["Enums"]["application_status"];
@@ -38,9 +40,7 @@ function ApplicationsList() {
     queryFn: async () => {
       let q = supabase
         .from("applications")
-        .select(
-          "id, first_name, last_name, email, category_slug, status, created_at",
-        )
+        .select("*")
         .order("created_at", { ascending: false });
       if (filter !== "all") q = q.eq("status", filter);
       const { data, error } = await q;
@@ -48,6 +48,17 @@ function ApplicationsList() {
       return data;
     },
   });
+
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    if (!filtered?.length) return;
+    setExporting(true);
+    try {
+      await exportApplicationsToExcel(filtered);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const filtered = data?.filter((a) => {
     if (!search.trim()) return true;
