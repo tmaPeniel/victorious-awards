@@ -62,6 +62,90 @@ export type Database = {
         }
         Relationships: []
       }
+      categories: {
+        Row: {
+          created_at: string
+          criteria: string[]
+          description: string
+          documents: string[]
+          id: string
+          image_url: string | null
+          published: boolean
+          slug: string
+          sort_order: number
+          tagline: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          criteria?: string[]
+          description?: string
+          documents?: string[]
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          slug: string
+          sort_order?: number
+          tagline?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          criteria?: string[]
+          description?: string
+          documents?: string[]
+          id?: string
+          image_url?: string | null
+          published?: boolean
+          slug?: string
+          sort_order?: number
+          tagline?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      gallery_items: {
+        Row: {
+          alt: string
+          aspect: string
+          caption: string | null
+          created_at: string
+          id: string
+          image_url: string
+          published: boolean
+          sort_order: number
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          alt?: string
+          aspect?: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url: string
+          published?: boolean
+          sort_order?: number
+          type?: string
+          updated_at?: string
+        }
+        Update: {
+          alt?: string
+          aspect?: string
+          caption?: string | null
+          created_at?: string
+          id?: string
+          image_url?: string
+          published?: boolean
+          sort_order?: number
+          type?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string

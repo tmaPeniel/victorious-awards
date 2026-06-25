@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { Download } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
+import { exportApplicationsToExcel } from "@/lib/excel-export";
 import type { Database } from "@/integrations/supabase/types";
 
 type Status = Database["public"]["Enums"]["application_status"];
@@ -38,9 +40,7 @@ function ApplicationsList() {
     queryFn: async () => {
       let q = supabase
         .from("applications")
-        .select(
-          "id, first_name, last_name, email, category_slug, status, created_at",
-        )
+        .select("*")
         .order("created_at", { ascending: false });
       if (filter !== "all") q = q.eq("status", filter);
       const { data, error } = await q;
@@ -48,6 +48,17 @@ function ApplicationsList() {
       return data;
     },
   });
+
+  const [exporting, setExporting] = useState(false);
+  const handleExport = async () => {
+    if (!filtered?.length) return;
+    setExporting(true);
+    try {
+      await exportApplicationsToExcel(filtered);
+    } finally {
+      setExporting(false);
+    }
+  };
 
   const filtered = data?.filter((a) => {
     if (!search.trim()) return true;
@@ -61,12 +72,23 @@ function ApplicationsList() {
 
   return (
     <div className="space-y-8">
-      <header>
-        <h1 className="font-display text-3xl text-ivory">Candidatures</h1>
-        <p className="mt-2 text-sm text-ivory/60">
-          {data?.length ?? 0} dossier{(data?.length ?? 0) > 1 ? "s" : ""} reçu
-          {(data?.length ?? 0) > 1 ? "s" : ""}.
-        </p>
+      <header className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 className="font-display text-3xl text-ivory">Candidatures</h1>
+          <p className="mt-2 text-sm text-ivory/60">
+            {data?.length ?? 0} dossier{(data?.length ?? 0) > 1 ? "s" : ""} reçu
+            {(data?.length ?? 0) > 1 ? "s" : ""}.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={handleExport}
+          disabled={exporting || !filtered?.length}
+          className="inline-flex items-center gap-2 border border-champagne/40 px-4 py-2 text-xs uppercase tracking-[0.2em] text-champagne transition-colors hover:bg-champagne hover:text-obsidian disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Download className="size-4" />
+          {exporting ? "Export…" : "Exporter Excel"}
+        </button>
       </header>
 
       <div className="flex flex-wrap items-center gap-3">
@@ -92,6 +114,7 @@ function ApplicationsList() {
           className="ml-auto h-9 border border-champagne/20 bg-transparent px-3 text-sm text-ivory outline-none focus:border-champagne"
         />
       </div>
+
 
       <div className="border border-champagne/15">
         {isLoading ? (

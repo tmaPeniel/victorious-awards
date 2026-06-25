@@ -1,6 +1,6 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LogOut, Inbox, LayoutDashboard } from "lucide-react";
+import { LogOut, Inbox, LayoutDashboard, Image as ImageIcon, Tags } from "lucide-react";
 import { useSession } from "@/lib/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -52,6 +52,8 @@ function AdminLayout() {
   const nav = [
     { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
     { to: "/admin/applications", label: "Candidatures", icon: Inbox, exact: false },
+    { to: "/admin/categories", label: "Catégories", icon: Tags, exact: false },
+    { to: "/admin/gallery", label: "Galerie", icon: ImageIcon, exact: false },
   ];
 
   const signOut = async () => {

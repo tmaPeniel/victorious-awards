@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Section } from "@/components/victorious/Section";
 import { CategoryCard } from "@/components/victorious/CategoryCard";
-import { categories } from "@/content/categories";
+import { useCategories } from "@/lib/use-categories";
 import categoriesHero from "@/assets/pages/categories-hero.jpg";
 
 export const Route = createFileRoute("/categories/")({
@@ -24,6 +24,7 @@ export const Route = createFileRoute("/categories/")({
 });
 
 function CategoriesIndex() {
+  const { items: categories, isLoading } = useCategories();
   return (
     <>
       <section className="relative isolate overflow-hidden pt-40 pb-12">
@@ -61,11 +62,15 @@ function CategoriesIndex() {
       </section>
 
       <Section>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {categories.map((cat, i) => (
-            <CategoryCard key={cat.slug} category={cat} index={i} />
-          ))}
-        </div>
+        {isLoading ? (
+          <p className="py-16 text-center text-ivory/50">Chargement…</p>
+        ) : (
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {categories.map((cat, i) => (
+              <CategoryCard key={cat.slug} category={cat} index={i} />
+            ))}
+          </div>
+        )}
       </Section>
     </>
   );
