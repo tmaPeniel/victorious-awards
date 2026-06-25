@@ -24,12 +24,12 @@ export function Countdown({
   target: Date;
   compact?: boolean;
 }) {
-  const { days, hours, minutes, seconds } = useCountdown(target);
+  const { days, hours, minutes, seconds, ready } = useCountdown(target);
   const items = [
-    { value: pad(days), label: "Jours" },
-    { value: pad(hours), label: "Heures" },
-    { value: pad(minutes), label: "Min." },
-    { value: pad(seconds), label: "Sec." },
+    { value: ready ? pad(days) : "—", label: "Jours" },
+    { value: ready ? pad(hours) : "—", label: "Heures" },
+    { value: ready ? pad(minutes) : "—", label: "Min." },
+    { value: ready ? pad(seconds) : "—", label: "Sec." },
   ];
   return (
     <div
