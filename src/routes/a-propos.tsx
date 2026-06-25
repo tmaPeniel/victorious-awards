@@ -5,6 +5,7 @@ import { VLink } from "@/components/victorious/VButton";
 import { pillars } from "@/content/pillars";
 import { team } from "@/content/team";
 import { ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
 import portrait from "@/assets/home/hero-portrait-violet.jpg";
 import aboutHero from "@/assets/pages/about-hero.jpg";
 import teamPlaceholder from "@/assets/pages/team-placeholder.jpg";
@@ -191,10 +192,13 @@ function AboutPage() {
                       src={m.photo}
                       alt={`Portrait de ${m.name}, ${m.role.toLowerCase()} de Victorious.`}
                       loading="lazy"
-                      className="size-full object-cover"
+                      className={cn(
+                        "size-full object-cover",
+                        m.visionary && "object-top",
+                      )}
                     />
                     {m.visionary && (
-                      <span className="absolute left-3 top-3 border border-gold/60 bg-obsidian/70 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
+                      <span className="absolute bottom-3 left-3 border border-gold/60 bg-obsidian/80 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
                         Visionnaire
                       </span>
                     )}
