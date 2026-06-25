@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Section } from "@/components/victorious/Section";
 import { CategoryCard } from "@/components/victorious/CategoryCard";
 import { categories } from "@/content/categories";
+import categoriesHero from "@/assets/pages/categories-hero.jpg";
 
 export const Route = createFileRoute("/categories/")({
   head: () => ({
@@ -25,7 +26,22 @@ export const Route = createFileRoute("/categories/")({
 function CategoriesIndex() {
   return (
     <>
-      <section className="bg-obsidian pt-40 pb-12">
+      <section className="relative isolate overflow-hidden bg-obsidian pt-40 pb-12">
+        <div className="absolute inset-0 -z-10">
+          <img
+            src={categoriesHero}
+            alt=""
+            aria-hidden="true"
+            className="size-full object-cover opacity-35"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, oklch(0.10 0.05 290 / 0.70) 0%, oklch(0.10 0.05 290 / 0.95) 100%)",
+            }}
+          />
+        </div>
         <div className="mx-auto max-w-7xl px-6 lg:px-10">
           <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
             <span className="h-px w-12 bg-champagne/50" />

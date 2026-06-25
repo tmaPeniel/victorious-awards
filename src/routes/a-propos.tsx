@@ -5,7 +5,9 @@ import { VLink } from "@/components/victorious/VButton";
 import { pillars } from "@/content/pillars";
 import { team } from "@/content/team";
 import { ArrowRight } from "lucide-react";
-import portrait from "@/assets/hero-portrait.jpg";
+import portrait from "@/assets/home/hero-portrait-violet.jpg";
+import aboutHero from "@/assets/pages/about-hero.jpg";
+import teamPlaceholder from "@/assets/pages/team-placeholder.jpg";
 
 export const Route = createFileRoute("/a-propos")({
   head: () => ({
@@ -38,6 +40,21 @@ function AboutPage() {
     <>
       {/* Hero éditorial */}
       <section className="relative isolate min-h-[70svh] overflow-hidden bg-obsidian pt-32 pb-20">
+        <div className="absolute inset-0 -z-10">
+          <img
+            src={aboutHero}
+            alt=""
+            aria-hidden="true"
+            className="size-full object-cover opacity-40"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse at 30% 0%, oklch(0.50 0.18 295 / 0.35) 0%, transparent 60%), linear-gradient(180deg, oklch(0.12 0.06 290 / 0.55) 0%, oklch(0.10 0.05 290 / 0.92) 100%)",
+            }}
+          />
+        </div>
         <div className="mx-auto grid max-w-7xl gap-12 px-6 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:px-10">
           <div>
             <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
@@ -148,7 +165,19 @@ function AboutPage() {
         <div className="grid gap-px bg-champagne/15 sm:grid-cols-2 lg:grid-cols-4">
           {team.map((m) => (
             <div key={m.name} className="bg-obsidian p-8">
-              <div className="aspect-square bg-velvet/60" aria-hidden="true" />
+              <div className="relative aspect-square overflow-hidden bg-velvet/60">
+                <img
+                  src={teamPlaceholder}
+                  alt=""
+                  aria-hidden="true"
+                  loading="lazy"
+                  className="size-full object-cover opacity-60 mix-blend-overlay"
+                />
+                <div className="absolute inset-0 bg-gradient-to-b from-velvet/30 via-obsidian/40 to-obsidian/80" />
+                <span className="absolute inset-0 grid place-items-center font-display-italic text-5xl text-champagne/40">
+                  {m.name.charAt(0)}
+                </span>
+              </div>
               <h3 className="mt-6 font-display text-xl text-ivory">{m.name}</h3>
               <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">
                 {m.role}
