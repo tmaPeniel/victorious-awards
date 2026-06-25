@@ -393,14 +393,24 @@ function HomePage() {
       </Section>
 
       {/* CTA final */}
-      <section className="relative isolate overflow-hidden border-t border-champagne/15 bg-obsidian py-32 lg:py-48">
+      <section className="relative isolate overflow-hidden border-t border-champagne/15 bg-obsidian-deep py-32 lg:py-48">
+        <img
+          src={ctaStage}
+          alt=""
+          aria-hidden="true"
+          loading="lazy"
+          width={1920}
+          height={1088}
+          className="absolute inset-0 size-full object-cover opacity-40"
+        />
         <div
-          className="absolute inset-0 opacity-60"
+          className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(ellipse at 50% 50%, oklch(0.68 0.13 75 / 0.25), transparent 60%)",
+              "radial-gradient(ellipse at 50% 40%, oklch(0.80 0.135 85 / 0.18) 0%, transparent 55%), linear-gradient(180deg, oklch(0.11 0.055 290 / 0.7) 0%, oklch(0.11 0.055 290 / 0.95) 100%)",
           }}
         />
+
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <motion.p
             initial={{ opacity: 0 }}
