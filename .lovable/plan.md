@@ -1,28 +1,44 @@
-## Problème
-Sur `/categories`, `/galerie` (et de façon plus discrète sur `/contact` et `/a-propos`), le H1 du hero apparaît « transparent » : l'image de fond est trop lumineuse et l'overlay violet trop léger, donc le titre `text-ivory` se confond avec les zones claires de l'image (trophées, lustre…).
+## Objectif
 
-## Correction (CSS / présentation uniquement)
-Aucun changement de structure, de typographie, d'image ou d'animation. On retravaille uniquement les calques d'arrière-plan des sections hero des 4 pages concernées :
+Intégrer les pasteurs Luka ANKOU et Marie-Ange ANKOU comme **Visionnaires** sur la page À propos, à deux endroits :
+1. Section « Notre histoire » : un visuel commun (le couple) en accompagnement éditorial du récit fondateur.
+2. Section « Notre équipe » : deux portraits individuels mis en avant en tête de la grille équipe.
 
-1. **`src/routes/categories.index.tsx`** — hero « Neuf victoires. Neuf histoires. »
-   - Baisser `opacity-35` → `opacity-20` sur l'`<img>`.
-   - Renforcer l'overlay : passer à un dégradé radial sombre côté gauche (là où se trouve le texte) + voile global plus opaque, ex.
-     `radial-gradient(ellipse at 0% 50%, oklch(0.10 0.05 290 / 0.92) 0%, oklch(0.10 0.05 290 / 0.55) 55%, transparent 80%), linear-gradient(180deg, oklch(0.10 0.05 290 / 0.80) 0%, oklch(0.10 0.05 290 / 0.97) 100%)`.
+## Étapes
 
-2. **`src/routes/galerie.tsx`** — hero « Fragments de nuits passées. »
-   - `opacity-40` → `opacity-20` sur l'`<img>`.
-   - Overlay renforcé (même logique : radial sombre à gauche + voile vertical plus dense).
+### 1. Préparation des images
+- Copier l'image source `user-uploads://Capture_d_écran_2026-06-25_à_18.45.11.png` dans `/tmp/`.
+- Générer **3 assets** dans `src/assets/team/` à partir de cette photo via `imagegen--edit_image` :
+  - `visionnaires-couple.jpg` (aspect 4:3) — recadrage doux du couple, ambiance préservée, pour la section Notre histoire.
+  - `pasteur-luka.jpg` (aspect 3:4) — portrait individuel cadré sur Pasteur Luka (homme en tunique bleu marine).
+  - `pasteur-marie-ange.jpg` (aspect 3:4) — portrait individuel cadré sur Pasteur Marie-Ange (femme à lunettes).
+- Externaliser chaque image via `lovable-assets` pour rester léger (pointeurs `.asset.json`).
 
-3. **`src/routes/contact.tsx`** — hero « Écrivez‑nous. »
-   - Vérifier et renforcer l'overlay de la même manière (radial sombre à gauche, voile global ≥ 0.85 en bas).
+### 2. Contenu (`src/content/team.ts`)
+Ajouter en tête de tableau deux nouvelles entrées avec un champ optionnel `photo` et `accent: "visionary"` :
+- Pasteur Luka ANKOU — Visionnaire & Pasteur principal
+- Pasteur Marie-Ange ANKOU — Visionnaire & Co-fondatrice
 
-4. **`src/routes/a-propos.tsx`** — hero « Une nuit née d'une conviction. »
-   - Le titre est déjà lisible, mais on harmonise : on s'assure que l'overlay reste plus dense côté gauche (radial à 0 %/30 % au lieu de 30 %/0 %) afin que la baseline soit cohérente avec les autres pages.
+Conserver les 4 membres existants (sans photo, ils garderont le placeholder + initiale).
 
-## Hors périmètre
-- Page d'accueil : **non touchée**.
-- Structure, composants, typographies, images, animations, espacements : inchangés.
-- Aucune modification back-end / contenu / SEO.
+### 3. Section « Notre histoire » (`src/routes/a-propos.tsx`)
+- Convertir le bloc texte actuel en grille 2 colonnes sur desktop (`lg:grid-cols-[1.3fr_1fr]`) :
+  - Colonne gauche : les 3 paragraphes existants (inchangés).
+  - Colonne droite : la photo du couple `visionnaires-couple.jpg` dans un cadre `shadow-frame` avec filet doré, surmontée d'une petite légende « Pasteurs Luka & Marie-Ange ANKOU — Visionnaires de Victorious ».
+- Sur mobile, la photo passe sous le texte.
 
-## Vérification
-Après application : capture Playwright des 4 pages (`/a-propos`, `/categories`, `/galerie`, `/contact`) en 1280×1800 pour confirmer que le H1 ressort nettement en ivoire/champagne sur fond violet profond.
+### 4. Section « Notre équipe »
+- Garder la grille `sm:grid-cols-2 lg:grid-cols-4` actuelle.
+- Pour les membres ayant un champ `photo`, afficher la vraie image (object-cover plein cadre) au lieu du placeholder + initiale. Le rôle des deux pasteurs porte la mention « Visionnaire » en champagne pour les distinguer visuellement.
+- Pas de changement structurel : juste un rendu conditionnel dans le `.map()`.
+
+### 5. Validation
+- Typecheck.
+- Vérification visuelle via Playwright sur `/a-propos` (desktop + mobile) — screenshot des deux sections concernées.
+
+## Détails techniques
+
+- Aucune modification de la palette, des typographies, des animations, des autres pages ou du back-office.
+- Le composant `Section` et la grille équipe restent identiques (juste un branchement conditionnel sur `m.photo`).
+- Les images sont servies via Lovable Assets (CDN) — pas de binaire dans `src/assets/`.
+- L'accessibilité est préservée : chaque portrait reçoit un `alt` descriptif (« Portrait du Pasteur Luka ANKOU, visionnaire de Victorious »).
