@@ -222,6 +222,43 @@ function HomePage() {
         </div>
       </Section>
 
+      {/* Aperçu visuel du lieu */}
+      <div className="relative px-6 pb-8 lg:px-10">
+        <motion.figure
+          initial={{ opacity: 0, scale: 0.97 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, margin: "-15% 0px" }}
+          transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
+          className="relative mx-auto aspect-[21/9] max-w-7xl overflow-hidden shadow-elegant"
+        >
+          <img
+            src={eventHall}
+            alt="Vue panoramique d'une salle de gala richement décorée — atmosphère ICC Rouen Isneauville"
+            loading="lazy"
+            width={1920}
+            height={800}
+            className="size-full object-cover"
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(180deg, oklch(0.13 0.06 290 / 0.25) 0%, transparent 40%, oklch(0.13 0.06 290 / 0.7) 100%)",
+            }}
+          />
+          <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-6 lg:p-10">
+            <span className="font-display-italic text-lg text-champagne/90 lg:text-2xl">
+              ICC Rouen — Isneauville
+            </span>
+            <span className="hidden text-[0.65rem] uppercase tracking-[0.3em] text-ivory/60 sm:block">
+              Le théâtre d'une nuit pas comme les autres
+            </span>
+          </figcaption>
+        </motion.figure>
+      </div>
+
+
+
       {/* Catégories */}
       <Section
         id="categories"
