@@ -5,10 +5,8 @@ import { VLink } from "@/components/victorious/VButton";
 import { pillars } from "@/content/pillars";
 import { team } from "@/content/team";
 import { ArrowRight } from "lucide-react";
-import { cn } from "@/lib/utils";
 import portrait from "@/assets/home/hero-portrait-violet.jpg";
 import aboutHero from "@/assets/pages/about-hero.jpg";
-import teamPlaceholder from "@/assets/pages/team-placeholder.jpg";
 import visionnairesCouple from "@/assets/team/visionnaires-couple.jpg";
 
 export const Route = createFileRoute("/a-propos")({
@@ -175,59 +173,37 @@ function AboutPage() {
         </div>
       </Section>
 
-      {/* Équipe */}
+      {/* Visionnaires */}
       <Section
         numeral="IV"
-        eyebrow="Notre équipe"
-        title="Celles et ceux qui veillent."
+        eyebrow="Les visionnaires"
+        title="Pasteurs Luka & Marie-Ange ANKOU."
         className="bg-velvet/20"
       >
-        <div className="grid gap-px bg-champagne/15 sm:grid-cols-2 lg:grid-cols-4">
-          {team.map((m) => (
-            <div key={m.name} className="bg-obsidian p-8">
-              <div className="relative aspect-square overflow-hidden bg-velvet/60">
-                {m.photo ? (
-                  <>
-                    <img
-                      src={m.photo}
-                      alt={`Portrait de ${m.name}, ${m.role.toLowerCase()} de Victorious.`}
-                      loading="lazy"
-                      className={cn(
-                        "size-full object-cover",
-                        m.visionary && "object-top",
-                      )}
-                    />
-                    {m.visionary && (
-                      <span className="absolute bottom-3 left-3 border border-gold/60 bg-obsidian/80 px-3 py-1 text-[0.6rem] uppercase tracking-[0.3em] text-gold backdrop-blur-sm">
-                        Visionnaire
-                      </span>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <img
-                      src={teamPlaceholder}
-                      alt=""
-                      aria-hidden="true"
-                      loading="lazy"
-                      className="size-full object-cover opacity-60 mix-blend-overlay"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-b from-velvet/30 via-obsidian/40 to-obsidian/80" />
-                    <span className="absolute inset-0 grid place-items-center font-display-italic text-5xl text-champagne/40">
-                      {m.name.charAt(0)}
-                    </span>
-                  </>
-                )}
+        <div className="grid gap-6 sm:grid-cols-2">
+          {team
+            .filter((m) => m.visionary)
+            .map((m) => (
+              <div key={m.name} className="bg-obsidian p-8">
+                <div className="relative aspect-[4/5] overflow-hidden bg-velvet/60">
+                  <img
+                    src={m.photo}
+                    alt={`Portrait de ${m.name}, ${m.role.toLowerCase()} de Victorious.`}
+                    loading="lazy"
+                    className="size-full object-cover object-top"
+                  />
+                </div>
+                <h3 className="mt-6 font-display text-2xl text-ivory">
+                  {m.name}
+                </h3>
+                <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">
+                  {m.role}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-ivory/65">
+                  {m.bio}
+                </p>
               </div>
-              <h3 className="mt-6 font-display text-xl text-ivory">{m.name}</h3>
-              <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">
-                {m.role}
-              </p>
-              <p className="mt-4 text-sm leading-relaxed text-ivory/65">
-                {m.bio}
-              </p>
-            </div>
-          ))}
+            ))}
         </div>
       </Section>
 
