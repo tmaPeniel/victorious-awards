@@ -10,7 +10,9 @@ export type GalleryDBItem = {
   caption: string | null;
   type: "photo" | "video" | "replay";
   aspect: "portrait" | "landscape" | "square";
+  imagePath: string;
 };
+
 
 export function useGallery() {
   const [urls, setUrls] = useState<Record<string, string>>({});
