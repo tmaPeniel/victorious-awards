@@ -46,7 +46,9 @@ export function useGallery() {
       caption: g.caption,
       type: (g.type as GalleryDBItem["type"]) ?? "photo",
       aspect: (g.aspect as GalleryDBItem["aspect"]) ?? "square",
+      imagePath: g.image_url,
     })) ?? [];
+
 
   return { ...query, items };
 }
