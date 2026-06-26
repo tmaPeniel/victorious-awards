@@ -1,44 +1,33 @@
-## Problème
+## Objectif
 
-110 photos sont bien dans le bucket Storage `gallery/2025/*` (uploadées manuellement), mais la table `gallery_items` est vide. La page `/galerie` et l'admin lisent cette table — d'où l'absence d'affichage.
+- Regrouper les photos de la galerie **par année** avec un titre au-dessus de chaque section.
+- Afficher **10 photos** par défaut + bouton **« Voir plus »** qui charge 10 photos supplémentaires à chaque clic (par groupe d'année).
 
-## Solution : backfill automatique des 110 photos
+## Détection de l'année
 
-Une seule migration SQL qui insère une ligne `gallery_items` pour chaque fichier `2025/*.jpg` présent dans le bucket, en sautant les doublons éventuels.
+Les `gallery_items` actuels n'ont pas de champ `year`. On l'extrait du champ `caption` :
+- regex `\d{4}` sur la légende → trouve « 2025 » dans « Édition 2025 »
+- fallback : extraction depuis `image_url` (les photos 2025 sont préfixées `2025/…`)
+- si rien trouvé → groupe « Autres »
 
-Pour chaque photo :
-- `image_url` = chemin du fichier dans le bucket (ex. `2025/4V7A4105.jpg`)
-- `alt` = `"Victorious 2025 — <nom du fichier>"`
-- `caption` = `"Édition 2025"`
-- `type` = `photo`
-- `aspect` = `landscape` (ce sont des photos d'événement, format paysage natif Canon)
-- `published` = `true`
-- `sort_order` = incrémenté à partir du `created_at` du fichier dans le storage (ordre d'upload)
+Pas de migration BDD nécessaire — purement front-end.
 
-```sql
-INSERT INTO public.gallery_items (image_url, alt, caption, type, aspect, sort_order, published)
-SELECT
-  o.name,
-  'Victorious 2025 — ' || regexp_replace(split_part(o.name, '/', 2), '\.[^.]+$', ''),
-  'Édition 2025',
-  'photo',
-  'landscape',
-  row_number() OVER (ORDER BY o.created_at),
-  true
-FROM storage.objects o
-WHERE o.bucket_id = 'gallery'
-  AND o.name LIKE '2025/%'
-  AND NOT EXISTS (
-    SELECT 1 FROM public.gallery_items g WHERE g.image_url = o.name
-  );
-```
+## Changements front-end
 
-## Après la migration
+Un seul fichier touché : `src/routes/galerie.tsx`.
 
-- Les 110 photos apparaissent immédiatement sur `/galerie` (filtre "Photos" / "Tout"), avec lazy-loading, lightbox et signature d'URL via le helper existant `signMany`.
-- Elles deviennent éditables depuis `/admin/gallery` : tu peux corriger légende, format (carré/portrait/paysage), ordre, ou les masquer/supprimer une par une.
-- Aucun changement de code front-end, aucune nouvelle dépendance.
+1. Après le filtre `type` existant (Tout / Photos / Vidéos / Replay), grouper les items restants par année (tri décroissant : 2025 d'abord).
+2. Pour chaque groupe, rendre :
+   - Un en-tête `<h2>` avec l'année (style cohérent : eyebrow doré + chiffre en grand `font-display`, ex. « Édition — 2025 »).
+   - La grille existante (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`) limitée aux N premières photos (N initialisé à 10 par groupe, stocké dans un `useState<Record<string, number>>`).
+   - Sous la grille, si `total > N`, un bouton **« Voir plus (X restantes) »** qui fait `N += 10`.
+3. Conserver la lightbox, le filtre, les animations Motion et le hero existants à l'identique.
+4. Réinitialiser les compteurs quand le filtre `type` change (sinon la pagination devient incohérente).
 
-## Note sur le format
+## Détail UI du bouton
 
-Je mets `landscape` par défaut. Si la majorité des photos sont en réalité portrait, dis-le moi et je bascule le défaut — sinon tu pourras ajuster au cas par cas dans l'admin.
+Même langage visuel que les filtres : bordure champagne, fond transparent au repos, fond champagne / texte obsidian au hover, hauteur 44 px, tracking large. Centré sous la grille avec une marge généreuse. Disparaît automatiquement quand toutes les photos du groupe sont affichées.
+
+## Note erreur de build
+
+Le message « ServiceUnavailable / Reduce your concurrent request rate » est une erreur transitoire de l'infra d'upload S3, sans rapport avec le code. Le prochain build passera sans modification.
