@@ -259,7 +259,7 @@ function GaleriePage() {
               className="relative max-h-[88vh] max-w-5xl"
             >
               <img
-                src={open.src}
+                src={open.fullSrc}
                 alt={open.alt}
                 className="max-h-[80vh] w-auto object-contain shadow-frame"
               />
