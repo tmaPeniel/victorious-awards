@@ -102,6 +102,25 @@ function CandidaterPage() {
       setForm((s) => ({ ...s, [key]: f }));
     };
 
+  const FIELD_TO_STEP: Record<string, number> = {
+    category: 1,
+    firstName: 2,
+    lastName: 2,
+    email: 2,
+    phone: 2,
+    testimony: 3,
+    rgpd: 4,
+  };
+  const FIELD_LABEL: Record<string, string> = {
+    category: "Catégorie",
+    firstName: "Prénom",
+    lastName: "Nom",
+    email: "Email",
+    phone: "Téléphone",
+    testimony: "Témoignage",
+    rgpd: "Acceptation RGPD",
+  };
+
   const validate = (): boolean => {
     const result = schema.safeParse(form);
     if (!result.success) {
@@ -111,9 +130,21 @@ function CandidaterPage() {
         if (typeof k === "string") errs[k] = issue.message;
       }
       setErrors(errs);
+      // Jump to the first step containing an invalid field
+      const firstStep = Object.keys(errs)
+        .map((k) => FIELD_TO_STEP[k] ?? 99)
+        .sort((a, b) => a - b)[0];
+      if (typeof firstStep === "number" && firstStep < STEPS.length) {
+        setStep(firstStep);
+      }
+      const missing = Object.keys(errs)
+        .map((k) => FIELD_LABEL[k] ?? k)
+        .join(", ");
+      setSubmitError(`Merci de compléter : ${missing}.`);
       return false;
     }
     setErrors({});
+    setSubmitError(null);
     return true;
   };
 
@@ -142,7 +173,11 @@ function CandidaterPage() {
         })
         .select("id")
         .single();
-      if (insertErr || !inserted) throw insertErr ?? new Error("Insert failed");
+      if (insertErr || !inserted) {
+        throw new Error(
+          insertErr?.message ?? "Échec de l'enregistrement de la candidature.",
+        );
+      }
 
       const appId = inserted.id;
       const paths: { photo_path?: string; document_path?: string } = {};
@@ -154,6 +189,7 @@ function CandidaterPage() {
           .from("application-files")
           .upload(path, form.photoFile, { upsert: false });
         if (!error) paths.photo_path = path;
+        else console.warn("photo upload failed", error);
       }
       if (form.docFile) {
         const path = `${appId}/document-${sanitize(form.docFile.name)}`;
@@ -161,6 +197,7 @@ function CandidaterPage() {
           .from("application-files")
           .upload(path, form.docFile, { upsert: false });
         if (!error) paths.document_path = path;
+        else console.warn("document upload failed", error);
       }
 
       // 3. Patch application with file paths
@@ -181,6 +218,7 @@ function CandidaterPage() {
       setSubmitting(false);
     }
   };
+
 
   return (
     <>
@@ -242,7 +280,7 @@ function CandidaterPage() {
                     </h2>
                     <ul className="space-y-4 text-base text-ivory/75">
                       {[
-                        "Votre victoire se situe entre janvier 2025 et juin 2026.",
+                        "Votre victoire se situe entre juillet 2025 et juillet 2026.",
                         "Vous pouvez partager un témoignage sincère et personnel.",
                         "Vous disposez d'un justificatif officiel (diplôme, contrat, acte…).",
                         "Vous acceptez d'être contacté pour la suite du processus.",

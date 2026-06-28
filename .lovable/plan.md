@@ -1,33 +1,23 @@
-## Objectif
+## 1. Corriger la soumission de candidature
 
-- Regrouper les photos de la galerie **par année** avec un titre au-dessus de chaque section.
-- Afficher **10 photos** par défaut + bouton **« Voir plus »** qui charge 10 photos supplémentaires à chaque clic (par groupe d'année).
+**Diagnostic** : Au clic sur "Envoyer ma candidature" (étape 5 — Pièces), `validate()` parse l'ensemble du schéma. Si un champ d'une étape précédente est invalide (ex. téléphone trop court, témoignage < 80 caractères, email invalide), l'erreur est bien stockée mais **invisible** car le champ n'est pas rendu dans l'étape courante. L'utilisateur a l'impression que "rien ne se passe". Le checkbox RGPD lui-même n'est pas requis pour passer aux étapes suivantes — il n'est vérifié qu'à la soumission.
 
-## Détection de l'année
+**Correctifs dans `src/routes/candidater.tsx`** :
+- Si `validate()` échoue, identifier la première étape contenant un champ en erreur (mapping `category→1`, `firstName/lastName/email/phone→2`, `testimony→3`, `rgpd→4`) et y renvoyer l'utilisateur automatiquement via `setStep(...)`.
+- Afficher une bannière d'erreur globale en haut du formulaire listant les champs manquants quand la soumission est bloquée (en plus des erreurs inline).
+- Ajouter une validation **par étape** lors du clic "Continuer" (pas seulement à la soumission finale) pour ne plus pouvoir avancer avec des champs invalides.
+- Logguer plus explicitement les erreurs Supabase (insert / upload) dans `submitError` pour rendre les vrais échecs réseau lisibles.
 
-Les `gallery_items` actuels n'ont pas de champ `year`. On l'extrait du champ `caption` :
-- regex `\d{4}` sur la légende → trouve « 2025 » dans « Édition 2025 »
-- fallback : extraction depuis `image_url` (les photos 2025 sont préfixées `2025/…`)
-- si rien trouvé → groupe « Autres »
+## 2. Mise à jour des critères d'éligibilité (Juillet 2025 → Juillet 2026)
 
-Pas de migration BDD nécessaire — purement front-end.
+Remplacer toutes les occurrences de la fenêtre temporelle dans le contenu :
 
-## Changements front-end
+- **`src/content/categories.ts`** : pour chaque catégorie, remplacer `"... entre janvier 2025 et juin 2026"` par `"... entre juillet 2025 et juillet 2026"` (8 catégories concernées + variantes "Œuvre publiée ou diffusée entre 2024 et 2026" → conserver ou aligner ? je propose d'aligner sur "juillet 2025 et juillet 2026" pour cohérence — à confirmer).
+- **`src/routes/candidater.tsx`** (étape 0 "Avant de commencer") : remplacer la ligne `"Votre victoire se situe entre janvier 2025 et juin 2026."` par `"Votre victoire se situe entre juillet 2025 et juillet 2026."`.
 
-Un seul fichier touché : `src/routes/galerie.tsx`.
+> Note : les catégories affichées sur `/categories` sont désormais lues depuis la base (`gallery_items`/`categories`), mais leurs `criteria` ont été initialisés depuis ce fichier seed. Je mettrai aussi à jour les lignes correspondantes en base via une migration `UPDATE` pour que les fiches publiques reflètent la nouvelle fenêtre.
 
-1. Après le filtre `type` existant (Tout / Photos / Vidéos / Replay), grouper les items restants par année (tri décroissant : 2025 d'abord).
-2. Pour chaque groupe, rendre :
-   - Un en-tête `<h2>` avec l'année (style cohérent : eyebrow doré + chiffre en grand `font-display`, ex. « Édition — 2025 »).
-   - La grille existante (`grid-cols-2 sm:grid-cols-3 lg:grid-cols-4`) limitée aux N premières photos (N initialisé à 10 par groupe, stocké dans un `useState<Record<string, number>>`).
-   - Sous la grille, si `total > N`, un bouton **« Voir plus (X restantes) »** qui fait `N += 10`.
-3. Conserver la lightbox, le filtre, les animations Motion et le hero existants à l'identique.
-4. Réinitialiser les compteurs quand le filtre `type` change (sinon la pagination devient incohérente).
-
-## Détail UI du bouton
-
-Même langage visuel que les filtres : bordure champagne, fond transparent au repos, fond champagne / texte obsidian au hover, hauteur 44 px, tracking large. Centré sous la grille avec une marge généreuse. Disparaît automatiquement quand toutes les photos du groupe sont affichées.
-
-## Note erreur de build
-
-Le message « ServiceUnavailable / Reduce your concurrent request rate » est une erreur transitoire de l'infra d'upload S3, sans rapport avec le code. Le prochain build passera sans modification.
+## Récapitulatif des fichiers touchés
+- `src/routes/candidater.tsx` — fix soumission + texte étape 0
+- `src/content/categories.ts` — textes des critères
+- Migration SQL — `UPDATE public.categories SET criteria = ...` pour aligner la base
