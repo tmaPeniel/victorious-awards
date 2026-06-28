@@ -38,8 +38,9 @@ const schema = z.object({
   testimony: z
     .string()
     .trim()
-    .min(80, "Témoignage trop court (80 caractères min.)")
-    .max(2000),
+    .max(2000)
+    .optional()
+    .or(z.literal("")),
   rgpd: z.literal(true, { message: "Acceptation requise" }),
 });
 
@@ -386,7 +387,7 @@ function CandidaterPage() {
                       lignes suffisent — l'authenticité fera le reste.
                     </p>
                     <Field
-                      label="Témoignage"
+                      label="Témoignage (optionnel)"
                       name="testimony"
                       textarea
                       value={form.testimony}
