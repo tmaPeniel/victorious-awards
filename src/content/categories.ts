@@ -26,7 +26,7 @@ export const categories: Category[] = [
     description:
       "Pour celles et ceux qui viennent de clôturer un cycle d'études — du baccalauréat au doctorat. Une victoire qui se prépare dans la patience, l'effort et la foi.",
     criteria: [
-      "Avoir obtenu son diplôme entre janvier 2025 et juin 2026",
+      "Avoir obtenu son diplôme entre juillet 2025 et juillet 2026",
       "Être membre ou ami régulier d'ICC Rouen",
       "Pouvoir partager une parole de reconnaissance",
     ],
@@ -40,7 +40,7 @@ export const categories: Category[] = [
     description:
       "La fin d'une attente, le début d'une stabilité. Cette catégorie honore le premier contrat à durée indéterminée — petit ou grand, partout en France ou ailleurs.",
     criteria: [
-      "Premier CDI signé entre janvier 2025 et juin 2026",
+      "Premier CDI signé entre juillet 2025 et juillet 2026",
       "Témoigner du chemin parcouru avant la signature",
     ],
     documents: ["Justificatif du contrat (1ère page suffit)", "Photo professionnelle ou personnelle"],
@@ -53,7 +53,7 @@ export const categories: Category[] = [
     description:
       "Devenir propriétaire pour la première fois — un cap symbolique, un jalon transmis. Nous célébrons l'audace et la rigueur de ce pas posé.",
     criteria: [
-      "Premier bien acquis entre janvier 2025 et juin 2026",
+      "Premier bien acquis entre juillet 2025 et juillet 2026",
       "Acquisition à titre principal (résidence ou investissement)",
     ],
     documents: ["Attestation notariée ou compromis signé", "Photo du bien (optionnelle)"],
@@ -66,7 +66,7 @@ export const categories: Category[] = [
     description:
       "Le permis est une victoire trop souvent banalisée. Nous voulons l'honorer comme il le mérite : un pas vers la liberté, l'indépendance, et de nouveaux possibles.",
     criteria: [
-      "Permis obtenu entre janvier 2025 et juin 2026",
+      "Permis obtenu entre juillet 2025 et juillet 2026",
       "Tout type de permis (B, A, poids lourd, etc.)",
     ],
     documents: ["Copie du permis", "Photo récente"],
@@ -79,7 +79,7 @@ export const categories: Category[] = [
     description:
       "Pour les entrepreneurs qui ont franchi le pas et lancé leur structure. Auto-entreprise, SAS, association — chaque création est une étincelle.",
     criteria: [
-      "Entreprise créée entre janvier 2025 et juin 2026",
+      "Entreprise créée entre juillet 2025 et juillet 2026",
       "Activité en cours d'exercice au moment de la candidature",
     ],
     documents: ["Extrait K-bis ou SIREN", "Présentation succincte de l'activité"],
@@ -92,7 +92,7 @@ export const categories: Category[] = [
     description:
       "Auteurs, poètes, blogueurs, scénaristes. Cette catégorie célèbre celles et ceux qui mettent en mots ce que beaucoup ressentent sans pouvoir le dire.",
     criteria: [
-      "Œuvre publiée ou diffusée entre 2024 et 2026",
+      "Œuvre publiée ou diffusée entre juillet 2025 et juillet 2026",
       "Tout format : livre, blog, recueil, scénario",
     ],
     documents: ["Lien ou extrait de l'œuvre", "Photo de l'auteur"],
@@ -118,7 +118,7 @@ export const categories: Category[] = [
     description:
       "Le premier projet musical sorti — single, EP ou album. Une catégorie pour saluer le courage de faire entendre sa voix.",
     criteria: [
-      "Projet sorti entre janvier 2025 et juin 2026",
+      "Projet sorti entre juillet 2025 et juillet 2026",
       "Distribution sur au moins une plateforme officielle",
     ],
     documents: ["Lien d'écoute (Spotify, Apple Music, YouTube…)", "Visuel du projet"],
@@ -131,7 +131,7 @@ export const categories: Category[] = [
     description:
       "Mariage, naissance, restauration. Cette catégorie célèbre les familles qui se construisent, se reconstruisent ou s'agrandissent dans la fidélité.",
     criteria: [
-      "Événement familial marquant entre janvier 2025 et juin 2026",
+      "Événement familial marquant entre juillet 2025 et juillet 2026",
       "Témoignage personnel partagé en toute simplicité",
     ],
     documents: ["Justificatif (acte, certificat ou attestation)", "Photo de famille"],
