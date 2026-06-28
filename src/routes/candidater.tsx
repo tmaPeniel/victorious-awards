@@ -161,49 +161,56 @@ function CandidaterPage() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      // 1. Create application row
-      const { data: inserted, error: insertErr } = await supabase
-        .from("applications")
-        .insert({
-          category_slug: form.category,
-          first_name: form.firstName.trim(),
-          last_name: form.lastName.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          testimony: form.testimony.trim(),
-        })
-        .select("id")
-        .single();
-      if (insertErr || !inserted) {
-        throw new Error(
-          insertErr?.message ?? "Échec de l'enregistrement de la candidature.",
-        );
-      }
+      // Generate ID client-side so we can upload files before the insert
+      // (anon has INSERT on applications but no UPDATE — single insert is required).
+      const appId =
+        typeof crypto !== "undefined" && "randomUUID" in crypto
+          ? crypto.randomUUID()
+          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-      const appId = inserted.id;
-      const paths: { photo_path?: string; document_path?: string } = {};
+      let photo_path: string | undefined;
+      let document_path: string | undefined;
 
-      // 2. Upload files (best-effort)
+      // 1. Upload files first (best-effort — failure does not block submission)
       if (form.photoFile) {
         const path = `${appId}/photo-${sanitize(form.photoFile.name)}`;
         const { error } = await supabase.storage
           .from("application-files")
           .upload(path, form.photoFile, { upsert: false });
-        if (!error) paths.photo_path = path;
-        else console.warn("photo upload failed", error);
+        if (error) {
+          console.warn("photo upload failed", error);
+        } else {
+          photo_path = path;
+        }
       }
       if (form.docFile) {
         const path = `${appId}/document-${sanitize(form.docFile.name)}`;
         const { error } = await supabase.storage
           .from("application-files")
           .upload(path, form.docFile, { upsert: false });
-        if (!error) paths.document_path = path;
-        else console.warn("document upload failed", error);
+        if (error) {
+          console.warn("document upload failed", error);
+        } else {
+          document_path = path;
+        }
       }
 
-      // 3. Patch application with file paths
-      if (paths.photo_path || paths.document_path) {
-        await supabase.from("applications").update(paths).eq("id", appId);
+      // 2. Create application row with everything in one insert
+      const { error: insertErr } = await supabase.from("applications").insert({
+        id: appId,
+        category_slug: form.category,
+        first_name: form.firstName.trim(),
+        last_name: form.lastName.trim(),
+        email: form.email.trim(),
+        phone: form.phone.trim(),
+        testimony: (form.testimony ?? "").trim(),
+        photo_path,
+        document_path,
+      });
+      if (insertErr) {
+        throw new Error(
+          insertErr.message ?? "Échec de l'enregistrement de la candidature.",
+        );
       }
 
       setDone(true);
@@ -219,6 +226,7 @@ function CandidaterPage() {
       setSubmitting(false);
     }
   };
+
 
 
   return (
