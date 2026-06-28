@@ -40,11 +40,7 @@ function AdminGallery() {
 
   useEffect(() => {
     if (!items) return;
-    void signMany("gallery", items.map((i) => i.image_url), 3600, {
-      width: 500,
-      quality: 70,
-      resize: "cover",
-    }).then(setUrls);
+    void signMany("gallery", items.map((i) => i.image_url)).then(setUrls);
   }, [items]);
 
   const handleUpload = async (e: ChangeEvent<HTMLInputElement>) => {

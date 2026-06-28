@@ -178,10 +178,8 @@ function GaleriePage() {
                     >
                       <img
                         src={g.src}
-                        srcSet={g.srcSet}
                         alt={g.alt}
                         loading="lazy"
-                        decoding="async"
                         className="size-full object-cover transition-transform duration-1000 group-hover:scale-105"
                       />
                       <div className="pointer-events-none absolute inset-0 bg-obsidian/0 transition-colors group-hover:bg-obsidian/30" />
@@ -259,7 +257,7 @@ function GaleriePage() {
               className="relative max-h-[88vh] max-w-5xl"
             >
               <img
-                src={open.fullSrc}
+                src={open.src}
                 alt={open.alt}
                 className="max-h-[80vh] w-auto object-contain shadow-frame"
               />
