@@ -387,7 +387,7 @@ function CandidaterPage() {
                       lignes suffisent — l'authenticité fera le reste.
                     </p>
                     <Field
-                      label="Témoignage"
+                      label="Témoignage (optionnel)"
                       name="testimony"
                       textarea
                       value={form.testimony}
