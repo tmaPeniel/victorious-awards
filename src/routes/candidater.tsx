@@ -280,7 +280,7 @@ function CandidaterPage() {
                     </h2>
                     <ul className="space-y-4 text-base text-ivory/75">
                       {[
-                        "Votre victoire se situe entre janvier 2025 et juin 2026.",
+                        "Votre victoire se situe entre juillet 2025 et juillet 2026.",
                         "Vous pouvez partager un témoignage sincère et personnel.",
                         "Vous disposez d'un justificatif officiel (diplôme, contrat, acte…).",
                         "Vous acceptez d'être contacté pour la suite du processus.",
