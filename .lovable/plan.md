@@ -1,20 +1,26 @@
-## 1. Témoignage déjà rendu optionnel
-La contrainte de 80 caractères minimum a été retirée au tour précédent (`testimony` est désormais `.optional()` dans le schéma Zod et le label affiche "Témoignage (optionnel)"). Si le champ apparaît encore obligatoire, c'est probablement un cache navigateur — rien à modifier côté code.
+## Problème
 
-## 2. Corriger l'erreur RLS sur `applications`
-La table `public.applications` possède bien une policy `INSERT` permissive (`Anyone can submit an application — WITH CHECK (true)` pour `anon, authenticated`), donc l'insert depuis le formulaire devrait passer. Si l'erreur RLS apparaît malgré tout, c'est en général lié à :
-- une policy `INSERT` manquante ou cassée après un remix,
-- ou l'upload Storage (`application-files`) qui exige une policy d'`INSERT` pour `anon`/`authenticated` sur `storage.objects`.
+Tu as supprimé des fichiers directement dans le bucket Storage `gallery`, mais la table `gallery_items` (qui alimente /admin/gallery et /galerie) garde des lignes pointant vers des fichiers qui n'existent plus → vignettes cassées côté admin et entrées fantômes côté public.
 
-### Migration de durcissement
-- Recréer proprement la policy `INSERT` publique sur `public.applications` (DROP + CREATE) pour garantir `TO anon, authenticated WITH CHECK (true)`.
-- Ajouter (si manquantes) les policies Storage sur le bucket `application-files` :
-  - `INSERT` autorisé pour `anon, authenticated` (upload d'une candidature),
-  - lecture restreinte aux admins (déjà privé).
+Le Storage et la table sont deux systèmes distincts : Supabase ne lie pas automatiquement la suppression d'un objet à la suppression de sa ligne. Il faut soit nettoyer, soit automatiser.
 
-### Vérification
-Après la migration, soumettre une candidature de test depuis `/candidater` et confirmer dans `/admin/applications` qu'elle apparaît, avec photo/justificatif uploadés correctement.
+## Solution proposée (2 volets)
+
+### 1. Nettoyage immédiat
+Migration SQL qui liste les objets réellement présents dans `storage.objects` (bucket `gallery`) et supprime de `gallery_items` toute ligne dont `image_url` n'a pas de fichier correspondant. Effet : l'admin et la galerie publique reflètent l'état réel du bucket.
+
+### 2. Synchronisation automatique permanente
+Trigger PostgreSQL `AFTER DELETE ON storage.objects` (filtré sur `bucket_id = 'gallery'`) qui supprime la ligne correspondante de `gallery_items` (`WHERE image_url = OLD.name`). À partir de là, toute suppression de fichier — via l'admin Lovable Cloud, via l'app, ou via l'API Storage — purge automatiquement la ligne associée. Aucune action côté code applicatif.
+
+Inversement, on garde l'app comme seule source qui *crée* des `gallery_items` (l'upload admin insère déjà la ligne après l'upload du fichier) — on n'ajoute pas d'auto-création depuis le bucket pour éviter des entrées sans légende/ordre.
 
 ## Fichiers / objets touchés
-- Migration SQL — policies `applications` + `storage.objects` (bucket `application-files`).
-- Aucun changement de code applicatif nécessaire.
+- Migration SQL unique :
+  - DELETE des `gallery_items` orphelins,
+  - fonction `public.handle_gallery_object_delete()` (SECURITY DEFINER),
+  - trigger `on_gallery_object_delete` sur `storage.objects`.
+- Aucun changement de code applicatif.
+
+## Vérification
+1. Recharger `/admin/gallery` → seules les photos réellement présentes apparaissent.
+2. Supprimer un fichier du bucket via l'admin Cloud → la ligne disparaît côté `/admin/gallery` et `/galerie` au refresh.
