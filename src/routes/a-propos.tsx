@@ -92,43 +92,27 @@ function AboutPage() {
         eyebrow="Notre histoire"
         title="D'une intuition, à une nuit attendue."
       >
-        <div className="grid gap-12 lg:grid-cols-[1.3fr_1fr] lg:gap-16">
-          <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
-            <p>
-              Tout a commencé par une conversation. Un dimanche soir, autour
-              d'une table, les Pasteurs Luka et Marie-Ange ANKOU posent une
-              question simple : combien d'histoires extraordinaires se vivent
-              dans notre communauté, et combien restent invisibles ?
-            </p>
-            <p>
-              Quelques mois plus tard, l'idée d'une cérémonie annuelle
-              prenait forme. Pas un service. Pas une conférence. Un gala. Une
-              soirée où l'on s'habille, où l'on dresse de belles tables, où
-              l'on prononce des discours — pour dire merci.
-            </p>
-            <p>
-              La première édition a réuni cent cinquante personnes. La
-              deuxième, trois cents. Aujourd'hui, Victorious est devenue
-              l'événement d'ouverture de l'été pour la communauté ICC Rouen
-              et bien au-delà.
-            </p>
-          </div>
-          <figure className="relative">
-            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
-            <img
-              src={visionnairesCouple}
-              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious, lors d'une édition de la cérémonie."
-              loading="lazy"
-              className="relative aspect-[4/5] w-full object-cover shadow-frame"
-            />
-            <figcaption className="mt-6 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/80">
-              Pasteurs Luka & Marie-Ange ANKOU
-              <span className="mt-1 block font-display-italic text-sm normal-case tracking-normal text-ivory/55">
-                Visionnaires de Victorious
-              </span>
-            </figcaption>
-          </figure>
+        <div className="max-w-3xl space-y-6 text-lg leading-relaxed text-ivory/75">
+          <p>
+            Tout a commencé par une conversation. Un dimanche soir, autour
+            d'une table, les Pasteurs Luka et Marie-Ange ANKOU posent une
+            question simple : combien d'histoires extraordinaires se vivent
+            dans notre communauté, et combien restent invisibles ?
+          </p>
+          <p>
+            Quelques mois plus tard, l'idée d'une cérémonie annuelle
+            prenait forme. Pas un service. Pas une conférence. Un gala. Une
+            soirée où l'on s'habille, où l'on dresse de belles tables, où
+            l'on prononce des discours — pour dire merci.
+          </p>
+          <p>
+            La première édition a réuni cent cinquante personnes. La
+            deuxième, trois cents. Aujourd'hui, Victorious est devenue
+            l'événement d'ouverture de l'été pour la communauté ICC Rouen
+            et bien au-delà.
+          </p>
         </div>
+
       </Section>
 
       {/* Notre vision — reprise piliers */}
@@ -180,31 +164,35 @@ function AboutPage() {
         title="Pasteurs Luka & Marie-Ange ANKOU."
         className="bg-velvet/20"
       >
-        <div className="grid gap-6 sm:grid-cols-2">
-          {team
-            .filter((m) => m.visionary)
-            .map((m) => (
-              <div key={m.name} className="bg-obsidian p-8">
-                <div className="relative aspect-[4/5] overflow-hidden bg-velvet/60">
-                  <img
-                    src={m.photo}
-                    alt={`Portrait de ${m.name}, ${m.role.toLowerCase()} de Victorious.`}
-                    loading="lazy"
-                    className="size-full object-cover object-top"
-                  />
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16">
+          <figure className="relative">
+            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
+            <img
+              src={visionnairesCouple}
+              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious."
+              loading="lazy"
+              className="relative aspect-[4/5] w-full object-cover shadow-frame"
+            />
+          </figure>
+          <div className="space-y-8">
+            {team
+              .filter((m) => m.visionary)
+              .map((m) => (
+                <div key={m.name} className="border-l border-gold/60 pl-6">
+                  <h3 className="font-display text-2xl text-ivory">
+                    {m.name}
+                  </h3>
+                  <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">
+                    {m.role}
+                  </p>
+                  <p className="mt-4 text-sm leading-relaxed text-ivory/70">
+                    {m.bio}
+                  </p>
                 </div>
-                <h3 className="mt-6 font-display text-2xl text-ivory">
-                  {m.name}
-                </h3>
-                <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">
-                  {m.role}
-                </p>
-                <p className="mt-4 text-sm leading-relaxed text-ivory/65">
-                  {m.bio}
-                </p>
-              </div>
-            ))}
+              ))}
+          </div>
         </div>
+
       </Section>
 
       <section className="border-t border-champagne/15 py-24 text-center">
