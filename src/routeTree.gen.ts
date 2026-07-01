@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as TemoignagesRouteImport } from './routes/temoignages'
 import { Route as MentionsLegalesRouteImport } from './routes/mentions-legales'
 import { Route as GalerieRouteImport } from './routes/galerie'
 import { Route as ContactRouteImport } from './routes/contact'
@@ -20,6 +21,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminCategoriesIndexRouteImport } from './routes/admin.categories.index'
@@ -27,6 +29,11 @@ import { Route as AdminApplicationsIndexRouteImport } from './routes/admin.appli
 import { Route as AdminCategoriesSlugRouteImport } from './routes/admin.categories.$slug'
 import { Route as AdminApplicationsIdRouteImport } from './routes/admin.applications.$id'
 
+const TemoignagesRoute = TemoignagesRouteImport.update({
+  id: '/temoignages',
+  path: '/temoignages',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const MentionsLegalesRoute = MentionsLegalesRouteImport.update({
   id: '/mentions-legales',
   path: '/mentions-legales',
@@ -82,6 +89,11 @@ const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => CategoriesRoute,
 } as any)
+const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
+  id: '/testimonials',
+  path: '/testimonials',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminLoginRoute = AdminLoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -122,8 +134,10 @@ export interface FileRoutesByFullPath {
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/temoignages': typeof TemoignagesRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
@@ -139,8 +153,10 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/temoignages': typeof TemoignagesRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/categories': typeof CategoriesIndexRoute
@@ -159,8 +175,10 @@ export interface FileRoutesById {
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
   '/mentions-legales': typeof MentionsLegalesRoute
+  '/temoignages': typeof TemoignagesRoute
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
+  '/admin/testimonials': typeof AdminTestimonialsRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
@@ -180,8 +198,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/galerie'
     | '/mentions-legales'
+    | '/temoignages'
     | '/admin/gallery'
     | '/admin/login'
+    | '/admin/testimonials'
     | '/categories/$slug'
     | '/admin/'
     | '/categories/'
@@ -197,8 +217,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/galerie'
     | '/mentions-legales'
+    | '/temoignages'
     | '/admin/gallery'
     | '/admin/login'
+    | '/admin/testimonials'
     | '/categories/$slug'
     | '/admin'
     | '/categories'
@@ -216,8 +238,10 @@ export interface FileRouteTypes {
     | '/contact'
     | '/galerie'
     | '/mentions-legales'
+    | '/temoignages'
     | '/admin/gallery'
     | '/admin/login'
+    | '/admin/testimonials'
     | '/categories/$slug'
     | '/admin/'
     | '/categories/'
@@ -236,10 +260,18 @@ export interface RootRouteChildren {
   ContactRoute: typeof ContactRoute
   GalerieRoute: typeof GalerieRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
+  TemoignagesRoute: typeof TemoignagesRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/temoignages': {
+      id: '/temoignages'
+      path: '/temoignages'
+      fullPath: '/temoignages'
+      preLoaderRoute: typeof TemoignagesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/mentions-legales': {
       id: '/mentions-legales'
       path: '/mentions-legales'
@@ -317,6 +349,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof CategoriesRoute
     }
+    '/admin/testimonials': {
+      id: '/admin/testimonials'
+      path: '/testimonials'
+      fullPath: '/admin/testimonials'
+      preLoaderRoute: typeof AdminTestimonialsRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/login': {
       id: '/admin/login'
       path: '/login'
@@ -365,6 +404,7 @@ declare module '@tanstack/react-router' {
 interface AdminRouteChildren {
   AdminGalleryRoute: typeof AdminGalleryRoute
   AdminLoginRoute: typeof AdminLoginRoute
+  AdminTestimonialsRoute: typeof AdminTestimonialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminApplicationsIdRoute: typeof AdminApplicationsIdRoute
   AdminCategoriesSlugRoute: typeof AdminCategoriesSlugRoute
@@ -375,6 +415,7 @@ interface AdminRouteChildren {
 const AdminRouteChildren: AdminRouteChildren = {
   AdminGalleryRoute: AdminGalleryRoute,
   AdminLoginRoute: AdminLoginRoute,
+  AdminTestimonialsRoute: AdminTestimonialsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminApplicationsIdRoute: AdminApplicationsIdRoute,
   AdminCategoriesSlugRoute: AdminCategoriesSlugRoute,
@@ -407,6 +448,7 @@ const rootRouteChildren: RootRouteChildren = {
   ContactRoute: ContactRoute,
   GalerieRoute: GalerieRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
+  TemoignagesRoute: TemoignagesRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
