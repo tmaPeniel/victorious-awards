@@ -29,6 +29,7 @@ export function Footer() {
               <li><Link to="/categories" className="link-underline">Catégories</Link></li>
               <li><Link to="/candidater" className="link-underline">Candidater</Link></li>
               <li><Link to="/galerie" className="link-underline">Galerie</Link></li>
+              <li><Link to="/temoignages" className="link-underline">Témoignages</Link></li>
               <li><Link to="/contact" className="link-underline">Contact</Link></li>
             </ul>
           </div>
