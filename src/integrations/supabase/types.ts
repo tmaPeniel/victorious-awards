@@ -146,6 +146,57 @@ export type Database = {
         }
         Relationships: []
       }
+      testimonials: {
+        Row: {
+          category_slug: string | null
+          created_at: string
+          edition_year: number
+          full_story: string | null
+          id: string
+          photo_url: string | null
+          published: boolean
+          quote: string
+          sort_order: number
+          type: string
+          updated_at: string
+          video_thumbnail_url: string | null
+          video_url: string | null
+          winner_name: string
+        }
+        Insert: {
+          category_slug?: string | null
+          created_at?: string
+          edition_year: number
+          full_story?: string | null
+          id?: string
+          photo_url?: string | null
+          published?: boolean
+          quote?: string
+          sort_order?: number
+          type: string
+          updated_at?: string
+          video_thumbnail_url?: string | null
+          video_url?: string | null
+          winner_name: string
+        }
+        Update: {
+          category_slug?: string | null
+          created_at?: string
+          edition_year?: number
+          full_story?: string | null
+          id?: string
+          photo_url?: string | null
+          published?: boolean
+          quote?: string
+          sort_order?: number
+          type?: string
+          updated_at?: string
+          video_thumbnail_url?: string | null
+          video_url?: string | null
+          winner_name?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
