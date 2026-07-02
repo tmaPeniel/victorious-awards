@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Trash2, Eye, EyeOff, ChevronUp, ChevronDown, Plus, Play, Pencil, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAdminTestimonials, testimonialsPublicUrl, type TestimonialRow } from "@/lib/use-testimonials";
+import { useAdminTestimonials, useSignedTestimonialUrl, type TestimonialRow } from "@/lib/use-testimonials";
 import { parseVideoUrl } from "@/lib/parse-video-url";
 import { cn } from "@/lib/utils";
 
