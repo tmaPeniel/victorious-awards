@@ -52,19 +52,18 @@ export function useTestimonials() {
         if (/^https?:\/\//.test(v)) return v;
         return signed[v] ?? null;
       };
-      const next = rows.map((r) => ({
-        ...r,
-        photo_url: resolveField(r.photo_url),
-        video_thumbnail_url: resolveField(r.video_thumbnail_url),
-        video_url:
-          r.video_url && !/^https?:\/\//.test(r.video_url)
-            ? await resolve(r.video_url)
-            : r.video_url,
-      }));
-      const resolved = await Promise.all(
-        next.map(async (r) => ({ ...r, video_url: await r.video_url })),
+      const next = await Promise.all(
+        rows.map(async (r) => ({
+          ...r,
+          photo_url: resolveField(r.photo_url),
+          video_thumbnail_url: resolveField(r.video_thumbnail_url),
+          video_url:
+            r.video_url && !/^https?:\/\//.test(r.video_url)
+              ? await resolve(r.video_url)
+              : r.video_url,
+        })),
       );
-      if (!cancelled) setItems(resolved);
+      if (!cancelled) setItems(next);
     })();
     return () => {
       cancelled = true;
