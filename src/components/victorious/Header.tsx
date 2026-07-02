@@ -33,31 +33,20 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-500",
-        scrolled
-          ? "bg-obsidian/85 backdrop-blur-xl border-b border-champagne/10"
-          : "bg-transparent",
+        scrolled ? "bg-obsidian/85 backdrop-blur-xl border-b border-champagne/10" : "bg-transparent",
       )}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
-        <Link
-          to="/"
-          aria-label="Victorious — Accueil"
-          className="group flex flex-col items-start"
-        >
+        <Link to="/" aria-label="Victorious — Accueil" className="group flex flex-col items-start">
           <span className="font-display text-xl leading-none tracking-[0.2em] text-champagne sm:text-2xl">
             VICTORIOUS
           </span>
-          <span className="text-[0.6rem] uppercase tracking-[0.3em] text-champagne/60">
-            La Nuit de l'Excellence
-          </span>
+          <span className="text-[0.6rem] uppercase tracking-[0.3em] text-champagne/60">- La Nuit de l'Excellence</span>
         </Link>
 
         <nav className="hidden items-center gap-10 lg:flex" aria-label="Navigation principale">
           {links.map((l) => {
-            const active =
-              l.to === "/"
-                ? pathname === "/"
-                : pathname.startsWith(l.to);
+            const active = l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
             return (
               <Link
                 key={l.to}
@@ -100,11 +89,7 @@ export function Header() {
         <div className="bg-obsidian/95 backdrop-blur-xl px-6 pb-8 pt-2">
           <nav className="flex flex-col" aria-label="Navigation mobile">
             {links.map((l) => (
-              <Link
-                key={l.to}
-                to={l.to}
-                className="border-b border-champagne/10 py-4 font-display text-2xl text-ivory"
-              >
+              <Link key={l.to} to={l.to} className="border-b border-champagne/10 py-4 font-display text-2xl text-ivory">
                 {l.label}
               </Link>
             ))}
