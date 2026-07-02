@@ -550,3 +550,9 @@ function Field({
     </div>
   );
 }
+
+function SignedThumb({ path }: { path: string }) {
+  const url = useSignedTestimonialUrl(path);
+  if (!url) return <div className="size-full bg-velvet" />;
+  return <img src={url} alt="" className="size-full object-cover" />;
+}
