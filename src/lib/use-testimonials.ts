@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { signMany, signUrl } from "@/lib/storage-urls";
 
 export type TestimonialRow = {
   id: string;
@@ -16,11 +18,10 @@ export type TestimonialRow = {
   published: boolean;
 };
 
-function publicUrl(path: string | null): string | null {
+async function resolve(path: string | null): Promise<string | null> {
   if (!path) return null;
-  if (path.startsWith("http://") || path.startsWith("https://")) return path;
-  const { data } = supabase.storage.from("testimonials").getPublicUrl(path);
-  return data.publicUrl;
+  if (/^https?:\/\//.test(path)) return path;
+  return signUrl("testimonials", path);
 }
 
 export function useTestimonials() {
@@ -38,15 +39,36 @@ export function useTestimonials() {
     },
   });
 
-  const items = (query.data ?? []).map((t) => ({
-    ...t,
-    photo_url: publicUrl(t.photo_url),
-    video_thumbnail_url: publicUrl(t.video_thumbnail_url),
-    video_url:
-      t.video_url && !/^https?:\/\//.test(t.video_url)
-        ? publicUrl(t.video_url)
-        : t.video_url,
-  }));
+  const [items, setItems] = useState<TestimonialRow[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const rows = query.data ?? [];
+    (async () => {
+      const paths = rows.flatMap((r) => [r.photo_url, r.video_thumbnail_url]);
+      const signed = await signMany("testimonials", paths);
+      const resolveField = (v: string | null) => {
+        if (!v) return null;
+        if (/^https?:\/\//.test(v)) return v;
+        return signed[v] ?? null;
+      };
+      const next = await Promise.all(
+        rows.map(async (r) => ({
+          ...r,
+          photo_url: resolveField(r.photo_url),
+          video_thumbnail_url: resolveField(r.video_thumbnail_url),
+          video_url:
+            r.video_url && !/^https?:\/\//.test(r.video_url)
+              ? await resolve(r.video_url)
+              : r.video_url,
+        })),
+      );
+      if (!cancelled) setItems(next);
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [query.data]);
 
   return { ...query, items };
 }
@@ -66,4 +88,24 @@ export function useAdminTestimonials() {
   });
 }
 
-export { publicUrl as testimonialsPublicUrl };
+export function useSignedTestimonialUrl(path: string | null | undefined) {
+  const [url, setUrl] = useState<string | null>(null);
+  useEffect(() => {
+    let cancelled = false;
+    if (!path) {
+      setUrl(null);
+      return;
+    }
+    if (/^https?:\/\//.test(path)) {
+      setUrl(path);
+      return;
+    }
+    signUrl("testimonials", path).then((u) => {
+      if (!cancelled) setUrl(u);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [path]);
+  return url;
+}

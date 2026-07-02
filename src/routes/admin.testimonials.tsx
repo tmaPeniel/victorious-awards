@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Trash2, Eye, EyeOff, ChevronUp, ChevronDown, Plus, Play, Pencil, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useAdminTestimonials, testimonialsPublicUrl, type TestimonialRow } from "@/lib/use-testimonials";
+import { useAdminTestimonials, useSignedTestimonialUrl, type TestimonialRow } from "@/lib/use-testimonials";
 import { parseVideoUrl } from "@/lib/parse-video-url";
 import { cn } from "@/lib/utils";
 
@@ -157,7 +157,6 @@ function AdminTestimonials() {
       ) : (
         <div className="space-y-3">
           {items.map((t, i) => {
-            const photo = testimonialsPublicUrl(t.photo_url);
             const parsed = parseVideoUrl(t.video_url);
             return (
               <article
@@ -165,8 +164,8 @@ function AdminTestimonials() {
                 className="grid grid-cols-[80px_1fr_auto] items-center gap-4 border border-champagne/15 bg-obsidian/50 p-3"
               >
                 <div className="relative aspect-square overflow-hidden bg-velvet">
-                  {photo ? (
-                    <img src={photo} alt="" className="size-full object-cover" />
+                  {t.photo_url ? (
+                    <SignedThumb path={t.photo_url} />
                   ) : parsed?.kind === "youtube" ? (
                     <img src={parsed.thumbnailUrl} alt="" className="size-full object-cover" />
                   ) : (
@@ -321,8 +320,8 @@ function EditModal({
     onSave();
   };
 
-  const photoUrl = testimonialsPublicUrl(value.photo_path);
-  const thumbUrl = testimonialsPublicUrl(value.video_thumbnail_path);
+  const photoUrl = useSignedTestimonialUrl(value.photo_path);
+  const thumbUrl = useSignedTestimonialUrl(value.video_thumbnail_path);
 
   return (
     <div
@@ -550,4 +549,10 @@ function Field({
       />
     </div>
   );
+}
+
+function SignedThumb({ path }: { path: string }) {
+  const url = useSignedTestimonialUrl(path);
+  if (!url) return <div className="size-full bg-velvet" />;
+  return <img src={url} alt="" className="size-full object-cover" />;
 }
