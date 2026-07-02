@@ -320,8 +320,8 @@ function EditModal({
     onSave();
   };
 
-  const photoUrl = testimonialsPublicUrl(value.photo_path);
-  const thumbUrl = testimonialsPublicUrl(value.video_thumbnail_path);
+  const photoUrl = useSignedTestimonialUrl(value.photo_path);
+  const thumbUrl = useSignedTestimonialUrl(value.video_thumbnail_path);
 
   return (
     <div
