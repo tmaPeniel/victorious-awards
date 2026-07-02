@@ -42,13 +42,13 @@ export function Header() {
         <Link
           to="/"
           aria-label="Victorious — Accueil"
-          className="group flex items-center gap-3"
+          className="group flex flex-col items-start"
         >
-          <span className="font-display text-xl tracking-[0.2em] text-champagne sm:text-2xl">
+          <span className="font-display text-xl leading-none tracking-[0.2em] text-champagne sm:text-2xl">
             VICTORIOUS
           </span>
-          <span className="hidden text-[0.6rem] uppercase tracking-[0.3em] text-champagne/50 sm:inline">
-            — La Nuit de l'Excellence
+          <span className="text-[0.6rem] uppercase tracking-[0.3em] text-champagne/60">
+            La Nuit de l'Excellence
           </span>
         </Link>
 
