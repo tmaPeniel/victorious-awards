@@ -157,7 +157,6 @@ function AdminTestimonials() {
       ) : (
         <div className="space-y-3">
           {items.map((t, i) => {
-            const photo = testimonialsPublicUrl(t.photo_url);
             const parsed = parseVideoUrl(t.video_url);
             return (
               <article
@@ -165,8 +164,8 @@ function AdminTestimonials() {
                 className="grid grid-cols-[80px_1fr_auto] items-center gap-4 border border-champagne/15 bg-obsidian/50 p-3"
               >
                 <div className="relative aspect-square overflow-hidden bg-velvet">
-                  {photo ? (
-                    <img src={photo} alt="" className="size-full object-cover" />
+                  {t.photo_url ? (
+                    <SignedThumb path={t.photo_url} />
                   ) : parsed?.kind === "youtube" ? (
                     <img src={parsed.thumbnailUrl} alt="" className="size-full object-cover" />
                   ) : (
