@@ -1,11 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ArrowRight, Calendar, Clock, MapPin, Sparkles } from "lucide-react";
 import { Hero } from "@/components/victorious/Hero";
 import { Section } from "@/components/victorious/Section";
@@ -25,7 +20,6 @@ import ctaStage from "@/assets/home/cta-stage.jpg";
 
 const pillarImages = [pillarGratitude, pillarInspire, pillarConnect];
 
-
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
@@ -38,8 +32,7 @@ export const Route = createFileRoute("/")({
       { property: "og:title", content: "Victorious — La Nuit de l'Excellence" },
       {
         property: "og:description",
-        content:
-          "Cérémonie de gala — 25 juillet 2026. Rendre grâce, inspirer, connecter.",
+        content: "Cérémonie de gala — 25 juillet 2026. Rendre grâce, inspirer, connecter.",
       },
     ],
   }),
@@ -82,9 +75,7 @@ function HomePage() {
           <>
             Plus qu'une cérémonie.
             <br />
-            <span className="font-display-italic text-champagne">
-              Une soirée d'inspiration.
-            </span>
+            <span className="font-display-italic text-champagne">Une soirée d'inspiration.</span>
           </>
         }
         intro="Chaque trophée représente une histoire. Chaque histoire témoigne de la fidélité de Dieu. Notre objectif n'est pas simplement de remettre des récompenses — c'est de rendre grâce, d'inspirer et de connecter."
@@ -110,83 +101,14 @@ function HomePage() {
           <div
             className="absolute inset-0"
             style={{
-              background:
-                "linear-gradient(180deg, transparent 50%, oklch(0.13 0.06 290 / 0.6) 100%)",
+              background: "linear-gradient(180deg, transparent 50%, oklch(0.13 0.06 290 / 0.6) 100%)",
             }}
           />
         </motion.div>
       </div>
 
-
-      {/* Trois piliers */}
-      <Section
-        id="piliers"
-        numeral="I"
-        eyebrow="Nos trois piliers"
-        title="Ce qui tient la nuit debout."
-        className="bg-velvet/20"
-      >
-        <div className="grid gap-px bg-champagne/15 lg:grid-cols-3">
-          {pillars.map((p, i) => (
-            <motion.article
-              key={p.title}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-10% 0px" }}
-              transition={{
-                duration: 0.9,
-                delay: i * 0.12,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              className="group relative flex flex-col gap-6 bg-obsidian p-10 lg:p-12"
-            >
-              <div className="relative -mx-10 -mt-10 mb-2 aspect-[4/3] overflow-hidden lg:-mx-12 lg:-mt-12">
-                <img
-                  src={pillarImages[i]}
-                  alt=""
-                  aria-hidden="true"
-                  loading="lazy"
-                  width={1024}
-                  height={1024}
-                  className="size-full object-cover transition-transform duration-[1500ms] group-hover:scale-105"
-                />
-                <div
-                  className="absolute inset-0"
-                  style={{
-                    background:
-                      "linear-gradient(180deg, oklch(0.13 0.06 290 / 0.35) 0%, oklch(0.16 0.07 295) 100%)",
-                  }}
-                />
-              </div>
-              <div className="flex items-baseline gap-4">
-                <span className="font-display text-5xl text-gold">
-                  {p.numeral}
-                </span>
-                <span className="h-px flex-1 bg-champagne/20" />
-              </div>
-
-              <h3 className="font-display text-3xl text-ivory lg:text-4xl">
-                {p.title}
-              </h3>
-              <p className="font-display-italic text-base text-champagne/80">
-                {p.subtitle}
-              </p>
-              <p className="text-pretty text-sm leading-relaxed text-ivory/65">
-                {p.text}
-              </p>
-              <div className="mt-auto h-px w-12 bg-gold transition-all duration-700 group-hover:w-24" />
-            </motion.article>
-          ))}
-        </div>
-      </Section>
-
       {/* Infos événement */}
-      <Section
-        id="infos"
-        numeral="II"
-        eyebrow="L'événement"
-        title="Une nuit. Un lieu. Une atmosphère."
-      >
+      <Section id="infos" numeral="II" eyebrow="L'événement" title="Une nuit. Un lieu. Une atmosphère.">
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { icon: Calendar, label: "Date", value: event.dateLabel },
@@ -203,22 +125,14 @@ function HomePage() {
               className="border border-champagne/15 bg-velvet/40 p-8"
             >
               <it.icon className="size-6 text-gold" aria-hidden="true" />
-              <div className="mt-6 text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">
-                {it.label}
-              </div>
-              <div className="mt-2 font-display text-xl text-ivory">
-                {it.value}
-              </div>
+              <div className="mt-6 text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">{it.label}</div>
+              <div className="mt-2 font-display text-xl text-ivory">{it.value}</div>
             </motion.div>
           ))}
         </div>
         <div className="mt-10 border-l-2 border-gold pl-6">
-          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">
-            Programme
-          </div>
-          <p className="mt-2 font-display-italic text-xl text-ivory/80">
-            {event.program} — annoncé prochainement.
-          </p>
+          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">Programme</div>
+          <p className="mt-2 font-display-italic text-xl text-ivory/80">{event.program} — annoncé prochainement.</p>
         </div>
       </Section>
 
@@ -247,17 +161,13 @@ function HomePage() {
             }}
           />
           <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-6 lg:p-10">
-            <span className="font-display-italic text-lg text-champagne/90 lg:text-2xl">
-              ICC Rouen — Isneauville
-            </span>
+            <span className="font-display-italic text-lg text-champagne/90 lg:text-2xl">ICC Rouen — Isneauville</span>
             <span className="hidden text-[0.65rem] uppercase tracking-[0.3em] text-ivory/60 sm:block">
               Le théâtre d'une nuit pas comme les autres
             </span>
           </figcaption>
         </motion.figure>
       </div>
-
-
 
       {/* Catégories */}
       <Section
@@ -266,10 +176,7 @@ function HomePage() {
         eyebrow="Les catégories"
         title={
           <>
-            Neuf victoires.{" "}
-            <span className="font-display-italic text-champagne">
-              Neuf histoires.
-            </span>
+            Neuf victoires. <span className="font-display-italic text-champagne">Neuf histoires.</span>
           </>
         }
         intro="Chacune a sa lumière. Trouvez celle qui raconte votre parcours."
@@ -309,9 +216,7 @@ function HomePage() {
               <div className="absolute -left-[3.45rem] top-1 grid size-12 place-items-center rounded-full border border-champagne/30 bg-obsidian font-display text-base text-gold sm:-left-[4.05rem]">
                 {s.n}
               </div>
-              <h3 className="font-display text-2xl text-ivory sm:text-3xl">
-                {s.title}
-              </h3>
+              <h3 className="font-display text-2xl text-ivory sm:text-3xl">{s.title}</h3>
               <p className="mt-3 max-w-xl text-base text-ivory/65">{s.text}</p>
             </motion.li>
           ))}
@@ -368,25 +273,14 @@ function HomePage() {
       </Section>
 
       {/* FAQ */}
-      <Section
-        id="faq"
-        numeral="VI"
-        eyebrow="Vos questions"
-        title="Tout ce qu'on nous demande, doucement."
-      >
+      <Section id="faq" numeral="VI" eyebrow="Vos questions" title="Tout ce qu'on nous demande, doucement.">
         <Accordion type="single" collapsible className="mx-auto max-w-3xl">
           {faq.map((item, i) => (
-            <AccordionItem
-              key={item.q}
-              value={`q-${i}`}
-              className="border-champagne/15"
-            >
+            <AccordionItem key={item.q} value={`q-${i}`} className="border-champagne/15">
               <AccordionTrigger className="py-6 text-left font-display text-lg text-ivory hover:no-underline hover:text-champagne sm:text-xl">
                 {item.q}
               </AccordionTrigger>
-              <AccordionContent className="text-base leading-relaxed text-ivory/65">
-                {item.a}
-              </AccordionContent>
+              <AccordionContent className="text-base leading-relaxed text-ivory/65">{item.a}</AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>
@@ -430,9 +324,7 @@ function HomePage() {
           >
             Et si votre histoire
             <br />
-            <span className="font-display-italic text-champagne">
-              était la prochaine ?
-            </span>
+            <span className="font-display-italic text-champagne">était la prochaine ?</span>
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -441,8 +333,7 @@ function HomePage() {
             transition={{ duration: 1, delay: 0.2 }}
             className="mx-auto mt-8 max-w-xl text-lg text-ivory/70"
           >
-            Le 25 juillet, neuf trophées trouveront un foyer. Le vôtre,
-            peut-être.
+            Le 25 juillet, neuf trophées trouveront un foyer. Le vôtre, peut-être.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
