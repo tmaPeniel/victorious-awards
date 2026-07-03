@@ -61,14 +61,16 @@ function AboutPage() {
               transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
               className="mt-8 font-display text-5xl leading-[0.95] text-ivory sm:text-7xl lg:text-8xl"
             >
-              Une nuit née
+              Une célébration de
               <br />
-              <span className="font-display-italic text-champagne">d'une conviction.</span>
+              <span className="font-display-italic text-champagne">la fidélité de Dieu.</span>
             </motion.h1>
             <p className="mt-8 max-w-xl text-lg leading-relaxed text-ivory/70">
-              Victorious est née d'une intuition simple : les victoires des uns peuvent devenir le souffle des autres.
-              Et le silence sur ce que Dieu fait, dans la vie ordinaire de Son peuple, est une injustice à laquelle nous
-              voulions répondre.
+              Victorious est née d'une conviction profonde : derrière chaque victoire se cache la fidélité de Dieu.
+              Chaque parcours, chaque accomplissement et chaque étape franchie témoignent de Son œuvre dans la vie de
+              celles et ceux qui Lui font confiance. Parce qu'un témoignage peut fortifier une foi, inspirer une
+              vocation et encourager une nouvelle génération à croire que tout est possible avec Dieu, Victorious
+              célèbre ces histoires qui méritent d'être entendues et transmises.
             </p>
           </div>
           <div className="relative hidden lg:block">
