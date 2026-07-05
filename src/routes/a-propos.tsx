@@ -80,22 +80,43 @@ function AboutPage() {
       </section>
 
       {/* Notre histoire */}
-      <Section numeral="I" eyebrow="Notre histoire" title="D'une intuition, à une nuit attendue.">
-        <div className="max-w-3xl space-y-6 text-lg leading-relaxed text-ivory/75">
-          <p>
-            Tout a commencé par une conversation. Un dimanche soir, autour d'une table, les Pasteurs Luka et Marie-Ange
-            ANKOU posent une question simple : combien d'histoires extraordinaires se vivent dans notre communauté, et
-            combien restent invisibles ?
-          </p>
-          <p>
-            Quelques mois plus tard, l'idée d'une cérémonie annuelle prenait forme. Pas un service. Pas une conférence.
-            Un gala. Une soirée où l'on s'habille, où l'on dresse de belles tables, où l'on prononce des discours — pour
-            dire merci.
-          </p>
-          <p>
-            La première édition a réuni cent cinquante personnes. La deuxième, trois cents. Aujourd'hui, Victorious est
-            devenue l'événement d'ouverture de l'été pour la communauté ICC Rouen et bien au-delà.
-          </p>
+      <Section
+        numeral="I"
+        eyebrow="Notre histoire"
+        title={<span className="font-display-italic text-champagne">D'une vision, à une célébration.</span>}
+      >
+        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start lg:gap-16">
+          <figure className="relative">
+            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
+            <img
+              src={visionnairesCouple}
+              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious."
+              loading="lazy"
+              className="relative aspect-[4/5] w-full object-cover shadow-frame"
+            />
+            <figcaption className="mt-6 text-center">
+              <p className="font-display text-xl text-ivory">Pasteurs Luka & Marie-Ange ANKOU</p>
+              <p className="mt-1 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/70">
+                Visionnaires de Victorious
+              </p>
+            </figcaption>
+          </figure>
+          <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
+            <p>
+              Tout a commencé par une conviction : les témoignages de la fidélité de Dieu méritent d'être célébrés.
+              Chaque jour, des femmes et des hommes vivent des percées, surmontent des épreuves et accomplissent des
+              choses extraordinaires, souvent dans la discrétion.
+            </p>
+            <p>
+              C'est de cette vision qu'est née Victorious. Plus qu'un gala, une soirée d'honneur et de reconnaissance
+              où nous prenons le temps de rendre grâce à Dieu pour Son œuvre dans la vie de Son peuple.
+            </p>
+            <p>
+              Au fil des éditions, Victorious est devenue bien plus qu'une cérémonie. C'est un rendez-vous attendu, où
+              les histoires individuelles deviennent une source d'inspiration collective, où les victoires sont
+              célébrées et où la fidélité de Dieu est mise en lumière.
+            </p>
+          </div>
         </div>
       </Section>
 
@@ -120,27 +141,16 @@ function AboutPage() {
         title="Pasteurs Luka & Marie-Ange ANKOU."
         className="bg-velvet/20"
       >
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16">
-          <figure className="relative">
-            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
-            <img
-              src={visionnairesCouple}
-              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious."
-              loading="lazy"
-              className="relative aspect-[4/5] w-full object-cover shadow-frame"
-            />
-          </figure>
-          <div className="space-y-8">
-            {team
-              .filter((m) => m.visionary)
-              .map((m) => (
-                <div key={m.name} className="border-l border-gold/60 pl-6">
-                  <h3 className="font-display text-2xl text-ivory">{m.name}</h3>
-                  <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">{m.role}</p>
-                  <p className="mt-4 text-sm leading-relaxed text-ivory/70">{m.bio}</p>
-                </div>
-              ))}
-          </div>
+        <div className="grid gap-8 sm:grid-cols-2">
+          {team
+            .filter((m) => m.visionary)
+            .map((m) => (
+              <div key={m.name} className="border-l border-gold/60 pl-6">
+                <h3 className="font-display text-2xl text-ivory">{m.name}</h3>
+                <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">{m.role}</p>
+                <p className="mt-4 text-sm leading-relaxed text-ivory/70">{m.bio}</p>
+              </div>
+            ))}
         </div>
       </Section>
 
