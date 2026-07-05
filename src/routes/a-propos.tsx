@@ -3,7 +3,6 @@ import { motion } from "motion/react";
 import { Section } from "@/components/victorious/Section";
 import { VLink } from "@/components/victorious/VButton";
 import { pillars } from "@/content/pillars";
-import { team } from "@/content/team";
 import { ArrowRight } from "lucide-react";
 import portrait from "@/assets/home/hero-portrait-violet.jpg";
 import aboutHero from "@/assets/pages/about-hero.jpg";
@@ -120,8 +119,65 @@ function AboutPage() {
         </div>
       </Section>
 
+      {/* Qu'est-ce que Victorious ? */}
+      <Section
+        numeral="II"
+        eyebrow="Présentation"
+        title={
+          <span className="font-display-italic text-champagne">
+            Qu'est-ce que Victorious ?
+          </span>
+        }
+      >
+        <div className="mx-auto max-w-4xl space-y-8">
+          <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
+            <p>
+              Victorious est la soirée prestigieuse de remise de prix et de célébration des victoires de l'année
+              écoulée.
+            </p>
+            <p>
+              Bien plus qu'une cérémonie, c'est une véritable plateforme d'actions de grâce où nous célébrons la
+              fidélité de Dieu, disons merci pour Ses bienfaits et fortifions la foi de chacun à travers des
+              témoignages inspirants.
+            </p>
+          </div>
+
+          <div className="border-y border-champagne/15 py-8">
+            <p className="mb-6 font-display text-2xl text-ivory">
+              Chaque année, plusieurs catégories sont mises à l'honneur, parmi lesquelles :
+            </p>
+            <ul className="grid gap-3 text-lg text-ivory/75 sm:grid-cols-2">
+              <li>🎓 Diplôme de fin de cycle</li>
+              <li>💼 Premier CDI</li>
+              <li>🚀 Création d'entreprise</li>
+              <li>🏡 Premier achat immobilier</li>
+              <li>🚗 Permis de conduire</li>
+              <li>📱 Influence sur les réseaux sociaux</li>
+              <li>❤️ Réussite familiale</li>
+              <li>… et bien d'autres victoires du quotidien</li>
+            </ul>
+          </div>
+
+          <div className="text-center">
+            <p className="font-display text-4xl text-gold sm:text-5xl">Plus de 180 personnes récompensées depuis 2020</p>
+          </div>
+
+          <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
+            <p>
+              Cette année, nous célébrons la 7ᵉ édition de Victorious. La toute première édition a eu lieu en 2019, et
+              depuis, cette soirée est devenue un rendez-vous incontournable pour honorer les victoires que Dieu
+              accomplit dans les vies.
+            </p>
+            <p>
+              Préparez-vous à vivre une soirée exceptionnelle, remplie d'actions de grâce, de célébration et
+              d'inspiration.
+            </p>
+          </div>
+        </div>
+      </Section>
+
       {/* Notre vision — reprise piliers */}
-      <Section numeral="II" eyebrow="Notre vision" title="Rendre grâce, inspirer, connecter." className="bg-velvet/20">
+      <Section numeral="III" eyebrow="Notre vision" title="Rendre grâce, inspirer, connecter." className="bg-velvet/20">
         <div className="grid gap-px bg-champagne/15 lg:grid-cols-3">
           {pillars.map((p) => (
             <article key={p.title} className="flex flex-col gap-5 bg-obsidian p-10">
@@ -134,25 +190,6 @@ function AboutPage() {
         </div>
       </Section>
 
-      {/* Visionnaires */}
-      <Section
-        numeral="III"
-        eyebrow="Les visionnaires"
-        title="Pasteurs Luka & Marie-Ange ANKOU."
-        className="bg-velvet/20"
-      >
-        <div className="grid gap-8 sm:grid-cols-2">
-          {team
-            .filter((m) => m.visionary)
-            .map((m) => (
-              <div key={m.name} className="border-l border-gold/60 pl-6">
-                <h3 className="font-display text-2xl text-ivory">{m.name}</h3>
-                <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">{m.role}</p>
-                <p className="mt-4 text-sm leading-relaxed text-ivory/70">{m.bio}</p>
-              </div>
-            ))}
-        </div>
-      </Section>
 
       <section className="border-t border-champagne/15 py-24 text-center">
         <div className="mx-auto max-w-2xl px-6">
