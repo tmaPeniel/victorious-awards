@@ -73,9 +73,9 @@ function HomePage() {
         eyebrow="Victorious"
         title={
           <>
-            Plus qu'une cérémonie.
+            Une plateformed’action de grâce pour dire à Dieu
             <br />
-            <span className="font-display-italic text-champagne">Une soirée d'inspiration.</span>
+            <span className="font-display-italic text-champagne">Et booster la foi de plusieurs. </span>
           </>
         }
         intro="Chaque trophée représente une histoire. Chaque histoire témoigne de la fidélité de Dieu. Notre objectif n'est pas simplement de remettre des récompenses — c'est de rendre grâce, d'inspirer et de connecter."
@@ -177,9 +177,7 @@ function HomePage() {
         title={
           <>
             9 catégories,{" "}
-            <span className="font-display-italic text-champagne">
-              9 séries de témoignages de la fidélité de Dieu.
-            </span>
+            <span className="font-display-italic text-champagne">9 séries de témoignages de la fidélité de Dieu.</span>
           </>
         }
         intro="Chacune a sa lumière. Trouvez celle qui raconte votre parcours."

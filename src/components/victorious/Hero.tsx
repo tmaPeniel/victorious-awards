@@ -27,7 +27,6 @@ export function Hero() {
         />
       </div>
 
-
       <div className="relative mx-auto grid min-h-[100svh] max-w-7xl grid-cols-1 items-center gap-12 px-6 pt-32 pb-16 lg:grid-cols-[1.3fr_1fr] lg:gap-20 lg:px-10">
         <div>
           <motion.div
@@ -65,9 +64,7 @@ export function Hero() {
             transition={{ duration: 1.1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="mt-6 max-w-xl text-base leading-relaxed text-ivory/70 sm:text-lg"
           >
-            Une cérémonie de gala pour célébrer les parcours marqués par
-            la fidélité de Dieu. Chaque trophée, une histoire. Chaque histoire,
-            un témoignage.
+            Une soirée prestigieuse de remise de prix et de célébration des victoires de l’année.
           </motion.p>
 
           <motion.div
@@ -77,18 +74,12 @@ export function Hero() {
             className="mt-10 flex flex-wrap items-center gap-x-10 gap-y-4 text-sm text-ivory/80"
           >
             <div>
-              <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">
-                Date
-              </div>
-              <div className="mt-1 font-display text-xl text-ivory">
-                {event.dateLabel}
-              </div>
+              <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">Date</div>
+              <div className="mt-1 font-display text-xl text-ivory">{event.dateLabel}</div>
             </div>
             <div className="hidden h-10 w-px bg-champagne/20 sm:block" />
             <div>
-              <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">
-                Lieu
-              </div>
+              <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">Lieu</div>
               <div className="mt-1 flex items-center gap-2 font-display text-xl text-ivory">
                 <MapPin className="size-4 text-gold" />
                 {event.venue} — {event.city}
@@ -141,8 +132,7 @@ export function Hero() {
             <div
               className="absolute inset-0"
               style={{
-                background:
-                  "linear-gradient(180deg, transparent 55%, oklch(0.11 0.055 290 / 0.6) 100%)",
+                background: "linear-gradient(180deg, transparent 55%, oklch(0.11 0.055 290 / 0.6) 100%)",
               }}
             />
           </div>
