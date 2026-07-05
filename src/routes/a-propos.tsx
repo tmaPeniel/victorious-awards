@@ -107,8 +107,8 @@ function AboutPage() {
               choses extraordinaires, souvent dans la discrétion.
             </p>
             <p>
-              C'est de cette vision qu'est née Victorious. Plus qu'un gala, une soirée d'honneur et de reconnaissance
-              où nous prenons le temps de rendre grâce à Dieu pour Son œuvre dans la vie de Son peuple.
+              C'est de cette vision qu'est née Victorious. Plus qu'un gala, une soirée d'honneur et de reconnaissance où
+              nous prenons le temps de rendre grâce à Dieu pour Son œuvre dans la vie de Son peuple.
             </p>
             <p>
               Au fil des éditions, Victorious est devenue bien plus qu'une cérémonie. C'est un rendez-vous attendu, où
@@ -123,11 +123,7 @@ function AboutPage() {
       <Section
         numeral="II"
         eyebrow="Présentation"
-        title={
-          <span className="font-display-italic text-champagne">
-            Qu'est-ce que Victorious ?
-          </span>
-        }
+        title={<span className="font-display-italic text-champagne">Qu'est-ce que Victorious ?</span>}
       >
         <div className="mx-auto max-w-4xl space-y-8">
           <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
@@ -137,8 +133,8 @@ function AboutPage() {
             </p>
             <p>
               Bien plus qu'une cérémonie, c'est une véritable plateforme d'actions de grâce où nous célébrons la
-              fidélité de Dieu, disons merci pour Ses bienfaits et fortifions la foi de chacun à travers des
-              témoignages inspirants.
+              fidélité de Dieu, disons merci pour Ses bienfaits et fortifions la foi de chacun à travers des témoignages
+              inspirants.
             </p>
           </div>
 
@@ -147,19 +143,21 @@ function AboutPage() {
               Chaque année, plusieurs catégories sont mises à l'honneur, parmi lesquelles :
             </p>
             <ul className="grid gap-3 text-lg text-ivory/75 sm:grid-cols-2">
-              <li>🎓 Diplôme de fin de cycle</li>
-              <li>💼 Premier CDI</li>
-              <li>🚀 Création d'entreprise</li>
-              <li>🏡 Premier achat immobilier</li>
-              <li>🚗 Permis de conduire</li>
-              <li>📱 Influence sur les réseaux sociaux</li>
-              <li>❤️ Réussite familiale</li>
+              <li> Diplôme de fin de cycle</li>
+              <li> Premier CDI</li>
+              <li> Création d'entreprise</li>
+              <li> Premier achat immobilier</li>
+              <li> Permis de conduire</li>
+              <li> Influence sur les réseaux sociaux</li>
+              <li> Réussite familiale</li>
               <li>… et bien d'autres victoires du quotidien</li>
             </ul>
           </div>
 
           <div className="text-center">
-            <p className="font-display text-4xl text-gold sm:text-5xl">Plus de 180 personnes récompensées depuis 2020</p>
+            <p className="font-display text-4xl text-gold sm:text-5xl">
+              Plus de 180 personnes récompensées depuis 2020
+            </p>
           </div>
 
           <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
@@ -189,7 +187,6 @@ function AboutPage() {
           ))}
         </div>
       </Section>
-
 
       <section className="border-t border-champagne/15 py-24 text-center">
         <div className="mx-auto max-w-2xl px-6">
