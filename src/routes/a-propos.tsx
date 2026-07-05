@@ -141,27 +141,16 @@ function AboutPage() {
         title="Pasteurs Luka & Marie-Ange ANKOU."
         className="bg-velvet/20"
       >
-        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:gap-16">
-          <figure className="relative">
-            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
-            <img
-              src={visionnairesCouple}
-              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious."
-              loading="lazy"
-              className="relative aspect-[4/5] w-full object-cover shadow-frame"
-            />
-          </figure>
-          <div className="space-y-8">
-            {team
-              .filter((m) => m.visionary)
-              .map((m) => (
-                <div key={m.name} className="border-l border-gold/60 pl-6">
-                  <h3 className="font-display text-2xl text-ivory">{m.name}</h3>
-                  <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">{m.role}</p>
-                  <p className="mt-4 text-sm leading-relaxed text-ivory/70">{m.bio}</p>
-                </div>
-              ))}
-          </div>
+        <div className="grid gap-8 sm:grid-cols-2">
+          {team
+            .filter((m) => m.visionary)
+            .map((m) => (
+              <div key={m.name} className="border-l border-gold/60 pl-6">
+                <h3 className="font-display text-2xl text-ivory">{m.name}</h3>
+                <p className="mt-1 text-[0.7rem] uppercase tracking-[0.25em] text-champagne/70">{m.role}</p>
+                <p className="mt-4 text-sm leading-relaxed text-ivory/70">{m.bio}</p>
+              </div>
+            ))}
         </div>
       </Section>
 
