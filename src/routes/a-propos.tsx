@@ -178,6 +178,18 @@ function AboutPage() {
 
       {/* Notre vision — reprise piliers */}
       <Section numeral="III" eyebrow="Notre vision" title="Rendre grâce, inspirer, connecter." className="bg-velvet/20">
+        <div className="grid gap-px bg-champagne/15 lg:grid-cols-3">
+          {pillars.map((p) => (
+            <article key={p.title} className="flex flex-col gap-5 bg-obsidian p-10">
+              <span className="font-display text-5xl text-gold">{p.numeral}</span>
+              <h3 className="font-display text-2xl text-ivory">{p.title}</h3>
+              <p className="font-display-italic text-sm text-champagne/70">{p.subtitle}</p>
+              <p className="text-sm leading-relaxed text-ivory/65">{p.text}</p>
+            </article>
+          ))}
+        </div>
+      </Section>
+
 
       <section className="border-t border-champagne/15 py-24 text-center">
         <div className="mx-auto max-w-2xl px-6">
