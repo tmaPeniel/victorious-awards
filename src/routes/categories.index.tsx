@@ -49,9 +49,9 @@ function CategoriesIndex() {
             Les catégories
           </div>
           <h1 className="mt-8 max-w-4xl font-display text-5xl leading-[0.95] text-ivory sm:text-7xl lg:text-8xl">
-            Neuf victoires.{" "}
+            9 catégories,{" "}
             <span className="font-display-italic text-champagne">
-              Neuf histoires.
+              9 séries de témoignages de la fidélité de Dieu.
             </span>
           </h1>
           <p className="mt-8 max-w-2xl text-lg text-ivory/70">
