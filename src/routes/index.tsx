@@ -176,7 +176,10 @@ function HomePage() {
         eyebrow="Les catégories"
         title={
           <>
-            Neuf victoires. <span className="font-display-italic text-champagne">Neuf histoires.</span>
+            9 catégories,{" "}
+            <span className="font-display-italic text-champagne">
+              9 séries de témoignages de la fidélité de Dieu.
+            </span>
           </>
         }
         intro="Chacune a sa lumière. Trouvez celle qui raconte votre parcours."
