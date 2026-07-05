@@ -84,22 +84,7 @@ function AboutPage() {
         eyebrow="Notre histoire"
         title={<span className="font-display-italic text-champagne">D'une vision, à une célébration.</span>}
       >
-        <div className="grid gap-12 lg:grid-cols-[1fr_1.1fr] lg:items-start lg:gap-16">
-          <figure className="relative">
-            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
-            <img
-              src={visionnairesCouple}
-              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious."
-              loading="lazy"
-              className="relative aspect-[4/5] w-full object-cover shadow-frame"
-            />
-            <figcaption className="mt-6 text-center">
-              <p className="font-display text-xl text-ivory">Pasteurs Luka & Marie-Ange ANKOU</p>
-              <p className="mt-1 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/70">
-                Visionnaires de Victorious
-              </p>
-            </figcaption>
-          </figure>
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-start lg:gap-16">
           <div className="space-y-6 text-lg leading-relaxed text-ivory/75">
             <p>
               Tout a commencé par une conviction : les témoignages de la fidélité de Dieu méritent d'être célébrés.
@@ -116,6 +101,21 @@ function AboutPage() {
               célébrées et où la fidélité de Dieu est mise en lumière.
             </p>
           </div>
+          <figure className="relative">
+            <div className="absolute -inset-3 border border-gold/30" aria-hidden="true" />
+            <img
+              src={visionnairesCouple}
+              alt="Pasteurs Luka et Marie-Ange ANKOU, visionnaires de Victorious."
+              loading="lazy"
+              className="relative aspect-[4/5] w-full object-cover shadow-frame"
+            />
+            <figcaption className="mt-6 text-center">
+              <p className="font-display text-xl text-ivory">Pasteurs Luka & Marie-Ange ANKOU</p>
+              <p className="mt-1 text-[0.7rem] uppercase tracking-[0.3em] text-champagne/70">
+                Visionnaires de Victorious
+              </p>
+            </figcaption>
+          </figure>
         </div>
       </Section>
 
