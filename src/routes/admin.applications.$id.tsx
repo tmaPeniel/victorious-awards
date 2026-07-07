@@ -131,7 +131,6 @@ function ApplicationDetail() {
 
       <section className="grid gap-6 sm:grid-cols-2">
         <FileBlock label="Photo" url={signed.photo} />
-        <FileBlock label="Justificatif" url={signed.doc} />
       </section>
 
       <section className="space-y-4 border border-champagne/15 p-6">
