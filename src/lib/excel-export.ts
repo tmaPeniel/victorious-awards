@@ -58,7 +58,7 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
   // Column widths
   ws["!cols"] = [
     { wch: 14 }, { wch: 16 }, { wch: 28 }, { wch: 16 }, { wch: 26 },
-    { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 }, { wch: 50 }, { wch: 50 },
+    { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 }, { wch: 50 },
   ];
 
   const wb = XLSX.utils.book_new();
