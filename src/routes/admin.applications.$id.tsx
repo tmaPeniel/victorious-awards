@@ -26,7 +26,7 @@ function ApplicationDetail() {
   const qc = useQueryClient();
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("pending");
-  const [signed, setSigned] = useState<{ photo?: string; doc?: string }>({});
+  const [signed, setSigned] = useState<{ photo?: string }>({});
 
   const { data: app, isLoading } = useQuery({
     queryKey: ["admin", "application", id],
