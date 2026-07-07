@@ -13,7 +13,6 @@ type AppRow = {
   admin_notes: string | null;
   created_at: string;
   photo_path: string | null;
-  document_path: string | null;
 };
 
 const statusLabels: Record<string, string> = {
@@ -30,14 +29,11 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
   // Sign file URLs (7 days)
   const signed = await Promise.all(
     rows.map(async (r) => {
-      const [photo, doc] = await Promise.all([
-        r.photo_path
-          ? supabase.storage.from("application-files").createSignedUrl(r.photo_path, 60 * 60 * 24 * 7)
-          : Promise.resolve({ data: null }),
-        r.document_path
-          ? supabase.storage.from("application-files").createSignedUrl(r.document_path, 60 * 60 * 24 * 7)
-          : Promise.resolve({ data: null }),
-      ]);
+      const photo = r.photo_path
+        ? await supabase.storage
+            .from("application-files")
+            .createSignedUrl(r.photo_path, 60 * 60 * 24 * 7)
+        : { data: null as { signedUrl: string } | null };
       return {
         Prénom: r.first_name,
         Nom: r.last_name,
@@ -53,7 +49,6 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
           timeStyle: "short",
         }),
         Photo: photo.data?.signedUrl ?? "",
-        Justificatif: doc.data?.signedUrl ?? "",
       };
     }),
   );
@@ -63,7 +58,7 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
   // Column widths
   ws["!cols"] = [
     { wch: 14 }, { wch: 16 }, { wch: 28 }, { wch: 16 }, { wch: 26 },
-    { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 }, { wch: 50 }, { wch: 50 },
+    { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 }, { wch: 50 },
   ];
 
   const wb = XLSX.utils.book_new();

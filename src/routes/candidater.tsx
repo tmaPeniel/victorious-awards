@@ -52,7 +52,6 @@ type FormState = {
   phone: string;
   testimony: string;
   photoFile: File | null;
-  docFile: File | null;
   rgpd: boolean;
 };
 
@@ -64,7 +63,6 @@ const initial: FormState = {
   phone: "",
   testimony: "",
   photoFile: null,
-  docFile: null,
   rgpd: false,
 };
 
@@ -73,7 +71,7 @@ const STEPS = [
   { n: "02", label: "Catégorie" },
   { n: "03", label: "Vous" },
   { n: "04", label: "Témoignage" },
-  { n: "05", label: "Pièces" },
+  { n: "05", label: "Photo" },
   { n: "06", label: "Confirmation" },
 ];
 
@@ -97,11 +95,10 @@ function CandidaterPage() {
       setForm((f) => ({ ...f, [key]: val as FormState[K] }));
     };
 
-  const file =
-    (key: "photoFile" | "docFile") => (e: ChangeEvent<HTMLInputElement>) => {
-      const f = e.target.files?.[0] ?? null;
-      setForm((s) => ({ ...s, [key]: f }));
-    };
+  const file = (key: "photoFile") => (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setForm((s) => ({ ...s, [key]: f }));
+  };
 
   const FIELD_TO_STEP: Record<string, number> = {
     category: 1,
@@ -169,9 +166,8 @@ function CandidaterPage() {
           : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
       let photo_path: string | undefined;
-      let document_path: string | undefined;
 
-      // 1. Upload files first (best-effort — failure does not block submission)
+      // 1. Upload photo (best-effort — failure does not block submission)
       if (form.photoFile) {
         const path = `${appId}/photo-${sanitize(form.photoFile.name)}`;
         const { error } = await supabase.storage
@@ -181,17 +177,6 @@ function CandidaterPage() {
           console.warn("photo upload failed", error);
         } else {
           photo_path = path;
-        }
-      }
-      if (form.docFile) {
-        const path = `${appId}/document-${sanitize(form.docFile.name)}`;
-        const { error } = await supabase.storage
-          .from("application-files")
-          .upload(path, form.docFile, { upsert: false });
-        if (error) {
-          console.warn("document upload failed", error);
-        } else {
-          document_path = path;
         }
       }
 
@@ -205,7 +190,6 @@ function CandidaterPage() {
         phone: form.phone.trim(),
         testimony: (form.testimony ?? "").trim(),
         photo_path,
-        document_path,
       });
       if (insertErr) {
         throw new Error(
@@ -291,7 +275,6 @@ function CandidaterPage() {
                       {[
                         "Votre victoire se situe entre juillet 2025 et juillet 2026.",
                         "Vous pouvez partager un témoignage sincère et personnel.",
-                        "Vous disposez d'un justificatif officiel (diplôme, contrat, acte…).",
                         "Vous acceptez d'être contacté pour la suite du processus.",
                       ].map((c) => (
                         <li key={c} className="flex gap-4">
@@ -410,7 +393,7 @@ function CandidaterPage() {
                 {step === 4 && (
                   <div className="space-y-8">
                     <h2 className="font-display text-3xl text-ivory">
-                      Vos pièces
+                      Votre photo
                     </h2>
                     <div className="grid gap-6 sm:grid-cols-2">
                       <FileField
@@ -419,13 +402,6 @@ function CandidaterPage() {
                         value={form.photoFile?.name ?? ""}
                         onChange={file("photoFile")}
                         accept="image/*"
-                      />
-                      <FileField
-                        label="Justificatif"
-                        name="doc"
-                        value={form.docFile?.name ?? ""}
-                        onChange={file("docFile")}
-                        accept="image/*,application/pdf"
                       />
                     </div>
                     <label className="flex items-start gap-3 text-sm text-ivory/70">

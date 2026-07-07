@@ -26,7 +26,7 @@ function ApplicationDetail() {
   const qc = useQueryClient();
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("pending");
-  const [signed, setSigned] = useState<{ photo?: string; doc?: string }>({});
+  const [signed, setSigned] = useState<{ photo?: string }>({});
 
   const { data: app, isLoading } = useQuery({
     queryKey: ["admin", "application", id],
@@ -46,18 +46,12 @@ function ApplicationDetail() {
     setNotes(app.admin_notes ?? "");
     setStatus(app.status);
     void (async () => {
-      const result: { photo?: string; doc?: string } = {};
+      const result: { photo?: string } = {};
       if (app.photo_path) {
         const { data } = await supabase.storage
           .from("application-files")
           .createSignedUrl(app.photo_path, 3600);
         if (data) result.photo = data.signedUrl;
-      }
-      if (app.document_path) {
-        const { data } = await supabase.storage
-          .from("application-files")
-          .createSignedUrl(app.document_path, 3600);
-        if (data) result.doc = data.signedUrl;
       }
       setSigned(result);
     })();
@@ -137,7 +131,6 @@ function ApplicationDetail() {
 
       <section className="grid gap-6 sm:grid-cols-2">
         <FileBlock label="Photo" url={signed.photo} />
-        <FileBlock label="Justificatif" url={signed.doc} />
       </section>
 
       <section className="space-y-4 border border-champagne/15 p-6">
