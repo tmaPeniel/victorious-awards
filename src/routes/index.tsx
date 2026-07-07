@@ -52,8 +52,8 @@ const steps = [
   },
   {
     n: "03",
-    title: "Déposer les justificatifs",
-    text: "Un document officiel et une photo : votre histoire en pièces tangibles.",
+    title: "Déposer votre photo",
+    text: "Une photo de vous : votre histoire, un visage.",
   },
   {
     n: "04",
