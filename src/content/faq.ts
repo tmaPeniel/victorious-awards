@@ -28,7 +28,7 @@ export const faq = [
     a: "Oui, la billetterie ouvrira quelques semaines avant l'événement. Restez connectés via nos réseaux pour ne pas la manquer.",
   },
   {
-    q: "Mes documents seront-ils conservés ?",
-    a: "Vos pièces justificatives ne servent qu'à valider votre candidature et sont supprimées après l'événement, conformément au RGPD.",
+    q: "Comment mes données seront-elles utilisées ?",
+    a: "Vos informations servent uniquement au traitement de votre candidature et à vous recontacter avant la cérémonie. Elles sont conservées de façon confidentielle, conformément au RGPD.",
   },
 ] as const;
