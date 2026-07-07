@@ -19,7 +19,6 @@ export type Database = {
           admin_notes: string | null
           category_slug: string
           created_at: string
-          document_path: string | null
           email: string
           first_name: string
           id: string
@@ -34,7 +33,6 @@ export type Database = {
           admin_notes?: string | null
           category_slug: string
           created_at?: string
-          document_path?: string | null
           email: string
           first_name: string
           id?: string
@@ -49,7 +47,6 @@ export type Database = {
           admin_notes?: string | null
           category_slug?: string
           created_at?: string
-          document_path?: string | null
           email?: string
           first_name?: string
           id?: string
