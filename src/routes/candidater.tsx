@@ -52,7 +52,6 @@ type FormState = {
   phone: string;
   testimony: string;
   photoFile: File | null;
-  docFile: File | null;
   rgpd: boolean;
 };
 
