@@ -46,18 +46,12 @@ function ApplicationDetail() {
     setNotes(app.admin_notes ?? "");
     setStatus(app.status);
     void (async () => {
-      const result: { photo?: string; doc?: string } = {};
+      const result: { photo?: string } = {};
       if (app.photo_path) {
         const { data } = await supabase.storage
           .from("application-files")
           .createSignedUrl(app.photo_path, 3600);
         if (data) result.photo = data.signedUrl;
-      }
-      if (app.document_path) {
-        const { data } = await supabase.storage
-          .from("application-files")
-          .createSignedUrl(app.document_path, 3600);
-        if (data) result.doc = data.signedUrl;
       }
       setSigned(result);
     })();
