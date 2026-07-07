@@ -71,7 +71,7 @@ const STEPS = [
   { n: "02", label: "Catégorie" },
   { n: "03", label: "Vous" },
   { n: "04", label: "Témoignage" },
-  { n: "05", label: "Pièces" },
+  { n: "05", label: "Photo" },
   { n: "06", label: "Confirmation" },
 ];
 
