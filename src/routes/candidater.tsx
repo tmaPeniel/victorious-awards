@@ -394,7 +394,7 @@ function CandidaterPage() {
                 {step === 4 && (
                   <div className="space-y-8">
                     <h2 className="font-display text-3xl text-ivory">
-                      Vos pièces
+                      Votre photo
                     </h2>
                     <div className="grid gap-6 sm:grid-cols-2">
                       <FileField
@@ -403,13 +403,6 @@ function CandidaterPage() {
                         value={form.photoFile?.name ?? ""}
                         onChange={file("photoFile")}
                         accept="image/*"
-                      />
-                      <FileField
-                        label="Justificatif"
-                        name="doc"
-                        value={form.docFile?.name ?? ""}
-                        onChange={file("docFile")}
-                        accept="image/*,application/pdf"
                       />
                     </div>
                     <label className="flex items-start gap-3 text-sm text-ivory/70">
