@@ -275,7 +275,7 @@ function CandidaterPage() {
                       {[
                         "Votre victoire se situe entre juillet 2025 et juillet 2026.",
                         "Vous pouvez partager un témoignage sincère et personnel.",
-                        "Vous disposez d'un justificatif officiel (diplôme, contrat, acte…).",
+                        "Vous acceptez d'être contacté pour la suite du processus.",
                         "Vous acceptez d'être contacté pour la suite du processus.",
                       ].map((c) => (
                         <li key={c} className="flex gap-4">
