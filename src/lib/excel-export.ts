@@ -13,7 +13,6 @@ type AppRow = {
   admin_notes: string | null;
   created_at: string;
   photo_path: string | null;
-  document_path: string | null;
 };
 
 const statusLabels: Record<string, string> = {
