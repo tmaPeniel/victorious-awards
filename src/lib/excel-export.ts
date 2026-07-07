@@ -29,14 +29,11 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
   // Sign file URLs (7 days)
   const signed = await Promise.all(
     rows.map(async (r) => {
-      const [photo, doc] = await Promise.all([
-        r.photo_path
-          ? supabase.storage.from("application-files").createSignedUrl(r.photo_path, 60 * 60 * 24 * 7)
-          : Promise.resolve({ data: null }),
-        r.document_path
-          ? supabase.storage.from("application-files").createSignedUrl(r.document_path, 60 * 60 * 24 * 7)
-          : Promise.resolve({ data: null }),
-      ]);
+      const photo = r.photo_path
+        ? await supabase.storage
+            .from("application-files")
+            .createSignedUrl(r.photo_path, 60 * 60 * 24 * 7)
+        : { data: null as { signedUrl: string } | null };
       return {
         Prénom: r.first_name,
         Nom: r.last_name,
@@ -52,7 +49,6 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
           timeStyle: "short",
         }),
         Photo: photo.data?.signedUrl ?? "",
-        Justificatif: doc.data?.signedUrl ?? "",
       };
     }),
   );
