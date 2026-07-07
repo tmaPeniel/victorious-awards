@@ -63,7 +63,6 @@ const initial: FormState = {
   phone: "",
   testimony: "",
   photoFile: null,
-  docFile: null,
   rgpd: false,
 };
 
