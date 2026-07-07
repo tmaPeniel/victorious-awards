@@ -95,11 +95,10 @@ function CandidaterPage() {
       setForm((f) => ({ ...f, [key]: val as FormState[K] }));
     };
 
-  const file =
-    (key: "photoFile" | "docFile") => (e: ChangeEvent<HTMLInputElement>) => {
-      const f = e.target.files?.[0] ?? null;
-      setForm((s) => ({ ...s, [key]: f }));
-    };
+  const file = (key: "photoFile") => (e: ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] ?? null;
+    setForm((s) => ({ ...s, [key]: f }));
+  };
 
   const FIELD_TO_STEP: Record<string, number> = {
     category: 1,
