@@ -166,9 +166,8 @@ function CandidaterPage() {
           : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
       let photo_path: string | undefined;
-      let document_path: string | undefined;
 
-      // 1. Upload files first (best-effort — failure does not block submission)
+      // 1. Upload photo (best-effort — failure does not block submission)
       if (form.photoFile) {
         const path = `${appId}/photo-${sanitize(form.photoFile.name)}`;
         const { error } = await supabase.storage
@@ -178,17 +177,6 @@ function CandidaterPage() {
           console.warn("photo upload failed", error);
         } else {
           photo_path = path;
-        }
-      }
-      if (form.docFile) {
-        const path = `${appId}/document-${sanitize(form.docFile.name)}`;
-        const { error } = await supabase.storage
-          .from("application-files")
-          .upload(path, form.docFile, { upsert: false });
-        if (error) {
-          console.warn("document upload failed", error);
-        } else {
-          document_path = path;
         }
       }
 
@@ -202,7 +190,6 @@ function CandidaterPage() {
         phone: form.phone.trim(),
         testimony: (form.testimony ?? "").trim(),
         photo_path,
-        document_path,
       });
       if (insertErr) {
         throw new Error(
