@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Download } from "lucide-react";
+import { Download, Filter, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
@@ -32,18 +32,18 @@ export const Route = createFileRoute("/admin/applications/")({
 });
 
 function ApplicationsList() {
-  const [filter, setFilter] = useState<Status | "all">("all");
+  const [statusFilter, setStatusFilter] = useState<Status | "all">("all");
+  const [cityFilter, setCityFilter] = useState("all");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [search, setSearch] = useState("");
 
   const { data, isLoading } = useQuery({
-    queryKey: ["admin", "applications", filter],
+    queryKey: ["admin", "applications"],
     queryFn: async () => {
-      let q = supabase
+      const { data, error } = await supabase
         .from("applications")
         .select("*")
         .order("created_at", { ascending: false });
-      if (filter !== "all") q = q.eq("status", filter);
-      const { data, error } = await q;
       if (error) throw error;
       return data;
     },
@@ -60,15 +60,30 @@ function ApplicationsList() {
     }
   };
 
+  const cities = Array.from(
+    new Set(data?.map((application) => application.city).filter(Boolean) ?? []),
+  ).sort((a, b) => a.localeCompare(b, "fr"));
+
   const filtered = data?.filter((a) => {
+    if (statusFilter !== "all" && a.status !== statusFilter) return false;
+    if (cityFilter !== "all" && a.city !== cityFilter) return false;
     if (!search.trim()) return true;
     const s = search.toLowerCase();
     return (
       a.first_name.toLowerCase().includes(s) ||
       a.last_name.toLowerCase().includes(s) ||
-      a.email.toLowerCase().includes(s)
+      a.email.toLowerCase().includes(s) ||
+      a.city.toLowerCase().includes(s)
     );
   });
+
+  const activeFilterCount =
+    Number(statusFilter !== "all") + Number(cityFilter !== "all");
+
+  const resetFilters = () => {
+    setStatusFilter("all");
+    setCityFilter("all");
+  };
 
   return (
     <div className="space-y-8">
@@ -91,32 +106,99 @@ function ApplicationsList() {
         </button>
       </header>
 
-      <div className="flex flex-wrap items-center gap-3">
-        {STATUSES.map((s) => (
-          <button
-            key={s.value}
-            onClick={() => setFilter(s.value)}
-            className={cn(
-              "h-9 border px-4 text-xs uppercase tracking-[0.2em] transition-colors",
-              filter === s.value
-                ? "border-champagne bg-champagne/10 text-champagne"
-                : "border-champagne/20 text-ivory/60 hover:border-champagne/50",
-            )}
-          >
-            {s.label}
-          </button>
-        ))}
+      <div className="relative flex flex-wrap items-center gap-3">
+        <button
+          type="button"
+          onClick={() => setFiltersOpen((open) => !open)}
+          aria-expanded={filtersOpen}
+          className={cn(
+            "inline-flex h-10 items-center gap-2 border px-4 text-xs uppercase tracking-[0.2em] transition-colors",
+            filtersOpen || activeFilterCount > 0
+              ? "border-champagne bg-champagne/10 text-champagne"
+              : "border-champagne/20 text-ivory/60 hover:border-champagne/50",
+          )}
+        >
+          <Filter className="size-4" />
+          Filtres
+          {activeFilterCount > 0 && (
+            <span className="grid size-5 place-items-center rounded-full bg-champagne text-[0.65rem] text-obsidian">
+              {activeFilterCount}
+            </span>
+          )}
+        </button>
         <input
           type="search"
           placeholder="Rechercher…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="ml-auto h-9 border border-champagne/20 bg-transparent px-3 text-sm text-ivory outline-none focus:border-champagne"
+          className="ml-auto h-10 min-w-0 flex-1 border border-champagne/20 bg-transparent px-3 text-sm text-ivory outline-none focus:border-champagne sm:max-w-xs"
         />
+
+        {filtersOpen && (
+          <div className="w-full border border-champagne/15 bg-obsidian p-5 shadow-elegant">
+            <div className="flex items-center justify-between gap-4">
+              <h2 className="text-xs uppercase tracking-[0.25em] text-champagne/70">
+                Filtrer les candidatures
+              </h2>
+              <button
+                type="button"
+                onClick={() => setFiltersOpen(false)}
+                aria-label="Fermer les filtres"
+                className="grid size-8 place-items-center text-ivory/50 hover:text-champagne"
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            <div className="mt-5 grid gap-5 md:grid-cols-2">
+              <div>
+                <label className="block text-[0.65rem] uppercase tracking-[0.2em] text-ivory/50">
+                  Statut
+                </label>
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value as Status | "all")}
+                  className="mt-2 h-10 w-full border border-champagne/20 bg-obsidian px-3 text-sm text-ivory outline-none focus:border-champagne"
+                >
+                  {STATUSES.map((status) => (
+                    <option key={status.value} value={status.value}>
+                      {status.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[0.65rem] uppercase tracking-[0.2em] text-ivory/50">
+                  Ville
+                </label>
+                <select
+                  value={cityFilter}
+                  onChange={(e) => setCityFilter(e.target.value)}
+                  className="mt-2 h-10 w-full border border-champagne/20 bg-obsidian px-3 text-sm text-ivory outline-none focus:border-champagne"
+                >
+                  <option value="all">Toutes les villes</option>
+                  {cities.map((city) => (
+                    <option key={city} value={city}>
+                      {city}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            {activeFilterCount > 0 && (
+              <button
+                type="button"
+                onClick={resetFilters}
+                className="mt-5 text-xs uppercase tracking-[0.2em] text-champagne hover:text-ivory"
+              >
+                Réinitialiser les filtres
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
 
-      <div className="border border-champagne/15">
+      <div className="overflow-x-auto border border-champagne/15">
         {isLoading ? (
           <div className="p-6 text-sm text-ivory/50">Chargement…</div>
         ) : filtered?.length === 0 ? (
@@ -127,6 +209,7 @@ function ApplicationsList() {
               <tr className="border-b border-champagne/15 text-left text-[0.65rem] uppercase tracking-[0.25em] text-champagne/60">
                 <th className="px-5 py-3 font-normal">Candidat</th>
                 <th className="px-5 py-3 font-normal">Catégorie</th>
+                <th className="px-5 py-3 font-normal">Ville</th>
                 <th className="px-5 py-3 font-normal">Reçue le</th>
                 <th className="px-5 py-3 font-normal">Statut</th>
                 <th className="px-5 py-3" />
@@ -144,6 +227,9 @@ function ApplicationsList() {
                   <td className="px-5 py-4 text-ivory/70">
                     {categories.find((c) => c.slug === a.category_slug)?.title ??
                       a.category_slug}
+                  </td>
+                  <td className="whitespace-nowrap px-5 py-4 text-ivory/70">
+                    {a.city}
                   </td>
                   <td className="px-5 py-4 text-ivory/60">
                     {new Date(a.created_at).toLocaleDateString("fr-FR")}

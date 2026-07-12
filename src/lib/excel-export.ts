@@ -7,6 +7,7 @@ type AppRow = {
   last_name: string;
   email: string;
   phone: string;
+  city: string;
   category_slug: string;
   status: string;
   testimony: string;
@@ -39,6 +40,7 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
         Nom: r.last_name,
         Email: r.email,
         Téléphone: r.phone,
+        Ville: r.city,
         Catégorie:
           staticCategories.find((c) => c.slug === r.category_slug)?.title ?? r.category_slug,
         Statut: statusLabels[r.status] ?? r.status,
@@ -57,8 +59,9 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
 
   // Column widths
   ws["!cols"] = [
-    { wch: 14 }, { wch: 16 }, { wch: 28 }, { wch: 16 }, { wch: 26 },
-    { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 }, { wch: 50 },
+    { wch: 14 }, { wch: 16 }, { wch: 28 }, { wch: 16 }, { wch: 20 },
+    { wch: 26 }, { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 },
+    { wch: 50 },
   ];
 
   const wb = XLSX.utils.book_new();

@@ -17,6 +17,8 @@ const STATUSES: Status[] = [
   "rejected",
 ];
 
+const CITIES = ["Rouen", "Caen", "Le Havre", "Dieppe", "Cherbourg", "Evreux"] as const;
+
 export const Route = createFileRoute("/admin/applications/$id")({
   component: ApplicationDetail,
 });
@@ -26,6 +28,8 @@ function ApplicationDetail() {
   const qc = useQueryClient();
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("pending");
+  const [city, setCity] = useState("");
+  const [otherCity, setOtherCity] = useState("");
   const [signed, setSigned] = useState<{ photo?: string }>({});
 
   const { data: app, isLoading } = useQuery({
@@ -45,6 +49,13 @@ function ApplicationDetail() {
     if (!app) return;
     setNotes(app.admin_notes ?? "");
     setStatus(app.status);
+    if (CITIES.includes(app.city as (typeof CITIES)[number])) {
+      setCity(app.city);
+      setOtherCity("");
+    } else {
+      setCity("Autre");
+      setOtherCity(app.city === "Non renseignée" ? "" : app.city);
+    }
     void (async () => {
       const result: { photo?: string } = {};
       if (app.photo_path) {
@@ -59,9 +70,11 @@ function ApplicationDetail() {
 
   const save = useMutation({
     mutationFn: async () => {
+      const savedCity = city === "Autre" ? otherCity.trim() : city;
+      if (!savedCity) throw new Error("La ville est requise.");
       const { error } = await supabase
         .from("applications")
-        .update({ status, admin_notes: notes })
+        .update({ status, admin_notes: notes, city: savedCity })
         .eq("id", id);
       if (error) throw error;
     },
@@ -157,6 +170,39 @@ function ApplicationDetail() {
         </div>
         <div>
           <label className="block text-xs uppercase tracking-[0.2em] text-ivory/60">
+            Ville
+          </label>
+          <select
+            value={city}
+            onChange={(e) => {
+              setCity(e.target.value);
+              if (e.target.value !== "Autre") setOtherCity("");
+            }}
+            className="mt-2 w-full border border-champagne/20 bg-obsidian px-3 py-2 text-sm text-ivory focus:border-champagne"
+          >
+            {CITIES.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+            <option value="Autre">Autre</option>
+          </select>
+        </div>
+        {city === "Autre" && (
+          <div>
+            <label className="block text-xs uppercase tracking-[0.2em] text-ivory/60">
+              Précisez la ville
+            </label>
+            <input
+              type="text"
+              value={otherCity}
+              onChange={(e) => setOtherCity(e.target.value)}
+              className="mt-2 w-full border border-champagne/20 bg-transparent px-3 py-2 text-sm text-ivory outline-none focus:border-champagne"
+            />
+          </div>
+        )}
+        <div>
+          <label className="block text-xs uppercase tracking-[0.2em] text-ivory/60">
             Notes internes
           </label>
           <textarea
@@ -187,6 +233,13 @@ function ApplicationDetail() {
         </div>
         {save.isSuccess && (
           <p className="text-xs text-emerald-300">Modifications enregistrées.</p>
+        )}
+        {save.isError && (
+          <p className="text-xs text-red-300">
+            {save.error instanceof Error
+              ? save.error.message
+              : "Impossible d’enregistrer les modifications."}
+          </p>
         )}
       </section>
     </div>
