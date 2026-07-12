@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           admin_notes: string | null
           category_slug: string
+          city: string
           created_at: string
           email: string
           first_name: string
@@ -32,6 +33,7 @@ export type Database = {
         Insert: {
           admin_notes?: string | null
           category_slug: string
+          city: string
           created_at?: string
           email: string
           first_name: string
@@ -46,6 +48,7 @@ export type Database = {
         Update: {
           admin_notes?: string | null
           category_slug?: string
+          city?: string
           created_at?: string
           email?: string
           first_name?: string

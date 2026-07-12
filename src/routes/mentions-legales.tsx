@@ -46,7 +46,7 @@ function Page() {
             </p>
             <p className="mt-3 text-base">
               Pour exercer vos droits d'accès, de rectification ou de
-              suppression : écrivez-nous à victorious@iccrouen.fr.
+              suppression : écrivez-nous à rouen.secretariat@gmail.com.
             </p>
           </div>
           <div>

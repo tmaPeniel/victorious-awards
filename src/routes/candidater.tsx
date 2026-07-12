@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, ArrowLeft, ArrowRight, Upload, Sparkles } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
 import { z } from "zod";
 import { Section } from "@/components/victorious/Section";
 import { VButton, VLink } from "@/components/victorious/VButton";
@@ -16,13 +16,13 @@ export const Route = createFileRoute("/candidater")({
       {
         name: "description",
         content:
-          "Proposez votre histoire à Victorious. Formulaire de candidature en 4 étapes pour les 9 catégories de la cérémonie.",
+          "Proposez votre histoire à Victorious grâce à un parcours de candidature guidé pour les 9 catégories de la cérémonie.",
       },
       { property: "og:title", content: "Candidater — Victorious" },
       {
         property: "og:description",
         content:
-          "Choisissez votre catégorie, partagez votre témoignage, déposez vos pièces.",
+          "Choisissez votre catégorie, complétez vos informations et partagez votre témoignage.",
       },
     ],
   }),
@@ -35,6 +35,8 @@ const schema = z.object({
   lastName: z.string().trim().min(2, "Nom requis").max(60),
   email: z.string().trim().email("Email invalide").max(255),
   phone: z.string().trim().min(8, "Téléphone requis").max(20),
+  city: z.string().min(1, "Ville requise"),
+  otherCity: z.string().trim().max(100),
   testimony: z
     .string()
     .trim()
@@ -42,6 +44,14 @@ const schema = z.object({
     .optional()
     .or(z.literal("")),
   rgpd: z.literal(true, { message: "Acceptation requise" }),
+}).superRefine((data, ctx) => {
+  if (data.city === "Autre" && data.otherCity.length < 2) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["otherCity"],
+      message: "Précisez votre ville",
+    });
+  }
 });
 
 type FormState = {
@@ -50,8 +60,9 @@ type FormState = {
   lastName: string;
   email: string;
   phone: string;
+  city: string;
+  otherCity: string;
   testimony: string;
-  photoFile: File | null;
   rgpd: boolean;
 };
 
@@ -61,8 +72,9 @@ const initial: FormState = {
   lastName: "",
   email: "",
   phone: "",
+  city: "",
+  otherCity: "",
   testimony: "",
-  photoFile: null,
   rgpd: false,
 };
 
@@ -71,8 +83,7 @@ const STEPS = [
   { n: "02", label: "Catégorie" },
   { n: "03", label: "Vous" },
   { n: "04", label: "Témoignage" },
-  { n: "05", label: "Photo" },
-  { n: "06", label: "Confirmation" },
+  { n: "05", label: "Confirmation" },
 ];
 
 function CandidaterPage() {
@@ -95,19 +106,16 @@ function CandidaterPage() {
       setForm((f) => ({ ...f, [key]: val as FormState[K] }));
     };
 
-  const file = (key: "photoFile") => (e: ChangeEvent<HTMLInputElement>) => {
-    const f = e.target.files?.[0] ?? null;
-    setForm((s) => ({ ...s, [key]: f }));
-  };
-
   const FIELD_TO_STEP: Record<string, number> = {
     category: 1,
     firstName: 2,
     lastName: 2,
     email: 2,
     phone: 2,
+    city: 2,
+    otherCity: 2,
     testimony: 3,
-    rgpd: 4,
+    rgpd: 3,
   };
   const FIELD_LABEL: Record<string, string> = {
     category: "Catégorie",
@@ -115,6 +123,8 @@ function CandidaterPage() {
     lastName: "Nom",
     email: "Email",
     phone: "Téléphone",
+    city: "Ville",
+    otherCity: "Votre ville",
     testimony: "Témoignage",
     rgpd: "Acceptation RGPD",
   };
@@ -149,47 +159,22 @@ function CandidaterPage() {
   const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
 
-  const sanitize = (name: string) =>
-    name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(0, 80);
-
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
     setSubmitting(true);
     setSubmitError(null);
     try {
-      // Generate ID client-side so we can upload files before the insert
-      // (anon has INSERT on applications but no UPDATE — single insert is required).
-      const appId =
-        typeof crypto !== "undefined" && "randomUUID" in crypto
-          ? crypto.randomUUID()
-          : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+      const city = form.city === "Autre" ? form.otherCity.trim() : form.city;
 
-      let photo_path: string | undefined;
-
-      // 1. Upload photo (best-effort — failure does not block submission)
-      if (form.photoFile) {
-        const path = `${appId}/photo-${sanitize(form.photoFile.name)}`;
-        const { error } = await supabase.storage
-          .from("application-files")
-          .upload(path, form.photoFile, { upsert: false });
-        if (error) {
-          console.warn("photo upload failed", error);
-        } else {
-          photo_path = path;
-        }
-      }
-
-      // 2. Create application row with everything in one insert
       const { error: insertErr } = await supabase.from("applications").insert({
-        id: appId,
         category_slug: form.category,
         first_name: form.firstName.trim(),
         last_name: form.lastName.trim(),
         email: form.email.trim(),
         phone: form.phone.trim(),
+        city,
         testimony: (form.testimony ?? "").trim(),
-        photo_path,
       });
       if (insertErr) {
         throw new Error(
@@ -363,6 +348,58 @@ function CandidaterPage() {
                         onChange={update("phone")}
                         error={errors.phone}
                       />
+                      <div>
+                        <label
+                          htmlFor="f-city"
+                          className="block text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70"
+                        >
+                          Ville
+                        </label>
+                        <select
+                          id="f-city"
+                          name="city"
+                          value={form.city}
+                          onChange={(e) =>
+                            setForm((f) => ({
+                              ...f,
+                              city: e.target.value,
+                              otherCity: e.target.value === "Autre" ? f.otherCity : "",
+                            }))
+                          }
+                          className="mt-2 w-full border-b border-champagne/30 bg-obsidian px-0 py-3 font-sans text-base text-ivory outline-none transition-colors focus:border-champagne"
+                        >
+                          <option value="">Sélectionnez une ville</option>
+                          {[
+                            "Rouen",
+                            "Caen",
+                            "Le Havre",
+                            "Dieppe",
+                            "Cherbourg",
+                            "Evreux",
+                            "Autre",
+                          ].map((city) => (
+                            <option key={city} value={city}>
+                              {city}
+                            </option>
+                          ))}
+                        </select>
+                        <div className="mt-1 text-xs">
+                          {errors.city ? (
+                            <span className="text-destructive">{errors.city}</span>
+                          ) : (
+                            <span className="text-ivory/40">&nbsp;</span>
+                          )}
+                        </div>
+                      </div>
+                      {form.city === "Autre" && (
+                        <Field
+                          label="Précisez votre ville"
+                          name="otherCity"
+                          value={form.otherCity}
+                          onChange={update("otherCity")}
+                          error={errors.otherCity}
+                        />
+                      )}
                     </div>
                   </div>
                 )}
@@ -386,24 +423,6 @@ function CandidaterPage() {
                       error={errors.testimony}
                       hint={`${form.testimony.length} / 2000`}
                     />
-                  </div>
-                )}
-
-                {/* Step 4 — Pièces */}
-                {step === 4 && (
-                  <div className="space-y-8">
-                    <h2 className="font-display text-3xl text-ivory">
-                      Votre photo
-                    </h2>
-                    <div className="grid gap-6 sm:grid-cols-2">
-                      <FileField
-                        label="Photo"
-                        name="photo"
-                        value={form.photoFile?.name ?? ""}
-                        onChange={file("photoFile")}
-                        accept="image/*"
-                      />
-                    </div>
                     <label className="flex items-start gap-3 text-sm text-ivory/70">
                       <input
                         type="checkbox"
@@ -425,8 +444,8 @@ function CandidaterPage() {
                   </div>
                 )}
 
-                {/* Step 5 — Confirmation */}
-                {step === 5 && done && (
+                {/* Step 4 — Confirmation */}
+                {step === 4 && done && (
                   <div className="py-12 text-center">
                     <div className="mx-auto grid size-20 place-items-center rounded-full border border-champagne/30 bg-champagne/10">
                       <Sparkles className="size-8 text-gold" />
@@ -462,7 +481,7 @@ function CandidaterPage() {
                 >
                   <ArrowLeft className="size-4" /> Retour
                 </VButton>
-                {step < 4 ? (
+                {step < 3 ? (
                   <VButton
                     type="button"
                     onClick={() => {
@@ -565,47 +584,6 @@ function Field({
           <span className="text-ivory/40">{hint ?? "\u00A0"}</span>
         )}
       </div>
-    </div>
-  );
-}
-
-function FileField({
-  label,
-  name,
-  value,
-  onChange,
-  accept,
-}: {
-  label: string;
-  name: string;
-  value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  accept?: string;
-}) {
-  const id = `file-${name}`;
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="flex cursor-pointer flex-col items-start gap-3 border border-dashed border-champagne/40 p-6 transition-colors hover:border-champagne hover:bg-champagne/5"
-      >
-        <div className="flex items-center gap-3 text-champagne">
-          <Upload className="size-5" />
-          <span className="text-[0.7rem] uppercase tracking-[0.25em]">
-            {label}
-          </span>
-        </div>
-        <div className="text-sm text-ivory/70">
-          {value || "Cliquez pour téléverser un fichier"}
-        </div>
-        <input
-          id={id}
-          type="file"
-          accept={accept}
-          onChange={onChange}
-          className="sr-only"
-        />
-      </label>
     </div>
   );
 }

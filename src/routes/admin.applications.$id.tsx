@@ -110,6 +110,8 @@ function ApplicationDetail() {
           <a href={`tel:${app.phone}`} className="hover:text-champagne">
             {app.phone}
           </a>
+          <span className="text-ivory/50">•</span>
+          <span>{app.city}</span>
           <span>
             Reçue le{" "}
             {new Date(app.created_at).toLocaleString("fr-FR", {

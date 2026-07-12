@@ -3,7 +3,7 @@ export const event = {
   theme: "La Nuit de l'Excellence",
   edition: "Édition 2026",
   date: new Date("2026-07-25T19:00:00+02:00"),
-  dateLabel: "25 Juillet 2026",
+  dateLabel: "25 juillet 2026",
   timeLabel: "19h00",
   venue: "ICC Rouen",
   city: "Isneauville",
@@ -16,7 +16,7 @@ export const event = {
     youtube: "https://youtube.com/@iccrouen",
   },
   contact: {
-    email: "victorious@iccrouen.fr",
-    phone: "+33 (0)2 00 00 00 00",
+    email: "rouen.secretariat@gmail.com",
+    phone: "07 67 96 57 09",
   },
 } as const;

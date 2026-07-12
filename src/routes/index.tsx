@@ -52,8 +52,8 @@ const steps = [
   },
   {
     n: "03",
-    title: "Déposer votre photo",
-    text: "Une photo de vous : votre histoire, un visage.",
+    title: "Partager votre témoignage",
+    text: "Racontez votre parcours avec vos mots, simplement et sincèrement.",
   },
   {
     n: "04",
@@ -73,7 +73,7 @@ function HomePage() {
         eyebrow="Victorious"
         title={
           <>
-            Une plateformed’action de grâce pour dire à Dieu
+            Une plateforme d’actions de grâce pour dire merci à Dieu
             <br />
             <span className="font-display-italic text-champagne">Et booster la foi de plusieurs. </span>
           </>
