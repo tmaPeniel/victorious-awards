@@ -177,6 +177,11 @@ function CandidaterPage() {
         testimony: (form.testimony ?? "").trim(),
       });
       if (insertErr) {
+        if (insertErr.message.includes("duplicate_application_same_category")) {
+          throw new Error(
+            "Une candidature existe déjà avec cette adresse e-mail dans cette catégorie.",
+          );
+        }
         throw new Error(
           insertErr.message ?? "Échec de l'enregistrement de la candidature.",
         );

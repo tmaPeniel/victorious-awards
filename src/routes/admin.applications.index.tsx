@@ -34,6 +34,7 @@ export const Route = createFileRoute("/admin/applications/")({
 function ApplicationsList() {
   const [statusFilter, setStatusFilter] = useState<Status | "all">("all");
   const [cityFilter, setCityFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -67,6 +68,7 @@ function ApplicationsList() {
   const filtered = data?.filter((a) => {
     if (statusFilter !== "all" && a.status !== statusFilter) return false;
     if (cityFilter !== "all" && a.city !== cityFilter) return false;
+    if (categoryFilter !== "all" && a.category_slug !== categoryFilter) return false;
     if (!search.trim()) return true;
     const s = search.toLowerCase();
     return (
@@ -78,11 +80,14 @@ function ApplicationsList() {
   });
 
   const activeFilterCount =
-    Number(statusFilter !== "all") + Number(cityFilter !== "all");
+    Number(statusFilter !== "all") +
+    Number(cityFilter !== "all") +
+    Number(categoryFilter !== "all");
 
   const resetFilters = () => {
     setStatusFilter("all");
     setCityFilter("all");
+    setCategoryFilter("all");
   };
 
   return (
@@ -149,7 +154,7 @@ function ApplicationsList() {
                 <X className="size-4" />
               </button>
             </div>
-            <div className="mt-5 grid gap-5 md:grid-cols-2">
+            <div className="mt-5 grid gap-5 md:grid-cols-3">
               <div>
                 <label className="block text-[0.65rem] uppercase tracking-[0.2em] text-ivory/50">
                   Statut
@@ -162,6 +167,23 @@ function ApplicationsList() {
                   {STATUSES.map((status) => (
                     <option key={status.value} value={status.value}>
                       {status.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[0.65rem] uppercase tracking-[0.2em] text-ivory/50">
+                  Catégorie
+                </label>
+                <select
+                  value={categoryFilter}
+                  onChange={(e) => setCategoryFilter(e.target.value)}
+                  className="mt-2 h-10 w-full border border-champagne/20 bg-obsidian px-3 text-sm text-ivory outline-none focus:border-champagne"
+                >
+                  <option value="all">Toutes les catégories</option>
+                  {categories.map((category) => (
+                    <option key={category.slug} value={category.slug}>
+                      {category.title}
                     </option>
                   ))}
                 </select>

@@ -28,6 +28,11 @@ function ApplicationDetail() {
   const qc = useQueryClient();
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("pending");
+  const [categorySlug, setCategorySlug] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [city, setCity] = useState("");
   const [otherCity, setOtherCity] = useState("");
   const [signed, setSigned] = useState<{ photo?: string }>({});
@@ -49,6 +54,11 @@ function ApplicationDetail() {
     if (!app) return;
     setNotes(app.admin_notes ?? "");
     setStatus(app.status);
+    setCategorySlug(app.category_slug);
+    setFirstName(app.first_name);
+    setLastName(app.last_name);
+    setEmail(app.email);
+    setPhone(app.phone);
     if (CITIES.includes(app.city as (typeof CITIES)[number])) {
       setCity(app.city);
       setOtherCity("");
@@ -71,12 +81,31 @@ function ApplicationDetail() {
   const save = useMutation({
     mutationFn: async () => {
       const savedCity = city === "Autre" ? otherCity.trim() : city;
+      if (firstName.trim().length < 2) throw new Error("Le prénom est requis.");
+      if (lastName.trim().length < 2) throw new Error("Le nom est requis.");
+      if (!/^\S+@\S+\.\S+$/.test(email.trim())) throw new Error("L’adresse e-mail est invalide.");
+      if (phone.trim().length < 8) throw new Error("Le numéro de téléphone est invalide.");
+      if (!categorySlug) throw new Error("La catégorie est requise.");
       if (!savedCity) throw new Error("La ville est requise.");
       const { error } = await supabase
         .from("applications")
-        .update({ status, admin_notes: notes, city: savedCity })
+        .update({
+          status,
+          admin_notes: notes,
+          category_slug: categorySlug,
+          first_name: firstName.trim(),
+          last_name: lastName.trim(),
+          email: email.trim().toLowerCase(),
+          phone: phone.trim(),
+          city: savedCity,
+        })
         .eq("id", id);
-      if (error) throw error;
+      if (error) {
+        if (error.message.includes("duplicate_application_same_category")) {
+          throw new Error("Cette personne possède déjà une candidature dans cette catégorie.");
+        }
+        throw error;
+      }
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["admin"] });
@@ -142,6 +171,34 @@ function ApplicationDetail() {
         <p className="whitespace-pre-wrap text-base leading-relaxed text-ivory/80">
           {app.testimony}
         </p>
+      </section>
+
+      <section className="space-y-5 border border-champagne/15 p-6">
+        <h2 className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">
+          Informations du candidat
+        </h2>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <AdminField label="Prénom" value={firstName} onChange={setFirstName} />
+          <AdminField label="Nom" value={lastName} onChange={setLastName} />
+          <AdminField label="E-mail" type="email" value={email} onChange={setEmail} />
+          <AdminField label="Téléphone" type="tel" value={phone} onChange={setPhone} />
+        </div>
+        <div>
+          <label className="block text-xs uppercase tracking-[0.2em] text-ivory/60">
+            Catégorie
+          </label>
+          <select
+            value={categorySlug}
+            onChange={(e) => setCategorySlug(e.target.value)}
+            className="mt-2 w-full border border-champagne/20 bg-obsidian px-3 py-2 text-sm text-ivory focus:border-champagne"
+          >
+            {categories.map((item) => (
+              <option key={item.slug} value={item.slug}>
+                {item.title}
+              </option>
+            ))}
+          </select>
+        </div>
       </section>
 
       <section className="grid gap-6 sm:grid-cols-2">
@@ -264,6 +321,32 @@ function FileBlock({ label, url }: { label: string; url?: string }) {
       ) : (
         <p className="mt-3 text-sm text-ivory/40">Aucun fichier fourni.</p>
       )}
+    </div>
+  );
+}
+
+function AdminField({
+  label,
+  type = "text",
+  value,
+  onChange,
+}: {
+  label: string;
+  type?: string;
+  value: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <div>
+      <label className="block text-xs uppercase tracking-[0.2em] text-ivory/60">
+        {label}
+      </label>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="mt-2 w-full border border-champagne/20 bg-transparent px-3 py-2 text-sm text-ivory outline-none focus:border-champagne"
+      />
     </div>
   );
 }
