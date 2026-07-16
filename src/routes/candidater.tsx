@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { Check, ArrowLeft, ArrowRight, Sparkles } from "lucide-react";
+import { Check, ArrowLeft, ArrowRight, ImagePlus, Sparkles, X } from "lucide-react";
 import { z } from "zod";
 import { Section } from "@/components/victorious/Section";
 import { VButton, VLink } from "@/components/victorious/VButton";
@@ -29,30 +29,27 @@ export const Route = createFileRoute("/candidater")({
   component: CandidaterPage,
 });
 
-const schema = z.object({
-  category: z.string().min(1, "Choisissez une catégorie"),
-  firstName: z.string().trim().min(2, "Prénom requis").max(60),
-  lastName: z.string().trim().min(2, "Nom requis").max(60),
-  email: z.string().trim().email("Email invalide").max(255),
-  phone: z.string().trim().min(8, "Téléphone requis").max(20),
-  city: z.string().min(1, "Ville requise"),
-  otherCity: z.string().trim().max(100),
-  testimony: z
-    .string()
-    .trim()
-    .max(2000)
-    .optional()
-    .or(z.literal("")),
-  rgpd: z.literal(true, { message: "Acceptation requise" }),
-}).superRefine((data, ctx) => {
-  if (data.city === "Autre" && data.otherCity.length < 2) {
-    ctx.addIssue({
-      code: "custom",
-      path: ["otherCity"],
-      message: "Précisez votre ville",
-    });
-  }
-});
+const schema = z
+  .object({
+    category: z.string().min(1, "Choisissez une catégorie"),
+    firstName: z.string().trim().min(2, "Prénom requis").max(60),
+    lastName: z.string().trim().min(2, "Nom requis").max(60),
+    email: z.string().trim().email("Email invalide").max(255),
+    phone: z.string().trim().min(8, "Téléphone requis").max(20),
+    city: z.string().min(1, "Ville requise"),
+    otherCity: z.string().trim().max(100),
+    testimony: z.string().trim().max(2000).optional().or(z.literal("")),
+    rgpd: z.literal(true, { message: "Acceptation requise" }),
+  })
+  .superRefine((data, ctx) => {
+    if (data.city === "Autre" && data.otherCity.length < 2) {
+      ctx.addIssue({
+        code: "custom",
+        path: ["otherCity"],
+        message: "Précisez votre ville",
+      });
+    }
+  });
 
 type FormState = {
   category: string;
@@ -86,6 +83,14 @@ const STEPS = [
   { n: "05", label: "Confirmation" },
 ];
 
+const MAX_PHOTO_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_PHOTO_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const PHOTO_EXTENSIONS: Record<string, string> = {
+  "image/jpeg": "jpg",
+  "image/png": "png",
+  "image/webp": "webp",
+};
+
 function CandidaterPage() {
   const [step, setStep] = useState(0);
   const [form, setForm] = useState<FormState>(initial);
@@ -93,12 +98,22 @@ function CandidaterPage() {
   const [done, setDone] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!photo) {
+      setPhotoPreview(null);
+      return;
+    }
+    const preview = URL.createObjectURL(photo);
+    setPhotoPreview(preview);
+    return () => URL.revokeObjectURL(preview);
+  }, [photo]);
 
   const update =
     <K extends keyof FormState>(key: K) =>
-    (
-      e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-    ) => {
+    (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const val =
         e.target instanceof HTMLInputElement && e.target.type === "checkbox"
           ? e.target.checked
@@ -159,6 +174,33 @@ function CandidaterPage() {
   const next = () => setStep((s) => Math.min(STEPS.length - 1, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
 
+  const selectPhoto = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] ?? null;
+    e.target.value = "";
+    if (!file) return;
+
+    if (!ACCEPTED_PHOTO_TYPES.includes(file.type)) {
+      setErrors((current) => ({
+        ...current,
+        photo: "Choisissez une image JPG, PNG ou WebP.",
+      }));
+      return;
+    }
+    if (file.size > MAX_PHOTO_SIZE) {
+      setErrors((current) => ({
+        ...current,
+        photo: "La photo ne doit pas dépasser 5 Mo.",
+      }));
+      return;
+    }
+
+    setPhoto(file);
+    setErrors((current) => {
+      const { photo: _photoError, ...rest } = current;
+      return rest;
+    });
+  };
+
   const submit = async (e: FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
@@ -166,6 +208,22 @@ function CandidaterPage() {
     setSubmitError(null);
     try {
       const city = form.city === "Autre" ? form.otherCity.trim() : form.city;
+      let photoPath: string | null = null;
+
+      if (photo) {
+        const extension = PHOTO_EXTENSIONS[photo.type];
+        photoPath = `photos/${crypto.randomUUID()}.${extension}`;
+        const { error: uploadError } = await supabase.storage
+          .from("application-files")
+          .upload(photoPath, photo, {
+            cacheControl: "3600",
+            contentType: photo.type,
+            upsert: false,
+          });
+        if (uploadError) {
+          throw new Error("La photo n’a pas pu être envoyée. Merci de réessayer.");
+        }
+      }
 
       const { error: insertErr } = await supabase.from("applications").insert({
         category_slug: form.category,
@@ -175,6 +233,7 @@ function CandidaterPage() {
         phone: form.phone.trim(),
         city,
         testimony: (form.testimony ?? "").trim(),
+        photo_path: photoPath,
       });
       if (insertErr) {
         if (insertErr.message.includes("duplicate_application_same_category")) {
@@ -182,9 +241,7 @@ function CandidaterPage() {
             "Une candidature existe déjà avec cette adresse e-mail dans cette catégorie.",
           );
         }
-        throw new Error(
-          insertErr.message ?? "Échec de l'enregistrement de la candidature.",
-        );
+        throw new Error(insertErr.message ?? "Échec de l'enregistrement de la candidature.");
       }
 
       setDone(true);
@@ -192,16 +249,12 @@ function CandidaterPage() {
     } catch (err) {
       console.error(err);
       setSubmitError(
-        err instanceof Error
-          ? err.message
-          : "Une erreur est survenue. Merci de réessayer.",
+        err instanceof Error ? err.message : "Une erreur est survenue. Merci de réessayer.",
       );
     } finally {
       setSubmitting(false);
     }
   };
-
-
 
   return (
     <>
@@ -214,9 +267,7 @@ function CandidaterPage() {
           <h1 className="mt-8 font-display text-5xl leading-[0.95] text-ivory sm:text-6xl lg:text-7xl">
             Votre histoire,
             <br />
-            <span className="font-display-italic text-champagne">
-              en quelques minutes.
-            </span>
+            <span className="font-display-italic text-champagne">en quelques minutes.</span>
           </h1>
         </div>
       </section>
@@ -230,18 +281,12 @@ function CandidaterPage() {
                 key={s.n}
                 className={cn(
                   "flex items-center gap-2 text-[0.7rem] uppercase tracking-[0.25em] transition-colors",
-                  i === step
-                    ? "text-champagne"
-                    : i < step
-                      ? "text-ivory/50"
-                      : "text-ivory/30",
+                  i === step ? "text-champagne" : i < step ? "text-ivory/50" : "text-ivory/30",
                 )}
               >
                 <span className="font-display text-base">{s.n}</span>
                 <span>{s.label}</span>
-                {i < STEPS.length - 1 && (
-                  <span className="ml-4 h-px w-6 bg-champagne/20" />
-                )}
+                {i < STEPS.length - 1 && <span className="ml-4 h-px w-6 bg-champagne/20" />}
               </li>
             ))}
           </ol>
@@ -258,9 +303,7 @@ function CandidaterPage() {
                 {/* Step 0 — Conditions */}
                 {step === 0 && (
                   <div className="space-y-6">
-                    <h2 className="font-display text-3xl text-ivory">
-                      Avant de commencer
-                    </h2>
+                    <h2 className="font-display text-3xl text-ivory">Avant de commencer</h2>
                     <ul className="space-y-4 text-base text-ivory/75">
                       {[
                         "Votre victoire se situe entre juillet 2025 et juillet 2026.",
@@ -279,9 +322,7 @@ function CandidaterPage() {
                 {/* Step 1 — Catégorie */}
                 {step === 1 && (
                   <div className="space-y-6">
-                    <h2 className="font-display text-3xl text-ivory">
-                      Choisissez votre catégorie
-                    </h2>
+                    <h2 className="font-display text-3xl text-ivory">Choisissez votre catégorie</h2>
                     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                       {categories.map((cat) => (
                         <label
@@ -298,17 +339,11 @@ function CandidaterPage() {
                             name="category"
                             value={cat.slug}
                             checked={form.category === cat.slug}
-                            onChange={() =>
-                              setForm((f) => ({ ...f, category: cat.slug }))
-                            }
+                            onChange={() => setForm((f) => ({ ...f, category: cat.slug }))}
                             className="sr-only"
                           />
-                          <div className="font-display text-lg text-ivory">
-                            {cat.title}
-                          </div>
-                          <div className="mt-1 text-xs text-champagne/70">
-                            {cat.tagline}
-                          </div>
+                          <div className="font-display text-lg text-ivory">{cat.title}</div>
+                          <div className="mt-1 text-xs text-champagne/70">{cat.tagline}</div>
                         </label>
                       ))}
                     </div>
@@ -405,6 +440,64 @@ function CandidaterPage() {
                           error={errors.otherCity}
                         />
                       )}
+                      <div className="sm:col-span-2">
+                        <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">
+                          Photo{" "}
+                          <span className="normal-case tracking-normal text-ivory/40">
+                            (facultative)
+                          </span>
+                        </div>
+                        <div className="mt-3 flex flex-col gap-4 border border-dashed border-champagne/30 p-4 sm:flex-row sm:items-center">
+                          {photoPreview ? (
+                            <img
+                              src={photoPreview}
+                              alt="Aperçu de la photo sélectionnée"
+                              className="size-24 shrink-0 object-cover"
+                            />
+                          ) : (
+                            <div className="grid size-24 shrink-0 place-items-center bg-champagne/5 text-champagne/60">
+                              <ImagePlus className="size-8" aria-hidden="true" />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <p className="text-sm text-ivory/65">
+                              Ajoutez une photo de vous au format JPG, PNG ou WebP, 5 Mo maximum.
+                            </p>
+                            {photo && (
+                              <p className="mt-1 truncate text-xs text-ivory/45">{photo.name}</p>
+                            )}
+                            <div className="mt-3 flex flex-wrap gap-3">
+                              <label
+                                htmlFor="f-photo"
+                                className="inline-flex cursor-pointer items-center gap-2 border border-champagne/40 px-4 py-2 text-xs uppercase tracking-[0.18em] text-champagne transition-colors hover:border-champagne hover:text-ivory"
+                              >
+                                <ImagePlus className="size-4" aria-hidden="true" />
+                                {photo ? "Changer" : "Choisir une photo"}
+                              </label>
+                              <input
+                                id="f-photo"
+                                name="photo"
+                                type="file"
+                                accept="image/jpeg,image/png,image/webp"
+                                onChange={selectPhoto}
+                                className="sr-only"
+                              />
+                              {photo && (
+                                <button
+                                  type="button"
+                                  onClick={() => setPhoto(null)}
+                                  className="inline-flex items-center gap-2 px-2 py-2 text-xs uppercase tracking-[0.18em] text-ivory/55 hover:text-ivory"
+                                >
+                                  <X className="size-4" aria-hidden="true" /> Retirer
+                                </button>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                        {errors.photo && (
+                          <p className="mt-2 text-sm text-destructive">{errors.photo}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -412,12 +505,10 @@ function CandidaterPage() {
                 {/* Step 3 — Témoignage */}
                 {step === 3 && (
                   <div className="space-y-6">
-                    <h2 className="font-display text-3xl text-ivory">
-                      Votre témoignage
-                    </h2>
+                    <h2 className="font-display text-3xl text-ivory">Votre témoignage</h2>
                     <p className="text-base text-ivory/65">
-                      Racontez votre histoire. Pas de plan. Pas de filtre. Quelques
-                      lignes suffisent — l'authenticité fera le reste.
+                      Racontez votre histoire. Pas de plan. Pas de filtre. Quelques lignes suffisent
+                      — l'authenticité fera le reste.
                     </p>
                     <Field
                       label="Témoignage (optionnel)"
@@ -432,20 +523,15 @@ function CandidaterPage() {
                       <input
                         type="checkbox"
                         checked={form.rgpd}
-                        onChange={(e) =>
-                          setForm((f) => ({ ...f, rgpd: e.target.checked }))
-                        }
+                        onChange={(e) => setForm((f) => ({ ...f, rgpd: e.target.checked }))}
                         className="mt-1 size-4 accent-champagne"
                       />
                       <span>
-                        J'accepte que mes données soient utilisées pour le
-                        traitement de ma candidature, conformément aux mentions
-                        légales.
+                        J'accepte que mes données soient utilisées pour le traitement de ma
+                        candidature, conformément aux mentions légales.
                       </span>
                     </label>
-                    {errors.rgpd && (
-                      <p className="text-sm text-destructive">{errors.rgpd}</p>
-                    )}
+                    {errors.rgpd && <p className="text-sm text-destructive">{errors.rgpd}</p>}
                   </div>
                 )}
 
@@ -459,9 +545,8 @@ function CandidaterPage() {
                       Merci, {form.firstName}.
                     </h2>
                     <p className="mx-auto mt-6 max-w-lg text-pretty text-lg text-ivory/70">
-                      Votre candidature a été reçue. Notre comité prend le temps
-                      d'examiner chaque histoire avec attention. Vous serez
-                      recontacté avant la cérémonie.
+                      Votre candidature a été reçue. Notre comité prend le temps d'examiner chaque
+                      histoire avec attention. Vous serez recontacté avant la cérémonie.
                     </p>
                     <div className="mt-12 flex flex-wrap justify-center gap-4">
                       <VLink to="/" variant="secondary">
@@ -508,10 +593,7 @@ function CandidaterPage() {
               </div>
             )}
             {submitError && (
-              <p
-                role="alert"
-                className="text-center text-sm text-destructive"
-              >
+              <p role="alert" className="text-center text-sm text-destructive">
                 {submitError}
               </p>
             )}
@@ -542,16 +624,7 @@ type FieldProps = {
   hint?: string;
 };
 
-function Field({
-  label,
-  name,
-  value,
-  onChange,
-  type = "text",
-  textarea,
-  error,
-  hint,
-}: FieldProps) {
+function Field({ label, name, value, onChange, type = "text", textarea, error, hint }: FieldProps) {
   const id = `f-${name}`;
   const baseCls =
     "w-full bg-transparent border-b border-champagne/30 px-0 py-3 font-sans text-base text-ivory placeholder:text-ivory/30 outline-none focus:border-champagne transition-colors";
