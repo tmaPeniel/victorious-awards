@@ -116,6 +116,12 @@ function ApplicationDetail() {
     mutationFn: async () => {
       const { error } = await supabase.from("applications").delete().eq("id", id);
       if (error) throw error;
+      if (app?.photo_path) {
+        const { error: storageError } = await supabase.storage
+          .from("application-files")
+          .remove([app.photo_path]);
+        if (storageError) console.error("Photo cleanup failed", storageError);
+      }
     },
     onSuccess: () => {
       void qc.invalidateQueries({ queryKey: ["admin"] });
