@@ -19,6 +19,7 @@ export type Database = {
           admin_notes: string | null
           category_slug: string
           city: string
+          civility: string
           created_at: string
           email: string
           first_name: string
@@ -34,6 +35,7 @@ export type Database = {
           admin_notes?: string | null
           category_slug: string
           city: string
+          civility: string
           created_at?: string
           email: string
           first_name: string
@@ -49,6 +51,7 @@ export type Database = {
           admin_notes?: string | null
           category_slug?: string
           city?: string
+          civility?: string
           created_at?: string
           email?: string
           first_name?: string

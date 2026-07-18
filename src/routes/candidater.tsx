@@ -32,6 +32,9 @@ export const Route = createFileRoute("/candidater")({
 const schema = z
   .object({
     category: z.string().min(1, "Choisissez une catégorie"),
+    civility: z.enum(["Madame", "Monsieur"], {
+      message: "Choisissez une civilité",
+    }),
     firstName: z.string().trim().min(2, "Prénom requis").max(60),
     lastName: z.string().trim().min(2, "Nom requis").max(60),
     email: z.string().trim().email("Email invalide").max(255),
@@ -53,6 +56,7 @@ const schema = z
 
 type FormState = {
   category: string;
+  civility: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -65,6 +69,7 @@ type FormState = {
 
 const initial: FormState = {
   category: "",
+  civility: "",
   firstName: "",
   lastName: "",
   email: "",
@@ -123,6 +128,7 @@ function CandidaterPage() {
 
   const FIELD_TO_STEP: Record<string, number> = {
     category: 1,
+    civility: 2,
     firstName: 2,
     lastName: 2,
     email: 2,
@@ -134,6 +140,7 @@ function CandidaterPage() {
   };
   const FIELD_LABEL: Record<string, string> = {
     category: "Catégorie",
+    civility: "Civilité",
     firstName: "Prénom",
     lastName: "Nom",
     email: "Email",
@@ -227,6 +234,7 @@ function CandidaterPage() {
 
       const { error: insertErr } = await supabase.from("applications").insert({
         category_slug: form.category,
+        civility: form.civility,
         first_name: form.firstName.trim(),
         last_name: form.lastName.trim(),
         email: form.email.trim(),
@@ -358,6 +366,34 @@ function CandidaterPage() {
                   <div className="space-y-8">
                     <h2 className="font-display text-3xl text-ivory">Vous</h2>
                     <div className="grid gap-6 sm:grid-cols-2">
+                      <div className="sm:col-span-2">
+                        <label
+                          htmlFor="f-civility"
+                          className="block text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70"
+                        >
+                          Civilité
+                        </label>
+                        <select
+                          id="f-civility"
+                          name="civility"
+                          value={form.civility}
+                          onChange={(e) =>
+                            setForm((f) => ({ ...f, civility: e.target.value }))
+                          }
+                          className="mt-2 w-full border-b border-champagne/30 bg-obsidian px-0 py-3 font-sans text-base text-ivory outline-none transition-colors focus:border-champagne"
+                        >
+                          <option value="">Sélectionnez votre civilité</option>
+                          <option value="Madame">Madame</option>
+                          <option value="Monsieur">Monsieur</option>
+                        </select>
+                        <div className="mt-1 text-xs">
+                          {errors.civility ? (
+                            <span className="text-destructive">{errors.civility}</span>
+                          ) : (
+                            <span className="text-ivory/40">&nbsp;</span>
+                          )}
+                        </div>
+                      </div>
                       <Field
                         label="Prénom"
                         name="firstName"

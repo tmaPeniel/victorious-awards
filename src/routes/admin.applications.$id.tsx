@@ -18,6 +18,7 @@ const STATUSES: Status[] = [
 ];
 
 const CITIES = ["Rouen", "Caen", "Le Havre", "Dieppe", "Cherbourg", "Evreux"] as const;
+const CIVILITIES = ["Madame", "Monsieur", "Non renseignée"] as const;
 
 export const Route = createFileRoute("/admin/applications/$id")({
   component: ApplicationDetail,
@@ -29,6 +30,7 @@ function ApplicationDetail() {
   const [notes, setNotes] = useState("");
   const [status, setStatus] = useState<Status>("pending");
   const [categorySlug, setCategorySlug] = useState("");
+  const [civility, setCivility] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -55,6 +57,7 @@ function ApplicationDetail() {
     setNotes(app.admin_notes ?? "");
     setStatus(app.status);
     setCategorySlug(app.category_slug);
+    setCivility(app.civility);
     setFirstName(app.first_name);
     setLastName(app.last_name);
     setEmail(app.email);
@@ -85,6 +88,7 @@ function ApplicationDetail() {
       if (lastName.trim().length < 2) throw new Error("Le nom est requis.");
       if (!/^\S+@\S+\.\S+$/.test(email.trim())) throw new Error("L’adresse e-mail est invalide.");
       if (phone.trim().length < 8) throw new Error("Le numéro de téléphone est invalide.");
+      if (!civility) throw new Error("La civilité est requise.");
       if (!categorySlug) throw new Error("La catégorie est requise.");
       if (!savedCity) throw new Error("La ville est requise.");
       const { error } = await supabase
@@ -93,6 +97,7 @@ function ApplicationDetail() {
           status,
           admin_notes: notes,
           category_slug: categorySlug,
+          civility,
           first_name: firstName.trim(),
           last_name: lastName.trim(),
           email: email.trim().toLowerCase(),
@@ -149,6 +154,7 @@ function ApplicationDetail() {
           {category?.title ?? app.category_slug}
         </div>
         <h1 className="mt-3 font-display text-4xl text-ivory">
+          {app.civility !== "Non renseignée" ? `${app.civility} ` : ""}
           {app.first_name} {app.last_name}
         </h1>
         <div className="mt-3 flex flex-wrap gap-x-6 gap-y-1 text-sm text-ivory/60">
@@ -184,6 +190,22 @@ function ApplicationDetail() {
           Informations du candidat
         </h2>
         <div className="grid gap-5 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <label className="block text-xs uppercase tracking-[0.2em] text-ivory/60">
+              Civilité
+            </label>
+            <select
+              value={civility}
+              onChange={(e) => setCivility(e.target.value)}
+              className="mt-2 w-full border border-champagne/20 bg-obsidian px-3 py-2 text-sm text-ivory focus:border-champagne"
+            >
+              {CIVILITIES.map((item) => (
+                <option key={item} value={item}>
+                  {item}
+                </option>
+              ))}
+            </select>
+          </div>
           <AdminField label="Prénom" value={firstName} onChange={setFirstName} />
           <AdminField label="Nom" value={lastName} onChange={setLastName} />
           <AdminField label="E-mail" type="email" value={email} onChange={setEmail} />
