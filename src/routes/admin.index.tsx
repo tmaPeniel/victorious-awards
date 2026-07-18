@@ -11,7 +11,13 @@ function AdminDashboard() {
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "dashboard"],
     queryFn: async () => {
-      const [{ count: total }, { count: pending }, { data: latest }] =
+      const [
+        { count: total },
+        { count: pending },
+        { count: accepted },
+        { count: rejected },
+        { data: latest },
+      ] =
         await Promise.all([
           supabase.from("applications").select("id", { count: "exact", head: true }),
           supabase
@@ -20,13 +26,23 @@ function AdminDashboard() {
             .eq("status", "pending"),
           supabase
             .from("applications")
-            .select("id, first_name, last_name, category_slug, created_at, status")
+            .select("id", { count: "exact", head: true })
+            .eq("status", "winner"),
+          supabase
+            .from("applications")
+            .select("id", { count: "exact", head: true })
+            .eq("status", "rejected"),
+          supabase
+            .from("applications")
+            .select("id, civility, first_name, last_name, category_slug, created_at, status")
             .order("created_at", { ascending: false })
             .limit(5),
         ]);
       return {
         total: total ?? 0,
         pending: pending ?? 0,
+        accepted: accepted ?? 0,
+        rejected: rejected ?? 0,
         latest: latest ?? [],
       };
     },
@@ -35,6 +51,8 @@ function AdminDashboard() {
   const stats = [
     { label: "Candidatures", value: data?.total ?? "—" },
     { label: "À traiter", value: data?.pending ?? "—" },
+    { label: "Acceptées", value: data?.accepted ?? "—" },
+    { label: "Rejetées", value: data?.rejected ?? "—" },
     { label: "Catégories", value: categories.length },
   ];
 
@@ -47,7 +65,7 @@ function AdminDashboard() {
         </p>
       </header>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {stats.map((s) => (
           <div
             key={s.label}
@@ -93,6 +111,7 @@ function AdminDashboard() {
                   >
                     <div>
                       <div className="text-sm text-ivory">
+                        {a.civility !== "Non renseignée" ? `${a.civility} ` : ""}
                         {a.first_name} {a.last_name}
                       </div>
                       <div className="text-xs text-ivory/50">

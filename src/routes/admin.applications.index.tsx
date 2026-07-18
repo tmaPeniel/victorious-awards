@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { Download, Filter, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ArrowUpDown, Download, Filter, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
@@ -9,6 +9,8 @@ import { exportApplicationsToExcel } from "@/lib/excel-export";
 import type { Database } from "@/integrations/supabase/types";
 
 type Status = Database["public"]["Enums"]["application_status"];
+type SortKey = "candidate" | "city" | "category" | "createdAt";
+type SortDirection = "asc" | "desc";
 
 const STATUSES: { value: Status | "all"; label: string }[] = [
   { value: "all", label: "Toutes" },
@@ -37,6 +39,8 @@ function ApplicationsList() {
   const [categoryFilter, setCategoryFilter] = useState("all");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [search, setSearch] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("createdAt");
+  const [sortDirection, setSortDirection] = useState<SortDirection>("desc");
 
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "applications"],
@@ -75,9 +79,44 @@ function ApplicationsList() {
       a.first_name.toLowerCase().includes(s) ||
       a.last_name.toLowerCase().includes(s) ||
       a.email.toLowerCase().includes(s) ||
+      a.phone.toLowerCase().includes(s) ||
       a.city.toLowerCase().includes(s)
     );
+  }).sort((a, b) => {
+    let comparison = 0;
+    if (sortKey === "candidate") {
+      comparison = `${a.last_name} ${a.first_name}`.localeCompare(
+        `${b.last_name} ${b.first_name}`,
+        "fr",
+        { sensitivity: "base" },
+      );
+    } else if (sortKey === "city") {
+      comparison = a.city.localeCompare(b.city, "fr", { sensitivity: "base" });
+    } else if (sortKey === "category") {
+      const categoryA =
+        categories.find((category) => category.slug === a.category_slug)?.title ??
+        a.category_slug;
+      const categoryB =
+        categories.find((category) => category.slug === b.category_slug)?.title ??
+        b.category_slug;
+      comparison = categoryA.localeCompare(categoryB, "fr", {
+        sensitivity: "base",
+      });
+    } else {
+      comparison =
+        new Date(a.created_at).getTime() - new Date(b.created_at).getTime();
+    }
+    return sortDirection === "asc" ? comparison : -comparison;
   });
+
+  const toggleSort = (key: SortKey) => {
+    if (sortKey === key) {
+      setSortDirection((direction) => (direction === "asc" ? "desc" : "asc"));
+      return;
+    }
+    setSortKey(key);
+    setSortDirection(key === "createdAt" ? "desc" : "asc");
+  };
 
   const activeFilterCount =
     Number(statusFilter !== "all") +
@@ -226,13 +265,39 @@ function ApplicationsList() {
         ) : filtered?.length === 0 ? (
           <div className="p-6 text-sm text-ivory/50">Aucun résultat.</div>
         ) : (
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[1150px] text-sm">
             <thead>
               <tr className="border-b border-champagne/15 text-left text-[0.65rem] uppercase tracking-[0.25em] text-champagne/60">
-                <th className="px-5 py-3 font-normal">Candidat</th>
-                <th className="px-5 py-3 font-normal">Catégorie</th>
-                <th className="px-5 py-3 font-normal">Ville</th>
-                <th className="px-5 py-3 font-normal">Reçue le</th>
+                <SortHeader
+                  label="Candidat"
+                  sortKey="candidate"
+                  activeKey={sortKey}
+                  direction={sortDirection}
+                  onSort={toggleSort}
+                />
+                <th className="px-5 py-3 font-normal">Civilité</th>
+                <th className="px-5 py-3 font-normal">Téléphone</th>
+                <SortHeader
+                  label="Catégorie"
+                  sortKey="category"
+                  activeKey={sortKey}
+                  direction={sortDirection}
+                  onSort={toggleSort}
+                />
+                <SortHeader
+                  label="Ville"
+                  sortKey="city"
+                  activeKey={sortKey}
+                  direction={sortDirection}
+                  onSort={toggleSort}
+                />
+                <SortHeader
+                  label="Inscription"
+                  sortKey="createdAt"
+                  activeKey={sortKey}
+                  direction={sortDirection}
+                  onSort={toggleSort}
+                />
                 <th className="px-5 py-3 font-normal">Statut</th>
                 <th className="px-5 py-3" />
               </tr>
@@ -245,6 +310,17 @@ function ApplicationsList() {
                       {a.first_name} {a.last_name}
                     </div>
                     <div className="text-xs text-ivory/40">{a.email}</div>
+                  </td>
+                  <td className="whitespace-nowrap px-5 py-4 text-ivory/70">
+                    {a.civility}
+                  </td>
+                  <td className="whitespace-nowrap px-5 py-4 text-ivory/70">
+                    <a
+                      href={`tel:${a.phone.replace(/\s/g, "")}`}
+                      className="hover:text-champagne"
+                    >
+                      {a.phone}
+                    </a>
                   </td>
                   <td className="px-5 py-4 text-ivory/70">
                     {categories.find((c) => c.slug === a.category_slug)?.title ??
@@ -282,5 +358,47 @@ function ApplicationsList() {
         )}
       </div>
     </div>
+  );
+}
+
+function SortHeader({
+  label,
+  sortKey,
+  activeKey,
+  direction,
+  onSort,
+}: {
+  label: string;
+  sortKey: SortKey;
+  activeKey: SortKey;
+  direction: SortDirection;
+  onSort: (key: SortKey) => void;
+}) {
+  const active = sortKey === activeKey;
+  const Icon = active
+    ? direction === "asc"
+      ? ArrowUp
+      : ArrowDown
+    : ArrowUpDown;
+
+  return (
+    <th
+      className="px-5 py-3 font-normal"
+      aria-sort={
+        active ? (direction === "asc" ? "ascending" : "descending") : "none"
+      }
+    >
+      <button
+        type="button"
+        onClick={() => onSort(sortKey)}
+        className={cn(
+          "inline-flex items-center gap-2 transition-colors hover:text-champagne",
+          active && "text-champagne",
+        )}
+      >
+        {label}
+        <Icon className="size-3.5" />
+      </button>
+    </th>
   );
 }
