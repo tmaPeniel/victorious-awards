@@ -10,6 +10,7 @@ const links = [
   { to: "/categories", label: "Catégories" },
   { to: "/galerie", label: "Galerie" },
   { to: "/temoignages", label: "Témoignages" },
+  { to: "/candidater", label: "Candidater" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -33,7 +34,9 @@ export function Header() {
     <header
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-all duration-500",
-        scrolled ? "bg-obsidian/85 backdrop-blur-xl border-b border-champagne/10" : "bg-transparent",
+        scrolled
+          ? "bg-obsidian/85 backdrop-blur-xl border-b border-champagne/10"
+          : "bg-transparent",
       )}
     >
       <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-6 lg:px-10">
@@ -41,10 +44,12 @@ export function Header() {
           <span className="font-display text-xl leading-none tracking-[0.2em] text-champagne sm:text-2xl">
             VICTORIOUS
           </span>
-          <span className="text-[0.6rem] uppercase tracking-[0.3em] text-champagne/60">- La Nuit de l'Excellence</span>
+          <span className="text-[0.6rem] uppercase tracking-[0.3em] text-champagne/60">
+            - La Nuit de l'Excellence
+          </span>
         </Link>
 
-        <nav className="hidden items-center gap-10 lg:flex" aria-label="Navigation principale">
+        <nav className="hidden items-center gap-8 xl:flex" aria-label="Navigation principale">
           {links.map((l) => {
             const active = l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
             return (
@@ -62,9 +67,9 @@ export function Header() {
           })}
         </nav>
 
-        <div className="hidden lg:block">
-          <VLink to="/candidater" size="md">
-            Je candidate
+        <div className="hidden xl:block">
+          <VLink to="/billetterie" size="md">
+            Je réserve
           </VLink>
         </div>
 
@@ -73,7 +78,7 @@ export function Header() {
           aria-label={open ? "Fermer le menu" : "Ouvrir le menu"}
           aria-expanded={open}
           onClick={() => setOpen((o) => !o)}
-          className="grid size-11 place-items-center text-champagne lg:hidden"
+          className="grid size-11 place-items-center text-champagne xl:hidden"
         >
           {open ? <X className="size-6" /> : <Menu className="size-6" />}
         </button>
@@ -81,22 +86,28 @@ export function Header() {
 
       {/* Mobile drawer */}
       <div
+        aria-hidden={!open}
+        inert={!open}
         className={cn(
-          "lg:hidden overflow-hidden transition-[max-height] duration-500 ease-out border-b border-champagne/10",
+          "overflow-hidden border-b border-champagne/10 transition-[max-height] duration-500 ease-out xl:hidden",
           open ? "max-h-[80vh]" : "max-h-0",
         )}
       >
         <div className="bg-obsidian/95 backdrop-blur-xl px-6 pb-8 pt-2">
           <nav className="flex flex-col" aria-label="Navigation mobile">
             {links.map((l) => (
-              <Link key={l.to} to={l.to} className="border-b border-champagne/10 py-4 font-display text-2xl text-ivory">
+              <Link
+                key={l.to}
+                to={l.to}
+                className="border-b border-champagne/10 py-4 font-display text-2xl text-ivory"
+              >
                 {l.label}
               </Link>
             ))}
           </nav>
           <div className="mt-8">
-            <VLink to="/candidater" size="lg" className="w-full">
-              Je candidate
+            <VLink to="/billetterie" size="lg" className="w-full">
+              Réserver mes places
             </VLink>
           </div>
         </div>

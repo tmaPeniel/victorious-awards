@@ -16,9 +16,7 @@ function Page() {
     <>
       <section className="bg-obsidian pt-40 pb-12">
         <div className="mx-auto max-w-4xl px-6 lg:px-10">
-          <h1 className="font-display text-5xl text-ivory sm:text-6xl">
-            Mentions légales
-          </h1>
+          <h1 className="font-display text-5xl text-ivory sm:text-6xl">Mentions légales</h1>
         </div>
       </section>
       <Section>
@@ -26,8 +24,8 @@ function Page() {
           <div>
             <h2 className="font-display text-2xl text-ivory">Éditeur</h2>
             <p className="mt-3 text-base">
-              Le site Victorious est édité par ICC Rouen — association culturelle
-              et cultuelle dont le siège est situé à Isneauville (Seine-Maritime).
+              Le site Victorious est édité par ICC Rouen — association culturelle et cultuelle dont
+              le siège est situé à Isneauville (Seine-Maritime).
             </p>
           </div>
           <div>
@@ -39,22 +37,24 @@ function Page() {
           <div>
             <h2 className="font-display text-2xl text-ivory">Données personnelles</h2>
             <p className="mt-3 text-base">
-              Les données collectées via les formulaires de candidature et de
-              contact sont utilisées uniquement dans le cadre du traitement de
-              votre demande. Elles ne sont pas cédées à des tiers et sont
-              supprimées à l'issue de l'événement, conformément au RGPD.
+              Les données collectées via les formulaires de candidature, de contact et de
+              billetterie sont utilisées uniquement pour traiter votre demande, générer les billets
+              PDF, gérer la liste d'attente et contrôler les accès à l'événement. Elles ne sont pas
+              cédées à des tiers et sont supprimées à l'issue de l'événement, conformément au RGPD.
+              Aucun billet n'est envoyé par e-mail dans cette version : le téléchargement s'effectue
+              depuis votre lien sécurisé de gestion.
             </p>
             <p className="mt-3 text-base">
-              Pour exercer vos droits d'accès, de rectification ou de
-              suppression : écrivez-nous à rouen.secretariat@gmail.com.
+              Pour exercer vos droits d'accès, de rectification ou de suppression : écrivez-nous à
+              rouen.secretariat@gmail.com.
             </p>
           </div>
           <div>
             <h2 className="font-display text-2xl text-ivory">Propriété intellectuelle</h2>
             <p className="mt-3 text-base">
-              L'ensemble des contenus (textes, photographies, vidéos, identité
-              graphique) sont la propriété d'ICC Rouen, sauf mention contraire.
-              Toute reproduction est soumise à autorisation.
+              L'ensemble des contenus (textes, photographies, vidéos, identité graphique) sont la
+              propriété d'ICC Rouen, sauf mention contraire. Toute reproduction est soumise à
+              autorisation.
             </p>
           </div>
         </div>
