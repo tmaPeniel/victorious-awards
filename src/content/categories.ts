@@ -24,7 +24,7 @@ export const categories: Category[] = [
     title: "Diplôme de fin de cycle",
     tagline: "Le sceau d'un long chemin",
     description:
-      "Pour celles et ceux qui viennent de clôturer un cycle d'études ou d'obtenir une certification — du baccalauréat au doctorat, en passant par les parcours professionnels ou spécialisés. Une victoire qui se prépare dans la patience, l'effort et la foi.",
+      "Pour celles et ceux qui viennent de clôturer un cycle d'études ou d'obtenir une certification : BAC, BTS, LICENCE, MASTER, DIPLÔME D'INGÉNIEUR, CERTIFICAT ou AUTRES. Une victoire qui se prépare dans la patience, l'effort et la foi.",
     criteria: [
       "Avoir obtenu son diplôme entre juillet 2025 et juillet 2026",
       "Être membre ou ami régulier d'ICC Rouen",

@@ -3,6 +3,7 @@ import { categories as staticCategories } from "@/content/categories";
 
 type AppRow = {
   id: string;
+  civility: string;
   first_name: string;
   last_name: string;
   email: string;
@@ -36,6 +37,7 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
             .createSignedUrl(r.photo_path, 60 * 60 * 24 * 7)
         : { data: null as { signedUrl: string } | null };
       return {
+        Civilité: r.civility,
         Prénom: r.first_name,
         Nom: r.last_name,
         Email: r.email,
@@ -59,7 +61,7 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
 
   // Column widths
   ws["!cols"] = [
-    { wch: 14 }, { wch: 16 }, { wch: 28 }, { wch: 16 }, { wch: 20 },
+    { wch: 16 }, { wch: 14 }, { wch: 16 }, { wch: 28 }, { wch: 16 }, { wch: 20 },
     { wch: 26 }, { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 },
     { wch: 50 },
   ];
