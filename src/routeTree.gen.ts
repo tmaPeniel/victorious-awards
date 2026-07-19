@@ -15,18 +15,24 @@ import { Route as GalerieRouteImport } from './routes/galerie'
 import { Route as ContactRouteImport } from './routes/contact'
 import { Route as CategoriesRouteImport } from './routes/categories'
 import { Route as CandidaterRouteImport } from './routes/candidater'
+import { Route as BilletterieRouteImport } from './routes/billetterie'
+import { Route as BilletRouteImport } from './routes/billet'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AProposRouteImport } from './routes/a-propos'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CategoriesIndexRouteImport } from './routes/categories.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as CategoriesSlugRouteImport } from './routes/categories.$slug'
+import { Route as BilletterieGererRouteImport } from './routes/billetterie_.gerer'
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
 import { Route as AdminCategoriesIndexRouteImport } from './routes/admin.categories.index'
+import { Route as AdminBilletterieIndexRouteImport } from './routes/admin.billetterie.index'
 import { Route as AdminApplicationsIndexRouteImport } from './routes/admin.applications.index'
 import { Route as AdminCategoriesSlugRouteImport } from './routes/admin.categories.$slug'
+import { Route as AdminBilletterieControleRouteImport } from './routes/admin.billetterie.controle'
+import { Route as AdminBilletterieIdRouteImport } from './routes/admin.billetterie.$id'
 import { Route as AdminApplicationsIdRouteImport } from './routes/admin.applications.$id'
 
 const TemoignagesRoute = TemoignagesRouteImport.update({
@@ -59,6 +65,16 @@ const CandidaterRoute = CandidaterRouteImport.update({
   path: '/candidater',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BilletterieRoute = BilletterieRouteImport.update({
+  id: '/billetterie',
+  path: '/billetterie',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BilletRoute = BilletRouteImport.update({
+  id: '/billet',
+  path: '/billet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -89,6 +105,11 @@ const CategoriesSlugRoute = CategoriesSlugRouteImport.update({
   path: '/$slug',
   getParentRoute: () => CategoriesRoute,
 } as any)
+const BilletterieGererRoute = BilletterieGererRouteImport.update({
+  id: '/billetterie_/gerer',
+  path: '/billetterie/gerer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminTestimonialsRoute = AdminTestimonialsRouteImport.update({
   id: '/testimonials',
   path: '/testimonials',
@@ -109,6 +130,11 @@ const AdminCategoriesIndexRoute = AdminCategoriesIndexRouteImport.update({
   path: '/categories/',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminBilletterieIndexRoute = AdminBilletterieIndexRouteImport.update({
+  id: '/billetterie/',
+  path: '/billetterie/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminApplicationsIndexRoute = AdminApplicationsIndexRouteImport.update({
   id: '/applications/',
   path: '/applications/',
@@ -117,6 +143,17 @@ const AdminApplicationsIndexRoute = AdminApplicationsIndexRouteImport.update({
 const AdminCategoriesSlugRoute = AdminCategoriesSlugRouteImport.update({
   id: '/categories/$slug',
   path: '/categories/$slug',
+  getParentRoute: () => AdminRoute,
+} as any)
+const AdminBilletterieControleRoute =
+  AdminBilletterieControleRouteImport.update({
+    id: '/billetterie/controle',
+    path: '/billetterie/controle',
+    getParentRoute: () => AdminRoute,
+  } as any)
+const AdminBilletterieIdRoute = AdminBilletterieIdRouteImport.update({
+  id: '/billetterie/$id',
+  path: '/billetterie/$id',
   getParentRoute: () => AdminRoute,
 } as any)
 const AdminApplicationsIdRoute = AdminApplicationsIdRouteImport.update({
@@ -129,6 +166,8 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/admin': typeof AdminRouteWithChildren
+  '/billet': typeof BilletRoute
+  '/billetterie': typeof BilletterieRoute
   '/candidater': typeof CandidaterRoute
   '/categories': typeof CategoriesRouteWithChildren
   '/contact': typeof ContactRoute
@@ -138,17 +177,23 @@ export interface FileRoutesByFullPath {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/billetterie/gerer': typeof BilletterieGererRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/admin/applications/$id': typeof AdminApplicationsIdRoute
+  '/admin/billetterie/$id': typeof AdminBilletterieIdRoute
+  '/admin/billetterie/controle': typeof AdminBilletterieControleRoute
   '/admin/categories/$slug': typeof AdminCategoriesSlugRoute
   '/admin/applications/': typeof AdminApplicationsIndexRoute
+  '/admin/billetterie/': typeof AdminBilletterieIndexRoute
   '/admin/categories/': typeof AdminCategoriesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
+  '/billet': typeof BilletRoute
+  '/billetterie': typeof BilletterieRoute
   '/candidater': typeof CandidaterRoute
   '/contact': typeof ContactRoute
   '/galerie': typeof GalerieRoute
@@ -157,12 +202,16 @@ export interface FileRoutesByTo {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/billetterie/gerer': typeof BilletterieGererRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin': typeof AdminIndexRoute
   '/categories': typeof CategoriesIndexRoute
   '/admin/applications/$id': typeof AdminApplicationsIdRoute
+  '/admin/billetterie/$id': typeof AdminBilletterieIdRoute
+  '/admin/billetterie/controle': typeof AdminBilletterieControleRoute
   '/admin/categories/$slug': typeof AdminCategoriesSlugRoute
   '/admin/applications': typeof AdminApplicationsIndexRoute
+  '/admin/billetterie': typeof AdminBilletterieIndexRoute
   '/admin/categories': typeof AdminCategoriesIndexRoute
 }
 export interface FileRoutesById {
@@ -170,6 +219,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/a-propos': typeof AProposRoute
   '/admin': typeof AdminRouteWithChildren
+  '/billet': typeof BilletRoute
+  '/billetterie': typeof BilletterieRoute
   '/candidater': typeof CandidaterRoute
   '/categories': typeof CategoriesRouteWithChildren
   '/contact': typeof ContactRoute
@@ -179,12 +230,16 @@ export interface FileRoutesById {
   '/admin/gallery': typeof AdminGalleryRoute
   '/admin/login': typeof AdminLoginRoute
   '/admin/testimonials': typeof AdminTestimonialsRoute
+  '/billetterie_/gerer': typeof BilletterieGererRoute
   '/categories/$slug': typeof CategoriesSlugRoute
   '/admin/': typeof AdminIndexRoute
   '/categories/': typeof CategoriesIndexRoute
   '/admin/applications/$id': typeof AdminApplicationsIdRoute
+  '/admin/billetterie/$id': typeof AdminBilletterieIdRoute
+  '/admin/billetterie/controle': typeof AdminBilletterieControleRoute
   '/admin/categories/$slug': typeof AdminCategoriesSlugRoute
   '/admin/applications/': typeof AdminApplicationsIndexRoute
+  '/admin/billetterie/': typeof AdminBilletterieIndexRoute
   '/admin/categories/': typeof AdminCategoriesIndexRoute
 }
 export interface FileRouteTypes {
@@ -193,6 +248,8 @@ export interface FileRouteTypes {
     | '/'
     | '/a-propos'
     | '/admin'
+    | '/billet'
+    | '/billetterie'
     | '/candidater'
     | '/categories'
     | '/contact'
@@ -202,17 +259,23 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/login'
     | '/admin/testimonials'
+    | '/billetterie/gerer'
     | '/categories/$slug'
     | '/admin/'
     | '/categories/'
     | '/admin/applications/$id'
+    | '/admin/billetterie/$id'
+    | '/admin/billetterie/controle'
     | '/admin/categories/$slug'
     | '/admin/applications/'
+    | '/admin/billetterie/'
     | '/admin/categories/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/a-propos'
+    | '/billet'
+    | '/billetterie'
     | '/candidater'
     | '/contact'
     | '/galerie'
@@ -221,18 +284,24 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/login'
     | '/admin/testimonials'
+    | '/billetterie/gerer'
     | '/categories/$slug'
     | '/admin'
     | '/categories'
     | '/admin/applications/$id'
+    | '/admin/billetterie/$id'
+    | '/admin/billetterie/controle'
     | '/admin/categories/$slug'
     | '/admin/applications'
+    | '/admin/billetterie'
     | '/admin/categories'
   id:
     | '__root__'
     | '/'
     | '/a-propos'
     | '/admin'
+    | '/billet'
+    | '/billetterie'
     | '/candidater'
     | '/categories'
     | '/contact'
@@ -242,12 +311,16 @@ export interface FileRouteTypes {
     | '/admin/gallery'
     | '/admin/login'
     | '/admin/testimonials'
+    | '/billetterie_/gerer'
     | '/categories/$slug'
     | '/admin/'
     | '/categories/'
     | '/admin/applications/$id'
+    | '/admin/billetterie/$id'
+    | '/admin/billetterie/controle'
     | '/admin/categories/$slug'
     | '/admin/applications/'
+    | '/admin/billetterie/'
     | '/admin/categories/'
   fileRoutesById: FileRoutesById
 }
@@ -255,12 +328,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AProposRoute: typeof AProposRoute
   AdminRoute: typeof AdminRouteWithChildren
+  BilletRoute: typeof BilletRoute
+  BilletterieRoute: typeof BilletterieRoute
   CandidaterRoute: typeof CandidaterRoute
   CategoriesRoute: typeof CategoriesRouteWithChildren
   ContactRoute: typeof ContactRoute
   GalerieRoute: typeof GalerieRoute
   MentionsLegalesRoute: typeof MentionsLegalesRoute
   TemoignagesRoute: typeof TemoignagesRoute
+  BilletterieGererRoute: typeof BilletterieGererRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -307,6 +383,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CandidaterRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/billetterie': {
+      id: '/billetterie'
+      path: '/billetterie'
+      fullPath: '/billetterie'
+      preLoaderRoute: typeof BilletterieRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/billet': {
+      id: '/billet'
+      path: '/billet'
+      fullPath: '/billet'
+      preLoaderRoute: typeof BilletRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -349,6 +439,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CategoriesSlugRouteImport
       parentRoute: typeof CategoriesRoute
     }
+    '/billetterie_/gerer': {
+      id: '/billetterie_/gerer'
+      path: '/billetterie/gerer'
+      fullPath: '/billetterie/gerer'
+      preLoaderRoute: typeof BilletterieGererRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/testimonials': {
       id: '/admin/testimonials'
       path: '/testimonials'
@@ -377,6 +474,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminCategoriesIndexRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/billetterie/': {
+      id: '/admin/billetterie/'
+      path: '/billetterie'
+      fullPath: '/admin/billetterie/'
+      preLoaderRoute: typeof AdminBilletterieIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/applications/': {
       id: '/admin/applications/'
       path: '/applications'
@@ -389,6 +493,20 @@ declare module '@tanstack/react-router' {
       path: '/categories/$slug'
       fullPath: '/admin/categories/$slug'
       preLoaderRoute: typeof AdminCategoriesSlugRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/billetterie/controle': {
+      id: '/admin/billetterie/controle'
+      path: '/billetterie/controle'
+      fullPath: '/admin/billetterie/controle'
+      preLoaderRoute: typeof AdminBilletterieControleRouteImport
+      parentRoute: typeof AdminRoute
+    }
+    '/admin/billetterie/$id': {
+      id: '/admin/billetterie/$id'
+      path: '/billetterie/$id'
+      fullPath: '/admin/billetterie/$id'
+      preLoaderRoute: typeof AdminBilletterieIdRouteImport
       parentRoute: typeof AdminRoute
     }
     '/admin/applications/$id': {
@@ -407,8 +525,11 @@ interface AdminRouteChildren {
   AdminTestimonialsRoute: typeof AdminTestimonialsRoute
   AdminIndexRoute: typeof AdminIndexRoute
   AdminApplicationsIdRoute: typeof AdminApplicationsIdRoute
+  AdminBilletterieIdRoute: typeof AdminBilletterieIdRoute
+  AdminBilletterieControleRoute: typeof AdminBilletterieControleRoute
   AdminCategoriesSlugRoute: typeof AdminCategoriesSlugRoute
   AdminApplicationsIndexRoute: typeof AdminApplicationsIndexRoute
+  AdminBilletterieIndexRoute: typeof AdminBilletterieIndexRoute
   AdminCategoriesIndexRoute: typeof AdminCategoriesIndexRoute
 }
 
@@ -418,8 +539,11 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminTestimonialsRoute: AdminTestimonialsRoute,
   AdminIndexRoute: AdminIndexRoute,
   AdminApplicationsIdRoute: AdminApplicationsIdRoute,
+  AdminBilletterieIdRoute: AdminBilletterieIdRoute,
+  AdminBilletterieControleRoute: AdminBilletterieControleRoute,
   AdminCategoriesSlugRoute: AdminCategoriesSlugRoute,
   AdminApplicationsIndexRoute: AdminApplicationsIndexRoute,
+  AdminBilletterieIndexRoute: AdminBilletterieIndexRoute,
   AdminCategoriesIndexRoute: AdminCategoriesIndexRoute,
 }
 
@@ -443,12 +567,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AProposRoute: AProposRoute,
   AdminRoute: AdminRouteWithChildren,
+  BilletRoute: BilletRoute,
+  BilletterieRoute: BilletterieRoute,
   CandidaterRoute: CandidaterRoute,
   CategoriesRoute: CategoriesRouteWithChildren,
   ContactRoute: ContactRoute,
   GalerieRoute: GalerieRoute,
   MentionsLegalesRoute: MentionsLegalesRoute,
   TemoignagesRoute: TemoignagesRoute,
+  BilletterieGererRoute: BilletterieGererRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

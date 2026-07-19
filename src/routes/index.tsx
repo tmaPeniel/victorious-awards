@@ -134,6 +134,15 @@ function HomePage() {
           <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">Programme</div>
           <p className="mt-2 font-display-italic text-xl text-ivory/80">{event.program} — annoncé prochainement.</p>
         </div>
+        <div className="mt-10 flex flex-wrap gap-4">
+          <VLink to="/billetterie">
+            Réserver mes places
+            <ArrowRight className="size-4" />
+          </VLink>
+          <VLink to="/candidater" variant="secondary">
+            Je candidate
+          </VLink>
+        </div>
       </Section>
 
       {/* Aperçu visuel du lieu */}
