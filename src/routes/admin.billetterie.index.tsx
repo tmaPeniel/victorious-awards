@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type FormEvent } from "react";
-import { Download, Filter, QrCode, Search, Settings2, Ticket, Users } from "lucide-react";
+import { Download, Filter, QrCode, Search, Settings2, Ticket, Trash2, Users } from "lucide-react";
 import { VButton } from "@/components/victorious/VButton";
 import { supabase } from "@/integrations/supabase/client";
 import { exportTicketReservationsToExcel } from "@/lib/excel-export";
-import { updateTicketEventSettings } from "@/lib/ticketing.functions";
+import { adminDeleteReservation, updateTicketEventSettings } from "@/lib/ticketing.functions";
+
 
 export const Route = createFileRoute("/admin/billetterie/")({ component: TicketingAdminPage });
 
