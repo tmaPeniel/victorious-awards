@@ -576,3 +576,93 @@ function WhatsappSend({ bundle }: { bundle: TicketBundle }) {
     </div>
   );
 }
+
+function ManageLookupModal({ onClose }: { onClose: () => void }) {
+  const navigate = useNavigate();
+  const [reference, setReference] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const submit = async (e: FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+    setLoading(true);
+    try {
+      const { token } = await lookupReservation({
+        data: { reference: reference.trim(), email: email.trim() },
+      });
+      onClose();
+      navigate({ to: "/billetterie_/gerer", search: { token } });
+    } catch (err) {
+      setErrorMsg(
+        err instanceof Error ? err.message : "Impossible de retrouver la réservation.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div
+      className="fixed inset-0 z-50 grid place-items-center bg-obsidian/85 px-4 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="lookup-title"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-md border border-champagne/25 bg-velvet/95 p-8"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Fermer"
+          className="absolute right-4 top-4 text-ivory/60 hover:text-ivory"
+        >
+          <X className="size-5" />
+        </button>
+        <h2 id="lookup-title" className="font-display text-2xl text-ivory">
+          Gérer ma réservation
+        </h2>
+        <p className="mt-2 text-sm text-ivory/65">
+          Saisissez votre référence et l'e-mail du contact principal pour retrouver vos billets.
+        </p>
+        <form onSubmit={submit} className="mt-6 space-y-4" noValidate>
+          <label className="block text-xs uppercase tracking-[0.18em] text-champagne/75">
+            Référence <span className="text-gold">*</span>
+            <input
+              className={fieldClass}
+              value={reference}
+              onChange={(e) => setReference(e.target.value.toUpperCase())}
+              placeholder="VIC26-XXXXXXXX"
+              autoComplete="off"
+              required
+            />
+          </label>
+          <label className="block text-xs uppercase tracking-[0.18em] text-champagne/75">
+            E-mail du contact <span className="text-gold">*</span>
+            <input
+              className={fieldClass}
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoComplete="email"
+              required
+            />
+          </label>
+          {errorMsg && (
+            <p role="alert" className="text-sm text-brick">
+              {errorMsg}
+            </p>
+          )}
+          <VButton type="submit" size="md" disabled={loading} className="w-full justify-center">
+            {loading ? "Recherche…" : "Accéder à ma réservation"}
+          </VButton>
+        </form>
+      </div>
+    </div>
+  );
+}
+
