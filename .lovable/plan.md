@@ -1,41 +1,70 @@
-# Envoi des billets par e-mail
+## Envoi des billets par WhatsApp (via liens wa.me)
 
-Réponses intégrées : envoi au contact **ET** à chaque participant, déclenché automatiquement **ET** disponible manuellement depuis l'admin, avec **billet PDF en pièce jointe** contenant un QR code.
+### Limite importante à connaître
 
-## Ce qui sera livré
+Avec `wa.me` (clic-pour-discuter), **il n'y a pas d'envoi automatique** : c'est toujours quelqu'un qui doit cliquer sur un lien pour ouvrir WhatsApp et envoyer le message.
 
-### 1. Génération du billet PDF
-- Nouveau module `src/lib/ticket-pdf.ts` (côté serveur) utilisant `pdf-lib` (compatible Cloudflare Worker) + `qrcode` pour dessiner un QR code du `ticket_token` (le token en clair, pas son hash — le token brut est déjà retourné par `createReservation`/`updateReservation` et sert au check-in).
-- Design du billet aux couleurs Victorious (violet profond + or) : logo texte "VICTORIOUS — La Nuit de l'Excellence", nom du participant, référence de réservation, date, lieu, ville, QR code, mention "À présenter à l'entrée".
-- Un PDF par participant, nommé `victorious-{reference}-{prenom}.pdf`.
+Le flux réaliste devient donc :
+- À la fin de la réservation, on affiche au **contact** une page « Envoyer les billets par WhatsApp » avec un bouton par participant.
+- Chaque bouton ouvre WhatsApp sur le téléphone du contact, avec la conversation pré-remplie vers le numéro du participant et un message contenant **le lien vers son billet en ligne (page web avec QR code)**.
+- Le contact tape « Envoyer » dans WhatsApp → chaque inscrit reçoit son billet.
+- Un bouton « M'envoyer les billets à moi » ouvre WhatsApp vers le numéro du contact (utile pour se les auto-envoyer / archiver).
 
-### 2. Nouveau server function `sendTicketEmails`
-- Fichier `src/lib/ticket-email.functions.ts` (public, sans `requireSupabaseAuth` pour l'appel post-confirmation ; sécurisé par un token à usage unique passé depuis le flow de réservation) + variante admin protégée par rôle.
-- Charge la réservation + participants + événement, régénère les PDFs, envoie via Resend (`RESEND_API_KEY` déjà configuré) en HTTP direct :
-  - **1 e-mail par participant** → à son adresse, avec son PDF personnel en pièce jointe.
-  - **1 e-mail récapitulatif** → au contact principal, avec **tous les PDFs** de la réservation attachés.
-- Templates HTML simples inline (violet/or, cohérents avec l'identité), suffisants pour Resend (pas besoin d'introduire l'infrastructure Lovable Emails, qui ne supporte pas les pièces jointes).
-- Chaque envoi est journalisé dans `ticket_email_log` (kind: `contact_recap` | `attendee_ticket`, `provider_id`, `status`, `error_message`).
+Les e-mails de billets sont **retirés** (remplacés par WhatsApp comme demandé).
 
-### 3. Déclenchement automatique
-- **À la confirmation** : dans `src/routes/billetterie.tsx`, après un `createReservation` renvoyant `status: "confirmed"`, appel de `sendTicketEmails({ reservationId, managementToken })` en fire-and-forget (l'échec e-mail ne bloque pas la confirmation ; l'utilisateur voit toujours l'écran de succès).
-- **À la promotion depuis la liste d'attente** : dans `updateReservation` (RPC `promote_ticket_waitlist` retourne déjà `promoted_ids`), nouveau server fn `promoteAndNotify` qui, pour chaque ID promu, appelle `sendTicketEmails`. Idem si l'admin passe manuellement un reservation en `confirmed`.
-- Idempotence : `ticket_email_log` est consulté avant envoi ; si un `attendee_ticket` a déjà été envoyé avec succès pour un attendee_id, il est sauté (sauf renvoi manuel forcé).
+### Modifications base de données (1 migration)
 
-### 4. Renvoi manuel depuis l'admin
-- Dans `src/routes/admin.billetterie.tsx`, ajout d'un bouton **"Renvoyer les billets"** sur chaque ligne de réservation confirmée (et d'un bouton "Renvoyer à ce participant" au niveau participant si la page de détail existe, sinon uniquement au niveau réservation).
-- Le bouton appelle un server fn admin `resendTicketEmails` (protégé par `requireSupabaseAuth` + `has_role('admin')`), qui force l'envoi (contourne l'idempotence) et retourne un toast de succès/échec.
+- `ticket_reservations` : ajouter `contact_whatsapp` (texte, obligatoire, format E.164 ex. `+33612345678`).
+- `ticket_attendees` : ajouter `whatsapp` (texte, optionnel — si vide, on utilisera celui du contact).
+- Nouveau champ `ticket_send_log` (ou renommer `ticket_email_log`) pour tracer les clics « Envoyer via WhatsApp » (facultatif, sinon on garde le log actuel inutilisé pour info).
 
-## Détails techniques
+### Modifications formulaire de réservation (`billetterie.tsx`)
 
-- **Pièces jointes Resend** : `attachments: [{ filename, content: base64 }]` — Resend gère nativement.
-- **PDF léger** : ~30 Ko/participant avec `pdf-lib`, pas de font custom (Helvetica intégré) → compatible Worker.
-- **QR code** : payload = token brut (32 caractères) ; l'admin scanne, l'app hache et appelle `check_in_ticket(hash)` déjà existant.
-- **Sécurité** : le token brut n'est envoyé qu'à l'adresse e-mail du participant concerné ; le contact ne reçoit que les PDFs, pas les tokens en texte clair dans le corps de l'e-mail.
-- **Dépendances à ajouter** : `pdf-lib`, `qrcode`. Les deux sont pure-JS et compatibles Cloudflare Worker.
-- **Rien à modifier côté BDD** : `ticket_email_log` existe déjà avec les bons champs.
+- Étape « Contact » : ajouter un champ **Numéro WhatsApp du contact** (obligatoire, validé E.164, avec sélecteur d'indicatif ou saisie libre + hint « ex. +33 6 12 34 56 78 »).
+- Étape « Participants » : pour chaque participant, ajouter un champ **Numéro WhatsApp (optionnel)** — placeholder « Laisser vide pour utiliser celui du contact ».
+- Validation Zod côté client + `.inputValidator` côté serveur (regex E.164 : `/^\+[1-9]\d{7,14}$/`).
 
-## Fichiers touchés
-- Nouveaux : `src/lib/ticket-pdf.ts`, `src/lib/ticket-email.functions.ts`
-- Modifiés : `src/routes/billetterie.tsx` (trigger post-succès), `src/routes/admin.billetterie.tsx` (bouton renvoi), `src/lib/ticketing.functions.ts` (hook sur promotion)
-- `package.json` : `pdf-lib`, `qrcode`
+### Nouvelle page « Envoyer les billets » (`/billetterie/envoi/$reference`)
+
+Affichée automatiquement après confirmation, et accessible depuis la page « Gérer ma réservation » :
+
+- Titre : « Envoyez leurs billets sur WhatsApp »
+- Un bloc par participant :
+  - Nom + numéro WhatsApp cible
+  - Bouton **« Envoyer sur WhatsApp »** → lien `https://wa.me/<num>?text=<message pré-rempli>`
+  - Message pré-rempli : « Bonjour {Prénom} 🎉 Voici votre billet pour Victorious 2026 le 21 mars à Rouen. Présentez le QR code à l'entrée : {URL_billet_public} »
+  - Aperçu du message en dessous.
+- Bouton secondaire « M'envoyer tous les billets » → wa.me vers le contact avec un message qui liste tous les liens.
+
+### Page publique du billet (`/billet/$token`)
+
+Déjà partiellement en place (`src/routes/billet.tsx`) — on s'assure qu'elle :
+- affiche le QR code plein écran (scannable à l'entrée),
+- nom du participant, référence, date, lieu,
+- fonctionne hors-ligne une fois chargée (mise en cache basique).
+
+Le PDF n'est plus la pièce centrale ; le lien vers cette page est ce qu'on envoie via WhatsApp. Le PDF reste téléchargeable depuis la page pour ceux qui préfèrent.
+
+### Admin (`admin/billetterie/$id`)
+
+- Remplacer le bouton « Renvoyer les billets par e-mail » par **« Ouvrir la page d'envoi WhatsApp »** → mène à la page ci-dessus.
+- Afficher les numéros WhatsApp dans la fiche.
+
+### Suppression / nettoyage
+
+- Retirer les appels `sendReservationTicketEmails` dans `ticketing.functions.ts` (création, promotion liste d'attente, admin).
+- Garder `ticket-pdf.server.ts` (utilisé par la page billet pour le téléchargement PDF).
+- Supprimer `ticket-email.server.ts` **ou** le garder inactif pour un futur canal e-mail.
+
+### Fichiers touchés
+
+- **Migration** : ajout colonnes `contact_whatsapp`, `whatsapp`.
+- **Nouveaux** : `src/routes/billetterie.envoi.$reference.tsx`, helpers `src/lib/whatsapp-link.ts`.
+- **Modifiés** : `src/routes/billetterie.tsx` (champs + redirect vers page envoi), `src/routes/billetterie_.gerer.tsx` (bouton envoi), `src/routes/admin.billetterie.$id.tsx` (bouton envoi), `src/lib/ticketing.functions.ts` (schéma + retrait appels e-mail), `src/routes/billet.tsx` (finaliser affichage QR).
+
+### Ce que ce plan ne fait PAS
+
+- Pas d'envoi WhatsApp **automatique** (nécessiterait Twilio/Meta Business API + template Meta approuvé + numéro Business vérifié — plusieurs jours de setup côté Meta).
+- Pas de pièce jointe PDF dans WhatsApp (les liens wa.me ne supportent que du texte). Le PDF reste téléchargeable depuis la page billet.
+
+Si l'envoi 100 % automatique et le PDF joint sont indispensables, il faudra passer sur Twilio WhatsApp Business — dis-le-moi et je referai le plan avec ce fournisseur.
