@@ -1,13 +1,39 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
+  const qc = useQueryClient();
+  const settings = useQuery({
+    queryKey: ["admin", "app_settings", "applications_open"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("app_settings" as never)
+        .select("value")
+        .eq("key", "applications_open")
+        .maybeSingle();
+      return (data as { value: unknown } | null)?.value === true;
+    },
+  });
+  const toggle = useMutation({
+    mutationFn: async (next: boolean) => {
+      const { error } = await supabase
+        .from("app_settings" as never)
+        .upsert({ key: "applications_open", value: next, updated_at: new Date().toISOString() } as never, { onConflict: "key" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["admin", "app_settings"] });
+      void qc.invalidateQueries({ queryKey: ["app_settings"] });
+    },
+  });
+  const open = settings.data === true;
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "dashboard"],
     queryFn: async () => {
@@ -69,6 +95,40 @@ function AdminDashboard() {
         <h1 className="font-display text-3xl text-ivory">Tableau de bord</h1>
         <p className="mt-2 text-sm text-ivory/60">Vue d'ensemble de l'édition en cours.</p>
       </header>
+
+      <section className="flex flex-col gap-4 border border-champagne/15 bg-ivory/[0.02] p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">Candidatures</div>
+          <div className="mt-2 font-display text-xl text-ivory">
+            {settings.isLoading ? "…" : open ? "Ouvertes au public" : "Fermées au public"}
+          </div>
+          <p className="mt-1 text-xs text-ivory/50">
+            Active ou désactive le formulaire de candidature sans redéploiement.
+          </p>
+        </div>
+        <button
+          type="button"
+          disabled={settings.isLoading || toggle.isPending}
+          onClick={() => toggle.mutate(!open)}
+          className={cn(
+            "inline-flex items-center gap-3 border px-5 py-3 text-[0.7rem] uppercase tracking-[0.3em] transition",
+            open
+              ? "border-champagne/40 text-champagne hover:bg-champagne/10"
+              : "border-champagne bg-champagne text-obsidian hover:bg-champagne/90",
+            (settings.isLoading || toggle.isPending) && "opacity-60",
+          )}
+        >
+          <span
+            aria-hidden
+            className={cn(
+              "inline-block h-2 w-2 rounded-full",
+              open ? "bg-champagne" : "bg-obsidian",
+            )}
+          />
+          {toggle.isPending ? "Enregistrement…" : open ? "Fermer les candidatures" : "Ouvrir les candidatures"}
+        </button>
+      </section>
+
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         {stats.map((s) => (
