@@ -354,6 +354,12 @@ export const createTicketReservation = createServerFn({ method: "POST" })
             }))
           : [],
     };
+    try {
+      const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
+      await sendReservationTicketEmails(booking.id, { kindSuffix: "reservation" });
+    } catch (emailError) {
+      console.error("ticket email dispatch failed", emailError);
+    }
     return {
       ok: true as const,
       reference: booking.reference,
@@ -444,10 +450,21 @@ export const updateManagedReservation = createServerFn({ method: "POST" })
       p_attendees: attendeesPayload as Json,
     });
     if (error) throw new Error(translateTicketError(error.message));
+    const promotedIds = ((result as { promoted_ids?: string[] })?.promoted_ids ?? []) as string[];
+    if (promotedIds.length) {
+      try {
+        const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
+        await Promise.all(
+          promotedIds.map((id) => sendReservationTicketEmails(id, { kindSuffix: "promotion" })),
+        );
+      } catch (emailError) {
+        console.error("promotion email dispatch failed", emailError);
+      }
+    }
     return {
       ok: true as const,
       cancelled: data.attendees.length === 0,
-      promoted: ((result as { promoted_ids?: string[] })?.promoted_ids ?? []).length,
+      promoted: promotedIds.length,
     };
   });
 
@@ -584,7 +601,29 @@ export const adminCancelReservation = createServerFn({ method: "POST" })
     const { data: promoted } = await supabaseAdmin.rpc("promote_ticket_waitlist", {
       p_event_id: reservation.event_id,
     });
-    return { ok: true as const, promoted: promoted?.length ?? 0 };
+    const promotedIds = (promoted ?? []) as string[];
+    if (promotedIds.length) {
+      try {
+        const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
+        await Promise.all(
+          promotedIds.map((id) => sendReservationTicketEmails(id, { kindSuffix: "promotion" })),
+        );
+      } catch (emailError) {
+        console.error("promotion email dispatch failed", emailError);
+      }
+    }
+    return { ok: true as const, promoted: promotedIds.length };
+  });
+
+export const adminResendReservationTickets = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) =>
+    z.object({ reservationId: z.string().uuid(), accessToken: z.string().min(20) }).parse(data),
+  )
+  .handler(async ({ data }) => {
+    await requireAdmin(data.accessToken);
+    const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
+    const result = await sendReservationTicketEmails(data.reservationId, { kindSuffix: "manual" });
+    return { ok: true as const, ...result };
   });
 
 export const updateTicketEventSettings = createServerFn({ method: "POST" })

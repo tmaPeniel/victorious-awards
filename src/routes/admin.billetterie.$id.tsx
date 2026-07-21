@@ -1,10 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type FormEvent } from "react";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Mail, Trash2 } from "lucide-react";
 import { VButton } from "@/components/victorious/VButton";
 import { supabase } from "@/integrations/supabase/client";
-import { adminCancelReservation, adminUpdateReservation } from "@/lib/ticketing.functions";
+import {
+  adminCancelReservation,
+  adminResendReservationTickets,
+  adminUpdateReservation,
+} from "@/lib/ticketing.functions";
 
 export const Route = createFileRoute("/admin/billetterie/$id")({
   component: TicketReservationDetail,
@@ -121,6 +125,25 @@ function TicketReservationDetail() {
     }
   };
 
+  const resend = async () => {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const result = await adminResendReservationTickets({
+        data: { reservationId: id, accessToken: await accessToken() },
+      });
+      setMessage(
+        result.failed
+          ? `Envoi partiel : ${result.sent} e-mail(s) envoyé(s), ${result.failed} échec(s). ${result.errors[0] ?? ""}`
+          : `${result.sent} e-mail(s) envoyé(s) avec succès.`,
+      );
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Échec de l’envoi des billets.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (query.isLoading)
     return <div className="text-sm text-ivory/50">Chargement de la réservation…</div>;
   if (!query.data) return <div role="alert">Réservation introuvable.</div>;
@@ -150,7 +173,15 @@ function TicketReservationDetail() {
                 : "Annulée"}
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={resend}
+            disabled={busy || reservation.status === "cancelled"}
+            className="inline-flex h-11 items-center gap-2 border border-champagne/40 px-4 text-sm text-champagne disabled:opacity-40"
+          >
+            <Mail className="size-4" />
+            Renvoyer les billets par e-mail
+          </button>
           <button
             onClick={cancel}
             disabled={busy || reservation.status === "cancelled"}
