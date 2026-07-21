@@ -3,12 +3,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/lib/use-session";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
+  const { session } = useSession();
   const qc = useQueryClient();
   const settings = useQuery({
     queryKey: ["admin", "app_settings", "applications_open"],
@@ -92,7 +94,10 @@ function AdminDashboard() {
   return (
     <div className="space-y-10">
       <header>
-        <h1 className="font-display text-3xl text-ivory">Tableau de bord</h1>
+        <p className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">
+          Bonjour {session?.user?.email ?? "utilisateur"}
+        </p>
+        <h1 className="mt-2 font-display text-3xl text-ivory">Tableau de bord</h1>
         <p className="mt-2 text-sm text-ivory/60">Vue d'ensemble de l'édition en cours.</p>
       </header>
 
