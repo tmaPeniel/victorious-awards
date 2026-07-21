@@ -82,12 +82,19 @@ function TicketingPage() {
           contactLastName: primaryAttendee.lastName,
           contactEmail: primaryAttendee.email,
           contactPhone: "",
-          attendees,
+          contactWhatsapp: primaryAttendee.whatsapp.trim(),
+          attendees: attendees.map((a) => ({
+            firstName: a.firstName,
+            lastName: a.lastName,
+            email: a.email,
+            whatsapp: a.whatsapp.trim(),
+          })),
           rgpd,
           idempotencyKey,
           website,
         },
       });
+
       setResult(response);
     } catch (err) {
       setError(
