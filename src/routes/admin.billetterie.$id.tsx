@@ -173,7 +173,15 @@ function TicketReservationDetail() {
                 : "Annulée"}
           </p>
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-3">
+          <button
+            onClick={resend}
+            disabled={busy || reservation.status === "cancelled"}
+            className="inline-flex h-11 items-center gap-2 border border-champagne/40 px-4 text-sm text-champagne disabled:opacity-40"
+          >
+            <Mail className="size-4" />
+            Renvoyer les billets par e-mail
+          </button>
           <button
             onClick={cancel}
             disabled={busy || reservation.status === "cancelled"}
