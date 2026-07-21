@@ -16,7 +16,35 @@ function TicketingAdminPage() {
   const [status, setStatus] = useState("all");
   const [showSettings, setShowSettings] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  const handleDelete = async (id: string, reference: string) => {
+    if (!confirm(`Supprimer définitivement la réservation ${reference} ? Cette action est irréversible.`)) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      setMessage("Votre session a expiré.");
+      return;
+    }
+    setDeletingId(id);
+    setMessage(null);
+    try {
+      const result = await adminDeleteReservation({
+        data: { accessToken: sessionData.session.access_token, reservationId: id },
+      });
+      setMessage(
+        result.promoted
+          ? `Réservation supprimée. ${result.promoted} réservation(s) promue(s) depuis la liste d’attente.`
+          : "Réservation supprimée.",
+      );
+      await queryClient.invalidateQueries({ queryKey: ["admin", "ticketing"] });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Suppression impossible.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
 
   const query = useQuery({
     queryKey: ["admin", "ticketing"],
