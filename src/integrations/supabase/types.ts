@@ -172,7 +172,7 @@ export type Database = {
           cancelled_at: string | null
           created_at: string
           created_by: string | null
-          email: string
+          email: string | null
           first_name: string
           id: string
           last_name: string
@@ -187,7 +187,7 @@ export type Database = {
           cancelled_at?: string | null
           created_at?: string
           created_by?: string | null
-          email: string
+          email?: string | null
           first_name: string
           id?: string
           last_name: string
@@ -202,7 +202,7 @@ export type Database = {
           cancelled_at?: string | null
           created_at?: string
           created_by?: string | null
-          email?: string
+          email?: string | null
           first_name?: string
           id?: string
           last_name?: string
