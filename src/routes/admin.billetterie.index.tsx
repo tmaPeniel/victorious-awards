@@ -327,14 +327,26 @@ function TicketingAdminPage() {
                   {new Date(reservation.created_at).toLocaleDateString("fr-FR")}
                 </td>
                 <td className="p-4 text-right">
-                  <Link
-                    to="/admin/billetterie/$id"
-                    params={{ id: reservation.id }}
-                    className="text-champagne hover:text-ivory"
-                  >
-                    Voir →
-                  </Link>
+                  <div className="inline-flex items-center gap-4">
+                    <Link
+                      to="/admin/billetterie/$id"
+                      params={{ id: reservation.id }}
+                      className="text-champagne hover:text-ivory"
+                    >
+                      Voir →
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(reservation.id, reservation.reference)}
+                      disabled={deletingId === reservation.id}
+                      aria-label={`Supprimer la réservation ${reservation.reference}`}
+                      className="text-ivory/50 transition-colors hover:text-brick disabled:opacity-40"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
                 </td>
+
               </tr>
             ))}
             {!filtered.length && (
