@@ -3,11 +3,17 @@ import { z } from "zod";
 import { event as eventDetails } from "@/content/event";
 import type { Json } from "@/integrations/supabase/types";
 
+const whatsappSchema = z
+  .string()
+  .trim()
+  .regex(/^\+[1-9]\d{7,14}$/, "Numéro WhatsApp invalide (format international, ex. +33612345678).");
+
 const attendeeSchema = z.object({
   id: z.string().uuid().optional(),
   firstName: z.string().trim().min(2).max(60),
   lastName: z.string().trim().min(2).max(60),
   email: z.string().trim().email().max(255),
+  whatsapp: z.union([whatsappSchema, z.literal("")]).optional(),
 });
 
 const bookingSchema = z.object({
@@ -15,6 +21,7 @@ const bookingSchema = z.object({
   contactLastName: z.string().trim().min(2).max(60),
   contactEmail: z.string().trim().email().max(255),
   contactPhone: z.string().trim().max(24),
+  contactWhatsapp: whatsappSchema,
   attendees: z
     .array(attendeeSchema.omit({ id: true }))
     .min(1)
@@ -33,6 +40,7 @@ const manageSchema = z.object({
   attendees: z.array(attendeeSchema.extend({ id: z.string().uuid() })).max(4),
 });
 
+
 const tokenSchema = z.object({ token: z.string().min(32) });
 
 type AdminAuth = { accessToken: string };
@@ -40,6 +48,9 @@ type AdminAuth = { accessToken: string };
 export type TicketBundle = {
   reference: string;
   status: "confirmed" | "waitlisted" | "cancelled";
+  contactFirstName: string;
+  contactLastName: string;
+  contactWhatsapp: string | null;
   event: {
     name: string;
     startsAt: string;
@@ -51,9 +62,11 @@ export type TicketBundle = {
     firstName: string;
     lastName: string;
     email: string;
+    whatsapp: string | null;
     token: string;
   }>;
 };
+
 
 async function hashToken(value: string): Promise<string> {
   const bytes = new TextEncoder().encode(value);
@@ -78,7 +91,9 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: reservation, error } = await supabaseAdmin
     .from("ticket_reservations")
-    .select("id, event_id, reference, status, idempotency_key")
+    .select(
+      "id, event_id, reference, status, idempotency_key, contact_first_name, contact_last_name, contact_whatsapp",
+    )
     .eq("id", reservationId)
     .single();
   if (error || !reservation) throw new Error("Réservation introuvable.");
@@ -92,7 +107,7 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
     supabaseAdmin
       .from("ticket_attendees")
       .select(
-        "id, position, first_name, last_name, email, status, ticket_token_hash, ticket_version",
+        "id, position, first_name, last_name, email, whatsapp, status, ticket_token_hash, ticket_version",
       )
       .eq("reservation_id", reservation.id)
       .neq("status", "cancelled")
@@ -122,6 +137,7 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
               firstName: attendee.first_name,
               lastName: attendee.last_name,
               email: attendee.email,
+              whatsapp: attendee.whatsapp ?? null,
               token,
             };
           }),
@@ -131,6 +147,9 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
   return {
     reference: reservation.reference,
     status: reservation.status,
+    contactFirstName: reservation.contact_first_name,
+    contactLastName: reservation.contact_last_name,
+    contactWhatsapp: reservation.contact_whatsapp ?? null,
     event: {
       name: event.name,
       startsAt: event.starts_at,
@@ -140,6 +159,7 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
     tickets,
   };
 }
+
 
 function translateTicketError(message: string): string {
   const errors: Record<string, string> = {
@@ -260,6 +280,7 @@ export const createTicketReservation = createServerFn({ method: "POST" })
         first_name: attendee.firstName,
         last_name: attendee.lastName,
         email: attendee.email.toLowerCase(),
+        whatsapp: attendee.whatsapp?.trim() ? attendee.whatsapp.trim() : null,
         ticket_token_hash: await hashToken(rawTicketTokens[index]),
       })),
     );
@@ -270,11 +291,13 @@ export const createTicketReservation = createServerFn({ method: "POST" })
       p_contact_last_name: data.contactLastName,
       p_contact_email: data.contactEmail.toLowerCase(),
       p_contact_phone: data.contactPhone,
+      p_contact_whatsapp: data.contactWhatsapp,
       p_management_token_hash: await hashToken(managementToken),
       p_idempotency_key: data.idempotencyKey,
       p_rate_key_hash: await hashToken(data.contactEmail.toLowerCase()),
       p_attendees: attendeePayload as Json,
     };
+
     let { data: result, error } = await supabase.rpc("create_ticket_reservation", rpcPayload);
     if (error && accessToken && error.message.toLowerCase().includes("permission denied")) {
       const { data: ticketEvent } = await supabase
@@ -312,6 +335,7 @@ export const createTicketReservation = createServerFn({ method: "POST" })
           contact_last_name: data.contactLastName,
           contact_email: data.contactEmail.toLowerCase(),
           contact_phone: data.contactPhone,
+          contact_whatsapp: data.contactWhatsapp,
           party_size: data.attendees.length,
           status,
           management_token_hash: rpcPayload.p_management_token_hash,
@@ -337,6 +361,9 @@ export const createTicketReservation = createServerFn({ method: "POST" })
     const ticketBundle: TicketBundle = {
       reference: booking.reference,
       status: booking.status,
+      contactFirstName: data.contactFirstName,
+      contactLastName: data.contactLastName,
+      contactWhatsapp: data.contactWhatsapp,
       event: {
         name: `${eventDetails.name} — ${eventDetails.theme}`,
         startsAt: eventDetails.date.toISOString(),
@@ -350,16 +377,11 @@ export const createTicketReservation = createServerFn({ method: "POST" })
               firstName: attendee.firstName,
               lastName: attendee.lastName,
               email: attendee.email,
+              whatsapp: attendee.whatsapp?.trim() ? attendee.whatsapp.trim() : null,
               token: rawTicketTokens[index],
             }))
           : [],
     };
-    try {
-      const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-      await sendReservationTicketEmails(booking.id, { kindSuffix: "reservation" });
-    } catch (emailError) {
-      console.error("ticket email dispatch failed", emailError);
-    }
     return {
       ok: true as const,
       reference: booking.reference,
@@ -368,6 +390,7 @@ export const createTicketReservation = createServerFn({ method: "POST" })
       ticketBundle,
     };
   });
+
 
 export const getTicketBundle = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => tokenSchema.parse(data))
@@ -451,21 +474,12 @@ export const updateManagedReservation = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(translateTicketError(error.message));
     const promotedIds = ((result as { promoted_ids?: string[] })?.promoted_ids ?? []) as string[];
-    if (promotedIds.length) {
-      try {
-        const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-        await Promise.all(
-          promotedIds.map((id) => sendReservationTicketEmails(id, { kindSuffix: "promotion" })),
-        );
-      } catch (emailError) {
-        console.error("promotion email dispatch failed", emailError);
-      }
-    }
     return {
       ok: true as const,
       cancelled: data.attendees.length === 0,
       promoted: promotedIds.length,
     };
+
   });
 
 export const getTicket = createServerFn({ method: "POST" })
@@ -602,29 +616,19 @@ export const adminCancelReservation = createServerFn({ method: "POST" })
       p_event_id: reservation.event_id,
     });
     const promotedIds = (promoted ?? []) as string[];
-    if (promotedIds.length) {
-      try {
-        const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-        await Promise.all(
-          promotedIds.map((id) => sendReservationTicketEmails(id, { kindSuffix: "promotion" })),
-        );
-      } catch (emailError) {
-        console.error("promotion email dispatch failed", emailError);
-      }
-    }
     return { ok: true as const, promoted: promotedIds.length };
   });
 
-export const adminResendReservationTickets = createServerFn({ method: "POST" })
+export const adminGetReservationBundle = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z.object({ reservationId: z.string().uuid(), accessToken: z.string().min(20) }).parse(data),
   )
   .handler(async ({ data }) => {
     await requireAdmin(data.accessToken);
-    const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-    const result = await sendReservationTicketEmails(data.reservationId, { kindSuffix: "manual" });
-    return { ok: true as const, ...result };
+    const bundle = await buildTicketBundle(data.reservationId);
+    return { ok: true as const, bundle };
   });
+
 
 export const updateTicketEventSettings = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>

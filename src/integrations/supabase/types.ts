@@ -217,6 +217,7 @@ export type Database = {
           ticket_token_hash: string
           ticket_version: number
           updated_at: string
+          whatsapp: string | null
         }
         Insert: {
           cancelled_at?: string | null
@@ -234,6 +235,7 @@ export type Database = {
           ticket_token_hash: string
           ticket_version?: number
           updated_at?: string
+          whatsapp?: string | null
         }
         Update: {
           cancelled_at?: string | null
@@ -251,6 +253,7 @@ export type Database = {
           ticket_token_hash?: string
           ticket_version?: number
           updated_at?: string
+          whatsapp?: string | null
         }
         Relationships: [
           {
@@ -422,6 +425,7 @@ export type Database = {
           contact_first_name: string
           contact_last_name: string
           contact_phone: string
+          contact_whatsapp: string | null
           created_at: string
           event_id: string
           id: string
@@ -438,6 +442,7 @@ export type Database = {
           contact_first_name: string
           contact_last_name: string
           contact_phone: string
+          contact_whatsapp?: string | null
           created_at?: string
           event_id: string
           id?: string
@@ -454,6 +459,7 @@ export type Database = {
           contact_first_name?: string
           contact_last_name?: string
           contact_phone?: string
+          contact_whatsapp?: string | null
           created_at?: string
           event_id?: string
           id?: string
@@ -501,20 +507,36 @@ export type Database = {
     }
     Functions: {
       check_in_ticket: { Args: { p_ticket_token_hash: string }; Returns: Json }
-      create_ticket_reservation: {
-        Args: {
-          p_attendees: Json
-          p_contact_email: string
-          p_contact_first_name: string
-          p_contact_last_name: string
-          p_contact_phone: string
-          p_event_slug: string
-          p_idempotency_key: string
-          p_management_token_hash: string
-          p_rate_key_hash: string
-        }
-        Returns: Json
-      }
+      create_ticket_reservation:
+        | {
+            Args: {
+              p_attendees: Json
+              p_contact_email: string
+              p_contact_first_name: string
+              p_contact_last_name: string
+              p_contact_phone: string
+              p_event_slug: string
+              p_idempotency_key: string
+              p_management_token_hash: string
+              p_rate_key_hash: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_attendees: Json
+              p_contact_email: string
+              p_contact_first_name: string
+              p_contact_last_name: string
+              p_contact_phone: string
+              p_contact_whatsapp?: string
+              p_event_slug: string
+              p_idempotency_key: string
+              p_management_token_hash: string
+              p_rate_key_hash: string
+            }
+            Returns: Json
+          }
       get_ticketing_availability: {
         Args: { p_event_slug: string }
         Returns: Json

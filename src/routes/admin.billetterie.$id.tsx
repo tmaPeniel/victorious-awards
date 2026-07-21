@@ -1,14 +1,16 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type FormEvent } from "react";
-import { ArrowLeft, Mail, Trash2 } from "lucide-react";
+import { ArrowLeft, MessageCircle, Trash2 } from "lucide-react";
 import { VButton } from "@/components/victorious/VButton";
 import { supabase } from "@/integrations/supabase/client";
 import {
   adminCancelReservation,
-  adminResendReservationTickets,
+  adminGetReservationBundle,
   adminUpdateReservation,
 } from "@/lib/ticketing.functions";
+import { buildAttendeeMessage, buildWaMeLink } from "@/lib/whatsapp-link";
+
 
 export const Route = createFileRoute("/admin/billetterie/$id")({
   component: TicketReservationDetail,
@@ -125,24 +127,55 @@ function TicketReservationDetail() {
     }
   };
 
-  const resend = async () => {
+  const [waLinks, setWaLinks] = useState<
+    Array<{ name: string; whatsapp: string | null; url: string; ticketUrl: string }>
+  >([]);
+  const prepareWhatsapp = async () => {
     setBusy(true);
     setMessage(null);
     try {
-      const result = await adminResendReservationTickets({
+      const { bundle } = await adminGetReservationBundle({
         data: { reservationId: id, accessToken: await accessToken() },
       });
-      setMessage(
-        result.failed
-          ? `Envoi partiel : ${result.sent} e-mail(s) envoyé(s), ${result.failed} échec(s). ${result.errors[0] ?? ""}`
-          : `${result.sent} e-mail(s) envoyé(s) avec succès.`,
-      );
+      const dateLabel = new Date(bundle.event.startsAt).toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+      const timeLabel = new Date(bundle.event.startsAt).toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const origin = window.location.origin;
+      const links = bundle.tickets.map((ticket) => {
+        const ticketUrl = `${origin}/billet?token=${encodeURIComponent(ticket.token)}`;
+        const msg = buildAttendeeMessage({
+          firstName: ticket.firstName,
+          eventName: bundle.event.name,
+          dateLabel,
+          timeLabel,
+          venue: bundle.event.venue,
+          city: bundle.event.city,
+          ticketUrl,
+          reference: bundle.reference,
+        });
+        return {
+          name: `${ticket.firstName} ${ticket.lastName}`,
+          whatsapp: ticket.whatsapp,
+          url: ticket.whatsapp ? buildWaMeLink(ticket.whatsapp, msg) : "",
+          ticketUrl,
+        };
+      });
+      setWaLinks(links);
+      if (!links.length) setMessage("Aucun billet actif à envoyer.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Échec de l’envoi des billets.");
+      setMessage(error instanceof Error ? error.message : "Échec de la préparation WhatsApp.");
     } finally {
       setBusy(false);
     }
   };
+
 
   if (query.isLoading)
     return <div className="text-sm text-ivory/50">Chargement de la réservation…</div>;
@@ -175,13 +208,14 @@ function TicketReservationDetail() {
         </div>
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={resend}
-            disabled={busy || reservation.status === "cancelled"}
+            onClick={prepareWhatsapp}
+            disabled={busy || reservation.status !== "confirmed"}
             className="inline-flex h-11 items-center gap-2 border border-champagne/40 px-4 text-sm text-champagne disabled:opacity-40"
           >
-            <Mail className="size-4" />
-            Renvoyer les billets par e-mail
+            <MessageCircle className="size-4" />
+            Préparer l’envoi WhatsApp
           </button>
+
           <button
             onClick={cancel}
             disabled={busy || reservation.status === "cancelled"}
@@ -192,7 +226,49 @@ function TicketReservationDetail() {
           </button>
         </div>
       </header>
+      {waLinks.length > 0 && (
+        <section className="border border-champagne/20 bg-obsidian/40 p-5">
+          <h2 className="font-display text-xl text-champagne">Envoi WhatsApp</h2>
+          <p className="mt-2 text-sm text-ivory/60">
+            Ouvrez chaque lien pour envoyer le billet nominatif via WhatsApp.
+          </p>
+          <ul className="mt-4 space-y-3">
+            {waLinks.map((link) => (
+              <li
+                key={link.ticketUrl}
+                className="flex flex-wrap items-center justify-between gap-3 border-b border-champagne/10 pb-3 last:border-0"
+              >
+                <div>
+                  <p className="text-sm text-ivory">{link.name}</p>
+                  <p className="text-xs text-ivory/50">{link.whatsapp ?? "Numéro WhatsApp manquant"}</p>
+                </div>
+                {link.url ? (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex h-9 items-center gap-2 border border-champagne/40 px-3 text-xs text-champagne"
+                  >
+                    <MessageCircle className="size-3.5" />
+                    Ouvrir WhatsApp
+                  </a>
+                ) : (
+                  <a
+                    href={link.ticketUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-ivory/60 underline"
+                  >
+                    Voir le billet
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <form onSubmit={save} className="space-y-10">
+
         <fieldset>
           <legend className="font-display text-2xl">Contact</legend>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
