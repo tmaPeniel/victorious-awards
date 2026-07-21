@@ -293,6 +293,14 @@ function TicketingAdminPage() {
         </button>
       </div>
 
+      {message && !showSettings && (
+        <p role="status" className="text-sm text-champagne">
+          {message}
+        </p>
+      )}
+
+
+
       <div className="overflow-x-auto border border-champagne/15">
         <table className="w-full min-w-[48rem] text-left text-sm">
           <thead className="border-b border-champagne/15 bg-ivory/[0.03] text-xs uppercase tracking-[0.15em] text-champagne/60">
