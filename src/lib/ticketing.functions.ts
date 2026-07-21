@@ -280,6 +280,7 @@ export const createTicketReservation = createServerFn({ method: "POST" })
         first_name: attendee.firstName,
         last_name: attendee.lastName,
         email: attendee.email.toLowerCase(),
+        whatsapp: attendee.whatsapp?.trim() ? attendee.whatsapp.trim() : null,
         ticket_token_hash: await hashToken(rawTicketTokens[index]),
       })),
     );
@@ -290,11 +291,13 @@ export const createTicketReservation = createServerFn({ method: "POST" })
       p_contact_last_name: data.contactLastName,
       p_contact_email: data.contactEmail.toLowerCase(),
       p_contact_phone: data.contactPhone,
+      p_contact_whatsapp: data.contactWhatsapp,
       p_management_token_hash: await hashToken(managementToken),
       p_idempotency_key: data.idempotencyKey,
       p_rate_key_hash: await hashToken(data.contactEmail.toLowerCase()),
       p_attendees: attendeePayload as Json,
     };
+
     let { data: result, error } = await supabase.rpc("create_ticket_reservation", rpcPayload);
     if (error && accessToken && error.message.toLowerCase().includes("permission denied")) {
       const { data: ticketEvent } = await supabase
