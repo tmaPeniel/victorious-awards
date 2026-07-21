@@ -48,6 +48,9 @@ type AdminAuth = { accessToken: string };
 export type TicketBundle = {
   reference: string;
   status: "confirmed" | "waitlisted" | "cancelled";
+  contactFirstName: string;
+  contactLastName: string;
+  contactWhatsapp: string | null;
   event: {
     name: string;
     startsAt: string;
@@ -59,9 +62,11 @@ export type TicketBundle = {
     firstName: string;
     lastName: string;
     email: string;
+    whatsapp: string | null;
     token: string;
   }>;
 };
+
 
 async function hashToken(value: string): Promise<string> {
   const bytes = new TextEncoder().encode(value);
