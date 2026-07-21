@@ -27,7 +27,7 @@ export const Route = createFileRoute("/candidater")({
       },
     ],
   }),
-  component: CandidaturesClosedPage,
+  component: CandidaturesGate,
 });
 
 function CandidaturesGate() {
