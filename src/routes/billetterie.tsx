@@ -360,7 +360,7 @@ function Field({
     <label htmlFor={id} className="block text-xs uppercase tracking-[0.18em] text-champagne/75">
       {label}
       <span className="text-gold"> *</span>
-      <input id={id} required className={fieldClass} {...props} />
+      <input id={id} className={fieldClass} {...props} />
     </label>
   );
 }
