@@ -95,6 +95,40 @@ function AdminDashboard() {
         <p className="mt-2 text-sm text-ivory/60">Vue d'ensemble de l'édition en cours.</p>
       </header>
 
+      <section className="flex flex-col gap-4 border border-champagne/15 bg-ivory/[0.02] p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">Candidatures</div>
+          <div className="mt-2 font-display text-xl text-ivory">
+            {settings.isLoading ? "…" : open ? "Ouvertes au public" : "Fermées au public"}
+          </div>
+          <p className="mt-1 text-xs text-ivory/50">
+            Active ou désactive le formulaire de candidature sans redéploiement.
+          </p>
+        </div>
+        <button
+          type="button"
+          disabled={settings.isLoading || toggle.isPending}
+          onClick={() => toggle.mutate(!open)}
+          className={cn(
+            "inline-flex items-center gap-3 border px-5 py-3 text-[0.7rem] uppercase tracking-[0.3em] transition",
+            open
+              ? "border-champagne/40 text-champagne hover:bg-champagne/10"
+              : "border-champagne bg-champagne text-obsidian hover:bg-champagne/90",
+            (settings.isLoading || toggle.isPending) && "opacity-60",
+          )}
+        >
+          <span
+            aria-hidden
+            className={cn(
+              "inline-block h-2 w-2 rounded-full",
+              open ? "bg-champagne" : "bg-obsidian",
+            )}
+          />
+          {toggle.isPending ? "Enregistrement…" : open ? "Fermer les candidatures" : "Ouvrir les candidatures"}
+        </button>
+      </section>
+
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
         {stats.map((s) => (
           <div key={s.label} className="border border-champagne/15 bg-ivory/[0.02] p-6">
