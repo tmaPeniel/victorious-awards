@@ -210,29 +210,49 @@ function TicketingPage() {
                 </div>
                 <div className="mt-7 divide-y divide-champagne/15 border-y border-champagne/15">
                   {attendees.map((person, index) => (
-                    <div key={index} className="grid gap-5 py-7 sm:grid-cols-[3rem_1fr_1fr]">
-                      <div className="grid size-10 place-items-center rounded-full bg-champagne text-sm font-semibold text-obsidian">
-                        {index + 1}
+                    <div key={index} className="grid gap-5 py-7">
+                      <div className="flex items-center gap-4">
+                        <div className="grid size-10 place-items-center rounded-full bg-champagne text-sm font-semibold text-obsidian">
+                          {index + 1}
+                        </div>
+                        <p className="text-xs uppercase tracking-[0.18em] text-champagne/75">
+                          {index === 0 ? "Contact principal" : `Participant ${index + 1}`}
+                        </p>
                       </div>
-                      <Field
-                        label="Prénom et nom"
-                        value={person.firstName}
-                        onChange={updateAttendee(index, "firstName")}
-                        second={{
-                          label: "Nom",
-                          value: person.lastName,
-                          onChange: updateAttendee(index, "lastName"),
-                        }}
-                      />
-                      <Field
-                        label="E-mail du participant"
-                        type="email"
-                        value={person.email}
-                        onChange={updateAttendee(index, "email")}
-                      />
+                      <div className="grid gap-4 sm:grid-cols-2">
+                        <Field
+                          label="Prénom"
+                          value={person.firstName}
+                          onChange={updateAttendee(index, "firstName")}
+                        />
+                        <Field
+                          label="Nom"
+                          value={person.lastName}
+                          onChange={updateAttendee(index, "lastName")}
+                        />
+                        <Field
+                          label="E-mail du participant"
+                          type="email"
+                          value={person.email}
+                          onChange={updateAttendee(index, "email")}
+                        />
+                        <Field
+                          label={
+                            index === 0
+                              ? "WhatsApp (obligatoire, format +33…)"
+                              : "WhatsApp (optionnel, format +33…)"
+                          }
+                          type="tel"
+                          placeholder="+33612345678"
+                          value={person.whatsapp}
+                          onChange={updateAttendee(index, "whatsapp")}
+                          required={index === 0}
+                        />
+                      </div>
                     </div>
                   ))}
                 </div>
+
               </fieldset>
 
               <div className="absolute -left-[9999px]" aria-hidden="true">
