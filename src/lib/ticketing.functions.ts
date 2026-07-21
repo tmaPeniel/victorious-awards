@@ -5,8 +5,18 @@ import type { Json } from "@/integrations/supabase/types";
 
 const whatsappSchema = z
   .string()
-  .trim()
-  .regex(/^\+[1-9]\d{7,14}$/, "Numéro WhatsApp invalide (format international, ex. +33612345678).");
+  .transform((v) => {
+    let s = v.replace(/[\s\-().]/g, "");
+    if (s.startsWith("00")) s = "+" + s.slice(2);
+    if (/^0\d{9}$/.test(s)) s = "+33" + s.slice(1);
+    return s;
+  })
+  .pipe(
+    z
+      .string()
+      .regex(/^\+[1-9]\d{7,14}$/, "Numéro WhatsApp invalide (format international, ex. +33612345678)."),
+  );
+
 
 const attendeeSchema = z.object({
   id: z.string().uuid().optional(),
