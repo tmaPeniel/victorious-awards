@@ -208,13 +208,14 @@ function TicketReservationDetail() {
         </div>
         <div className="flex flex-wrap gap-3">
           <button
-            onClick={resend}
-            disabled={busy || reservation.status === "cancelled"}
+            onClick={prepareWhatsapp}
+            disabled={busy || reservation.status !== "confirmed"}
             className="inline-flex h-11 items-center gap-2 border border-champagne/40 px-4 text-sm text-champagne disabled:opacity-40"
           >
-            <Mail className="size-4" />
-            Renvoyer les billets par e-mail
+            <MessageCircle className="size-4" />
+            Préparer l’envoi WhatsApp
           </button>
+
           <button
             onClick={cancel}
             disabled={busy || reservation.status === "cancelled"}
