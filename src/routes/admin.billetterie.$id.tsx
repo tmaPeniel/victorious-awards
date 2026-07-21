@@ -127,24 +127,55 @@ function TicketReservationDetail() {
     }
   };
 
-  const resend = async () => {
+  const [waLinks, setWaLinks] = useState<
+    Array<{ name: string; whatsapp: string | null; url: string; ticketUrl: string }>
+  >([]);
+  const prepareWhatsapp = async () => {
     setBusy(true);
     setMessage(null);
     try {
-      const result = await adminResendReservationTickets({
+      const { bundle } = await adminGetReservationBundle({
         data: { reservationId: id, accessToken: await accessToken() },
       });
-      setMessage(
-        result.failed
-          ? `Envoi partiel : ${result.sent} e-mail(s) envoyé(s), ${result.failed} échec(s). ${result.errors[0] ?? ""}`
-          : `${result.sent} e-mail(s) envoyé(s) avec succès.`,
-      );
+      const dateLabel = new Date(bundle.event.startsAt).toLocaleDateString("fr-FR", {
+        weekday: "long",
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      });
+      const timeLabel = new Date(bundle.event.startsAt).toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
+      const origin = window.location.origin;
+      const links = bundle.tickets.map((ticket) => {
+        const ticketUrl = `${origin}/billet?token=${encodeURIComponent(ticket.token)}`;
+        const msg = buildAttendeeMessage({
+          firstName: ticket.firstName,
+          eventName: bundle.event.name,
+          dateLabel,
+          timeLabel,
+          venue: bundle.event.venue,
+          city: bundle.event.city,
+          ticketUrl,
+          reference: bundle.reference,
+        });
+        return {
+          name: `${ticket.firstName} ${ticket.lastName}`,
+          whatsapp: ticket.whatsapp,
+          url: ticket.whatsapp ? buildWaMeLink(ticket.whatsapp, msg) : "",
+          ticketUrl,
+        };
+      });
+      setWaLinks(links);
+      if (!links.length) setMessage("Aucun billet actif à envoyer.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Échec de l’envoi des billets.");
+      setMessage(error instanceof Error ? error.message : "Échec de la préparation WhatsApp.");
     } finally {
       setBusy(false);
     }
   };
+
 
   if (query.isLoading)
     return <div className="text-sm text-ivory/50">Chargement de la réservation…</div>;
