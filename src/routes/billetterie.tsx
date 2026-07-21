@@ -593,7 +593,7 @@ function ManageLookupModal({ onClose }: { onClose: () => void }) {
         data: { reference: reference.trim(), email: email.trim() },
       });
       onClose();
-      navigate({ to: "/billetterie_/gerer", search: { token } });
+      navigate({ to: "/billetterie/gerer", search: { token } });
     } catch (err) {
       setErrorMsg(
         err instanceof Error ? err.message : "Impossible de retrouver la réservation.",
