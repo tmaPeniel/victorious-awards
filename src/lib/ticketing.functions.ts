@@ -742,3 +742,42 @@ export const lookupReservation = createServerFn({ method: "POST" })
     return { token: rawToken };
   });
 
+export const adminDeleteReservation = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) =>
+    z
+      .object({
+        accessToken: z.string().min(20),
+        reservationId: z.string().uuid(),
+      })
+      .parse(data),
+  )
+  .handler(async ({ data }) => {
+    await requireAdmin(data.accessToken);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: reservation, error: fetchError } = await supabaseAdmin
+      .from("ticket_reservations")
+      .select("id, event_id")
+      .eq("id", data.reservationId)
+      .single();
+    if (fetchError || !reservation) throw new Error("Réservation introuvable.");
+
+    const { error: attendeesError } = await supabaseAdmin
+      .from("ticket_attendees")
+      .delete()
+      .eq("reservation_id", data.reservationId);
+    if (attendeesError) throw new Error(attendeesError.message);
+
+    const { error: deleteError } = await supabaseAdmin
+      .from("ticket_reservations")
+      .delete()
+      .eq("id", data.reservationId);
+    if (deleteError) throw new Error(deleteError.message);
+
+    // Promote waitlist to fill the freed capacity.
+    const { data: promoted } = await supabaseAdmin.rpc("promote_ticket_waitlist", {
+      p_event_id: reservation.event_id,
+    });
+    return { ok: true as const, promoted: Array.isArray(promoted) ? promoted.length : 0 };
+  });
+
+

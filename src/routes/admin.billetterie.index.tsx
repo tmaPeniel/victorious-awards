@@ -1,11 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type FormEvent } from "react";
-import { Download, Filter, QrCode, Search, Settings2, Ticket, Users } from "lucide-react";
+import { Download, Filter, QrCode, Search, Settings2, Ticket, Trash2, Users } from "lucide-react";
 import { VButton } from "@/components/victorious/VButton";
 import { supabase } from "@/integrations/supabase/client";
 import { exportTicketReservationsToExcel } from "@/lib/excel-export";
-import { updateTicketEventSettings } from "@/lib/ticketing.functions";
+import { adminDeleteReservation, updateTicketEventSettings } from "@/lib/ticketing.functions";
+
 
 export const Route = createFileRoute("/admin/billetterie/")({ component: TicketingAdminPage });
 
@@ -15,7 +16,35 @@ function TicketingAdminPage() {
   const [status, setStatus] = useState("all");
   const [showSettings, setShowSettings] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
+
+  const handleDelete = async (id: string, reference: string) => {
+    if (!confirm(`Supprimer définitivement la réservation ${reference} ? Cette action est irréversible.`)) return;
+    const { data: sessionData } = await supabase.auth.getSession();
+    if (!sessionData.session) {
+      setMessage("Votre session a expiré.");
+      return;
+    }
+    setDeletingId(id);
+    setMessage(null);
+    try {
+      const result = await adminDeleteReservation({
+        data: { accessToken: sessionData.session.access_token, reservationId: id },
+      });
+      setMessage(
+        result.promoted
+          ? `Réservation supprimée. ${result.promoted} réservation(s) promue(s) depuis la liste d’attente.`
+          : "Réservation supprimée.",
+      );
+      await queryClient.invalidateQueries({ queryKey: ["admin", "ticketing"] });
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Suppression impossible.");
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
 
   const query = useQuery({
     queryKey: ["admin", "ticketing"],
@@ -264,6 +293,14 @@ function TicketingAdminPage() {
         </button>
       </div>
 
+      {message && !showSettings && (
+        <p role="status" className="text-sm text-champagne">
+          {message}
+        </p>
+      )}
+
+
+
       <div className="overflow-x-auto border border-champagne/15">
         <table className="w-full min-w-[48rem] text-left text-sm">
           <thead className="border-b border-champagne/15 bg-ivory/[0.03] text-xs uppercase tracking-[0.15em] text-champagne/60">
@@ -298,14 +335,26 @@ function TicketingAdminPage() {
                   {new Date(reservation.created_at).toLocaleDateString("fr-FR")}
                 </td>
                 <td className="p-4 text-right">
-                  <Link
-                    to="/admin/billetterie/$id"
-                    params={{ id: reservation.id }}
-                    className="text-champagne hover:text-ivory"
-                  >
-                    Voir →
-                  </Link>
+                  <div className="inline-flex items-center gap-4">
+                    <Link
+                      to="/admin/billetterie/$id"
+                      params={{ id: reservation.id }}
+                      className="text-champagne hover:text-ivory"
+                    >
+                      Voir →
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={() => handleDelete(reservation.id, reservation.reference)}
+                      disabled={deletingId === reservation.id}
+                      aria-label={`Supprimer la réservation ${reservation.reference}`}
+                      className="text-ivory/50 transition-colors hover:text-brick disabled:opacity-40"
+                    >
+                      <Trash2 className="size-4" />
+                    </button>
+                  </div>
                 </td>
+
               </tr>
             ))}
             {!filtered.length && (
