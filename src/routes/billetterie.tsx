@@ -57,6 +57,7 @@ function TicketingPage() {
   const [website, setWebsite] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [lookupOpen, setLookupOpen] = useState(false);
   const [result, setResult] = useState<null | {
     reference: string;
     status: "confirmed" | "waitlisted";
@@ -64,6 +65,7 @@ function TicketingPage() {
     ticketBundle: TicketBundle | null;
   }>(null);
   const idempotencyKey = useMemo(() => crypto.randomUUID(), []);
+
 
   const updateAttendee =
     (index: number, key: keyof Attendee) => (e: ChangeEvent<HTMLInputElement>) => {
