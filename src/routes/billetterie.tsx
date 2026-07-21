@@ -224,18 +224,22 @@ function TicketingPage() {
                           label="Prénom"
                           value={person.firstName}
                           onChange={updateAttendee(index, "firstName")}
+                          required
                         />
                         <Field
                           label="Nom"
                           value={person.lastName}
                           onChange={updateAttendee(index, "lastName")}
+                          required
                         />
                         <Field
                           label="E-mail du participant"
                           type="email"
                           value={person.email}
                           onChange={updateAttendee(index, "email")}
+                          required
                         />
+
                         <Field
                           label={
                             index === 0
