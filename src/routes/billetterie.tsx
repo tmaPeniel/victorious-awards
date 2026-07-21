@@ -439,21 +439,25 @@ function SuccessState({
           : "Conservez votre lien de gestion et consultez-le ultérieurement pour suivre votre statut."}
       </p>
       {confirmed && result.ticketBundle && (
-        <button
-          type="button"
-          onClick={download}
-          disabled={downloading}
-          className="mx-auto mt-9 inline-flex h-14 items-center justify-center gap-3 bg-champagne px-7 text-sm font-semibold uppercase tracking-[0.14em] text-obsidian transition-colors hover:bg-gold disabled:opacity-50"
-        >
-          <Download className="size-5" />
-          {downloading ? "Préparation du PDF…" : "Télécharger mes billets en PDF"}
-        </button>
+        <div className="mt-9 space-y-4">
+          <button
+            type="button"
+            onClick={download}
+            disabled={downloading}
+            className="mx-auto inline-flex h-14 items-center justify-center gap-3 bg-champagne px-7 text-sm font-semibold uppercase tracking-[0.14em] text-obsidian transition-colors hover:bg-gold disabled:opacity-50"
+          >
+            <Download className="size-5" />
+            {downloading ? "Préparation du PDF…" : "Télécharger mes billets en PDF"}
+          </button>
+          <WhatsappSend bundle={result.ticketBundle} />
+        </div>
       )}
       {downloadError && (
         <p role="alert" className="mt-4 text-sm text-brick">
           {downloadError}
         </p>
       )}
+
       <div className="mx-auto mt-8 max-w-xl border-y border-champagne/15 py-5">
         <p className="text-sm leading-relaxed text-ivory/60">
           Ce lien sécurisé est le seul moyen de retrouver, modifier ou annuler vos billets.
