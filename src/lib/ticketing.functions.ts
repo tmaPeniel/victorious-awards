@@ -230,7 +230,7 @@ export const getTicketingAvailability = createServerFn({ method: "GET" }).handle
 });
 
 export const createTicketReservation = createServerFn({ method: "POST" })
-  .validator((data: unknown) => bookingSchema.parse(data))
+  .inputValidator((data: unknown) => bookingSchema.parse(data))
   .handler(async ({ data }) => {
     if (data.website)
       return {
@@ -364,7 +364,7 @@ export const createTicketReservation = createServerFn({ method: "POST" })
   });
 
 export const getTicketBundle = createServerFn({ method: "POST" })
-  .validator((data: unknown) => tokenSchema.parse(data))
+  .inputValidator((data: unknown) => tokenSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: reservation, error } = await supabaseAdmin
@@ -377,7 +377,7 @@ export const getTicketBundle = createServerFn({ method: "POST" })
   });
 
 export const getManagedReservation = createServerFn({ method: "POST" })
-  .validator((data: unknown) => tokenSchema.parse(data))
+  .inputValidator((data: unknown) => tokenSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: reservation, error } = await supabaseAdmin
@@ -398,7 +398,7 @@ export const getManagedReservation = createServerFn({ method: "POST" })
   });
 
 export const updateManagedReservation = createServerFn({ method: "POST" })
-  .validator((data: unknown) => manageSchema.parse(data))
+  .inputValidator((data: unknown) => manageSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const managementHash = await hashToken(data.token);
@@ -452,7 +452,7 @@ export const updateManagedReservation = createServerFn({ method: "POST" })
   });
 
 export const getTicket = createServerFn({ method: "POST" })
-  .validator((data: unknown) => tokenSchema.parse(data))
+  .inputValidator((data: unknown) => tokenSchema.parse(data))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: attendee, error } = await supabaseAdmin
@@ -483,7 +483,7 @@ async function requireAdmin(accessToken: string) {
 }
 
 export const adminUpdateReservation = createServerFn({ method: "POST" })
-  .validator((data: unknown) =>
+  .inputValidator((data: unknown) =>
     z
       .object({
         reservationId: z.string().uuid(),
@@ -560,7 +560,7 @@ export const adminUpdateReservation = createServerFn({ method: "POST" })
   });
 
 export const adminCancelReservation = createServerFn({ method: "POST" })
-  .validator((data: unknown) =>
+  .inputValidator((data: unknown) =>
     z.object({ reservationId: z.string().uuid(), accessToken: z.string().min(20) }).parse(data),
   )
   .handler(async ({ data }) => {
@@ -588,7 +588,7 @@ export const adminCancelReservation = createServerFn({ method: "POST" })
   });
 
 export const updateTicketEventSettings = createServerFn({ method: "POST" })
-  .validator((data: unknown) =>
+  .inputValidator((data: unknown) =>
     z
       .object({
         accessToken: z.string().min(20),
