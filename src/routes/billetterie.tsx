@@ -489,3 +489,71 @@ function SuccessState({
     </div>
   );
 }
+
+function WhatsappSend({ bundle }: { bundle: TicketBundle }) {
+  const dateLabel = new Date(bundle.event.startsAt).toLocaleDateString("fr-FR", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const timeLabel = new Date(bundle.event.startsAt).toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+  return (
+    <div className="mt-6 border border-champagne/20 bg-obsidian/40 p-5 text-left">
+      <h3 className="font-display text-xl text-champagne">Envoyer les billets par WhatsApp</h3>
+      <p className="mt-2 text-sm text-ivory/65">
+        Ouvrez chaque conversation WhatsApp pré-remplie avec le lien du billet et le QR code.
+      </p>
+      <ul className="mt-4 space-y-3">
+        {bundle.tickets.map((ticket) => {
+          const ticketUrl = `${window.location.origin}/billet?token=${encodeURIComponent(ticket.token)}`;
+          const message =
+            `Bonjour ${ticket.firstName} 🎉\n\n` +
+            `Voici votre billet pour ${bundle.event.name}\n` +
+            `📅 ${dateLabel} · ${timeLabel}\n` +
+            `📍 ${bundle.event.venue} — ${bundle.event.city}\n\n` +
+            `Ouvrez ce lien et présentez le QR code à l'entrée :\n${ticketUrl}\n\n` +
+            `Référence : ${bundle.reference}`;
+          const number = ticket.whatsapp ?? bundle.contactWhatsapp;
+          const digits = number?.replace(/[\s\-().]/g, "").replace(/^\+/, "");
+          const waUrl = digits ? `https://wa.me/${digits}?text=${encodeURIComponent(message)}` : null;
+          return (
+            <li
+              key={ticket.token}
+              className="flex flex-wrap items-center justify-between gap-3 border-b border-champagne/10 pb-3 last:border-0"
+            >
+              <div>
+                <p className="text-sm text-ivory">
+                  {ticket.firstName} {ticket.lastName}
+                </p>
+                <p className="text-xs text-ivory/50">{number ?? "Numéro manquant"}</p>
+              </div>
+              {waUrl ? (
+                <a
+                  href={waUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex h-9 items-center gap-2 border border-champagne/40 px-3 text-xs text-champagne"
+                >
+                  Ouvrir WhatsApp
+                </a>
+              ) : (
+                <a
+                  href={ticketUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-xs text-ivory/60 underline"
+                >
+                  Voir le billet
+                </a>
+              )}
+            </li>
+          );
+        })}
+      </ul>
+    </div>
+  );
+}
