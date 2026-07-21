@@ -3,11 +3,17 @@ import { z } from "zod";
 import { event as eventDetails } from "@/content/event";
 import type { Json } from "@/integrations/supabase/types";
 
+const whatsappSchema = z
+  .string()
+  .trim()
+  .regex(/^\+[1-9]\d{7,14}$/, "Numéro WhatsApp invalide (format international, ex. +33612345678).");
+
 const attendeeSchema = z.object({
   id: z.string().uuid().optional(),
   firstName: z.string().trim().min(2).max(60),
   lastName: z.string().trim().min(2).max(60),
   email: z.string().trim().email().max(255),
+  whatsapp: z.union([whatsappSchema, z.literal("")]).optional(),
 });
 
 const bookingSchema = z.object({
@@ -15,6 +21,7 @@ const bookingSchema = z.object({
   contactLastName: z.string().trim().min(2).max(60),
   contactEmail: z.string().trim().email().max(255),
   contactPhone: z.string().trim().max(24),
+  contactWhatsapp: whatsappSchema,
   attendees: z
     .array(attendeeSchema.omit({ id: true }))
     .min(1)
@@ -32,6 +39,7 @@ const manageSchema = z.object({
   contactPhone: z.string().trim().min(8).max(24),
   attendees: z.array(attendeeSchema.extend({ id: z.string().uuid() })).max(4),
 });
+
 
 const tokenSchema = z.object({ token: z.string().min(32) });
 
