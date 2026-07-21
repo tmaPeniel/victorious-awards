@@ -167,6 +167,54 @@ export type Database = {
         }
         Relationships: []
       }
+      raffle_participants: {
+        Row: {
+          cancelled_at: string | null
+          created_at: string
+          created_by: string | null
+          email: string
+          first_name: string
+          id: string
+          last_name: string
+          phone: string
+          status: Database["public"]["Enums"]["raffle_participant_status"]
+          ticket_number: number
+          ticket_token_hash: string
+          updated_at: string
+          whatsapp_sent_at: string | null
+        }
+        Insert: {
+          cancelled_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          email: string
+          first_name: string
+          id?: string
+          last_name: string
+          phone: string
+          status?: Database["public"]["Enums"]["raffle_participant_status"]
+          ticket_number?: number
+          ticket_token_hash: string
+          updated_at?: string
+          whatsapp_sent_at?: string | null
+        }
+        Update: {
+          cancelled_at?: string | null
+          created_at?: string
+          created_by?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          last_name?: string
+          phone?: string
+          status?: Database["public"]["Enums"]["raffle_participant_status"]
+          ticket_number?: number
+          ticket_token_hash?: string
+          updated_at?: string
+          whatsapp_sent_at?: string | null
+        }
+        Relationships: []
+      }
       testimonials: {
         Row: {
           category_slug: string | null
@@ -594,6 +642,7 @@ export type Database = {
         | "shortlisted"
         | "rejected"
         | "winner"
+      raffle_participant_status: "active" | "cancelled"
       ticket_attendee_status: "active" | "cancelled" | "checked_in"
       ticket_reservation_status: "confirmed" | "waitlisted" | "cancelled"
     }
@@ -731,6 +780,7 @@ export const Constants = {
         "rejected",
         "winner",
       ],
+      raffle_participant_status: ["active", "cancelled"],
       ticket_attendee_status: ["active", "cancelled", "checked_in"],
       ticket_reservation_status: ["confirmed", "waitlisted", "cancelled"],
     },

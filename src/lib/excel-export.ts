@@ -104,3 +104,39 @@ export async function exportTicketReservationsToExcel(rows: Array<{
   XLSX.utils.book_append_sheet(wb, ws, "Billetterie");
   XLSX.writeFile(wb, `victorious-billetterie-${new Date().toISOString().slice(0, 10)}.xlsx`);
 }
+
+export async function exportRaffleParticipantsToExcel(rows: Array<{
+  ticket_number: number;
+  first_name: string;
+  last_name: string;
+  phone: string;
+  email: string | null;
+  status: string;
+  whatsapp_sent_at: string | null;
+  created_at: string;
+}>): Promise<void> {
+  const XLSX = await import("xlsx");
+  const ws = XLSX.utils.json_to_sheet(
+    rows.map((r) => ({
+      "N° Ticket": `T-${String(r.ticket_number).padStart(4, "0")}`,
+      Prénom: r.first_name,
+      Nom: r.last_name,
+      Téléphone: r.phone,
+      Email: r.email ?? "",
+      Statut: r.status === "cancelled" ? "Annulé" : "Actif",
+      "WhatsApp envoyé": r.whatsapp_sent_at
+        ? new Date(r.whatsapp_sent_at).toLocaleString("fr-FR")
+        : "",
+      "Inscrit le": new Date(r.created_at).toLocaleString("fr-FR", {
+        dateStyle: "short",
+        timeStyle: "short",
+      }),
+    })),
+  );
+  ws["!cols"] = [
+    { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 28 }, { wch: 10 }, { wch: 20 }, { wch: 18 },
+  ];
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Tirage au sort");
+  XLSX.writeFile(wb, `victorious-tirage-${new Date().toISOString().slice(0, 10)}.xlsx`);
+}

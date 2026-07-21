@@ -9,6 +9,17 @@ export function isValidWhatsappNumber(value: string): boolean {
 }
 
 /**
+ * Normalizes a French local number (0X…) or an international one (00…) to E.164.
+ * Returns null if the result isn't a valid E.164 number.
+ */
+export function toE164Whatsapp(value: string): string | null {
+  let s = normalizeWhatsappNumber(value);
+  if (s.startsWith("00")) s = "+" + s.slice(2);
+  if (/^0\d{9}$/.test(s)) s = "+33" + s.slice(1);
+  return E164_REGEX.test(s) ? s : null;
+}
+
+/**
  * Build a wa.me click-to-chat link. `phone` must be E.164 (with the leading +),
  * which we strip because wa.me expects digits only.
  */
@@ -43,6 +54,19 @@ export function buildAttendeeMessage(params: {
     `📍 ${params.venue} — ${params.city}\n\n` +
     `Ouvrez ce lien et présentez le QR code à l'entrée :\n${params.ticketUrl}\n\n` +
     `Référence : ${params.reference}`
+  );
+}
+
+export function buildRaffleTicketMessage(params: {
+  firstName: string;
+  ticketNumber: number;
+}): string {
+  const ref = `T-${String(params.ticketNumber).padStart(4, "0")}`;
+  return (
+    `Bonjour ${params.firstName} 🎟️\n\n` +
+    `Vous êtes inscrit(e) au tirage au sort Victorious !\n` +
+    `Votre numéro de participation : ${ref}\n\n` +
+    `Le tirage aura lieu le jour J. Bonne chance ! ✨`
   );
 }
 
