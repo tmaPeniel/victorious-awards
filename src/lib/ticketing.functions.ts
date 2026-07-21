@@ -354,6 +354,12 @@ export const createTicketReservation = createServerFn({ method: "POST" })
             }))
           : [],
     };
+    try {
+      const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
+      await sendReservationTicketEmails(booking.id, { kindSuffix: "reservation" });
+    } catch (emailError) {
+      console.error("ticket email dispatch failed", emailError);
+    }
     return {
       ok: true as const,
       reference: booking.reference,
