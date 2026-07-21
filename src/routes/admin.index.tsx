@@ -3,12 +3,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
+import { useSession } from "@/lib/use-session";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
 });
 
 function AdminDashboard() {
+  const { session } = useSession();
   const qc = useQueryClient();
   const settings = useQuery({
     queryKey: ["admin", "app_settings", "applications_open"],
