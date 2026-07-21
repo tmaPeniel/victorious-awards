@@ -363,10 +363,11 @@ function Field({
   return (
     <label htmlFor={id} className="block text-xs uppercase tracking-[0.18em] text-champagne/75">
       {label}
-      <span className="text-gold"> *</span>
+      {props.required && <span className="text-gold"> *</span>}
       <input id={id} className={fieldClass} {...props} />
     </label>
   );
+
 }
 
 function StateMessage({ title, text }: { title: string; text: string }) {
