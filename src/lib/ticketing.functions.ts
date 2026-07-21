@@ -474,21 +474,12 @@ export const updateManagedReservation = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(translateTicketError(error.message));
     const promotedIds = ((result as { promoted_ids?: string[] })?.promoted_ids ?? []) as string[];
-    if (promotedIds.length) {
-      try {
-        const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-        await Promise.all(
-          promotedIds.map((id) => sendReservationTicketEmails(id, { kindSuffix: "promotion" })),
-        );
-      } catch (emailError) {
-        console.error("promotion email dispatch failed", emailError);
-      }
-    }
     return {
       ok: true as const,
       cancelled: data.attendees.length === 0,
       promoted: promotedIds.length,
     };
+
   });
 
 export const getTicket = createServerFn({ method: "POST" })
