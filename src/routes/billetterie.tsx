@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery } from "@tanstack/react-query";
 import { useId, useMemo, useState, type ChangeEvent, type FormEvent } from "react";
 import {
@@ -8,19 +8,23 @@ import {
   Copy,
   Clock,
   Download,
+  KeyRound,
   MapPin,
   Minus,
   Plus,
   Ticket,
   Users,
+  X,
 } from "lucide-react";
 import { VButton } from "@/components/victorious/VButton";
 import { event } from "@/content/event";
 import {
   createTicketReservation,
   getTicketingAvailability,
+  lookupReservation,
   type TicketBundle,
 } from "@/lib/ticketing.functions";
+
 
 export const Route = createFileRoute("/billetterie")({
   head: () => ({
