@@ -36,10 +36,11 @@ export const Route = createFileRoute("/billetterie")({
   component: TicketingPage,
 });
 
-type Attendee = { firstName: string; lastName: string; email: string };
-const emptyAttendee = (): Attendee => ({ firstName: "", lastName: "", email: "" });
+type Attendee = { firstName: string; lastName: string; email: string; whatsapp: string };
+const emptyAttendee = (): Attendee => ({ firstName: "", lastName: "", email: "", whatsapp: "" });
 const fieldClass =
   "mt-2 h-12 w-full border border-champagne/25 bg-obsidian/35 px-4 text-base text-ivory outline-none transition-colors placeholder:text-ivory/45 focus:border-champagne";
+
 
 function TicketingPage() {
   const availability = useQuery({
