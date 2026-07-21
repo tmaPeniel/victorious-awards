@@ -357,7 +357,9 @@ function TicketingPage() {
           </div>
         )}
       </section>
+      {lookupOpen && <ManageLookupModal onClose={() => setLookupOpen(false)} />}
     </>
+
   );
 }
 
