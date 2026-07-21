@@ -91,7 +91,9 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: reservation, error } = await supabaseAdmin
     .from("ticket_reservations")
-    .select("id, event_id, reference, status, idempotency_key")
+    .select(
+      "id, event_id, reference, status, idempotency_key, contact_first_name, contact_last_name, contact_whatsapp",
+    )
     .eq("id", reservationId)
     .single();
   if (error || !reservation) throw new Error("Réservation introuvable.");
@@ -105,7 +107,7 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
     supabaseAdmin
       .from("ticket_attendees")
       .select(
-        "id, position, first_name, last_name, email, status, ticket_token_hash, ticket_version",
+        "id, position, first_name, last_name, email, whatsapp, status, ticket_token_hash, ticket_version",
       )
       .eq("reservation_id", reservation.id)
       .neq("status", "cancelled")
@@ -135,6 +137,7 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
               firstName: attendee.first_name,
               lastName: attendee.last_name,
               email: attendee.email,
+              whatsapp: attendee.whatsapp ?? null,
               token,
             };
           }),
@@ -144,6 +147,9 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
   return {
     reference: reservation.reference,
     status: reservation.status,
+    contactFirstName: reservation.contact_first_name,
+    contactLastName: reservation.contact_last_name,
+    contactWhatsapp: reservation.contact_whatsapp ?? null,
     event: {
       name: event.name,
       startsAt: event.starts_at,
@@ -153,6 +159,7 @@ async function buildTicketBundle(reservationId: string): Promise<TicketBundle> {
     tickets,
   };
 }
+
 
 function translateTicketError(message: string): string {
   const errors: Record<string, string> = {
