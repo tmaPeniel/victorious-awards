@@ -8,6 +8,31 @@ export const Route = createFileRoute("/admin/")({
 });
 
 function AdminDashboard() {
+  const qc = useQueryClient();
+  const settings = useQuery({
+    queryKey: ["admin", "app_settings", "applications_open"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("app_settings" as never)
+        .select("value")
+        .eq("key", "applications_open")
+        .maybeSingle();
+      return (data as { value: unknown } | null)?.value === true;
+    },
+  });
+  const toggle = useMutation({
+    mutationFn: async (next: boolean) => {
+      const { error } = await supabase
+        .from("app_settings" as never)
+        .upsert({ key: "applications_open", value: next, updated_at: new Date().toISOString() } as never, { onConflict: "key" });
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      void qc.invalidateQueries({ queryKey: ["admin", "app_settings"] });
+      void qc.invalidateQueries({ queryKey: ["app_settings"] });
+    },
+  });
+  const open = settings.data === true;
   const { data, isLoading } = useQuery({
     queryKey: ["admin", "dashboard"],
     queryFn: async () => {
