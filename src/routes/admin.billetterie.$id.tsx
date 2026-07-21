@@ -1,10 +1,14 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState, type FormEvent } from "react";
-import { ArrowLeft, Trash2 } from "lucide-react";
+import { ArrowLeft, Mail, Trash2 } from "lucide-react";
 import { VButton } from "@/components/victorious/VButton";
 import { supabase } from "@/integrations/supabase/client";
-import { adminCancelReservation, adminUpdateReservation } from "@/lib/ticketing.functions";
+import {
+  adminCancelReservation,
+  adminResendReservationTickets,
+  adminUpdateReservation,
+} from "@/lib/ticketing.functions";
 
 export const Route = createFileRoute("/admin/billetterie/$id")({
   component: TicketReservationDetail,
