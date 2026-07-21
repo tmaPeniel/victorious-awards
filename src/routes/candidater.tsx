@@ -8,6 +8,7 @@ import { VButton, VLink } from "@/components/victorious/VButton";
 import { categories } from "@/content/categories";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 export const Route = createFileRoute("/candidater")({
   head: () => ({
