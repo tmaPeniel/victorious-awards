@@ -674,3 +674,71 @@ export const updateTicketEventSettings = createServerFn({ method: "POST" })
   });
 
 export type { AdminAuth };
+
+const lookupSchema = z.object({
+  reference: z.string().trim().min(6).max(32),
+  email: z.string().trim().email().max(255),
+});
+
+export const lookupReservation = createServerFn({ method: "POST" })
+  .inputValidator((data: unknown) => lookupSchema.parse(data))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const reference = data.reference.trim().toUpperCase();
+    const email = data.email.trim().toLowerCase();
+
+    // Rate limit lookups: 5 attempts / 15 min per (reference+email) combo.
+    const rateKeyHash = await hashToken(`lookup:${reference}:${email}`);
+    const { data: rateRow } = await supabaseAdmin
+      .from("ticket_rate_limits")
+      .select("attempts, window_started_at")
+      .eq("key_hash", rateKeyHash)
+      .maybeSingle();
+    const now = Date.now();
+    if (rateRow) {
+      const windowStart = new Date(rateRow.window_started_at).getTime();
+      if (now - windowStart < 15 * 60 * 1000 && rateRow.attempts >= 5) {
+        throw new Error("Trop de tentatives. Réessayez dans 15 minutes.");
+      }
+      if (now - windowStart >= 15 * 60 * 1000) {
+        await supabaseAdmin
+          .from("ticket_rate_limits")
+          .update({ attempts: 1, window_started_at: new Date().toISOString() })
+          .eq("key_hash", rateKeyHash);
+      } else {
+        await supabaseAdmin
+          .from("ticket_rate_limits")
+          .update({ attempts: rateRow.attempts + 1 })
+          .eq("key_hash", rateKeyHash);
+      }
+    } else {
+      await supabaseAdmin.from("ticket_rate_limits").insert({ key_hash: rateKeyHash });
+    }
+
+    const { data: reservation } = await supabaseAdmin
+      .from("ticket_reservations")
+      .select("id, contact_email, status")
+      .eq("reference", reference)
+      .maybeSingle();
+
+    const genericError = "Référence ou e-mail introuvable.";
+    if (!reservation) throw new Error(genericError);
+    if ((reservation.contact_email ?? "").trim().toLowerCase() !== email) {
+      throw new Error(genericError);
+    }
+    if (reservation.status === "cancelled") {
+      throw new Error("Cette réservation a été annulée.");
+    }
+
+    // Issue a fresh management token (invalidates any older link).
+    const rawToken = `${crypto.randomUUID()}${crypto.randomUUID()}`.replace(/-/g, "");
+    const tokenHash = await hashToken(rawToken);
+    const { error: updateError } = await supabaseAdmin
+      .from("ticket_reservations")
+      .update({ management_token_hash: tokenHash })
+      .eq("id", reservation.id);
+    if (updateError) throw new Error("Impossible de générer un lien de gestion. Réessayez.");
+
+    return { token: rawToken };
+  });
+
