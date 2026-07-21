@@ -226,7 +226,49 @@ function TicketReservationDetail() {
           </button>
         </div>
       </header>
+      {waLinks.length > 0 && (
+        <section className="border border-champagne/20 bg-obsidian/40 p-5">
+          <h2 className="font-display text-xl text-champagne">Envoi WhatsApp</h2>
+          <p className="mt-2 text-sm text-ivory/60">
+            Ouvrez chaque lien pour envoyer le billet nominatif via WhatsApp.
+          </p>
+          <ul className="mt-4 space-y-3">
+            {waLinks.map((link) => (
+              <li
+                key={link.ticketUrl}
+                className="flex flex-wrap items-center justify-between gap-3 border-b border-champagne/10 pb-3 last:border-0"
+              >
+                <div>
+                  <p className="text-sm text-ivory">{link.name}</p>
+                  <p className="text-xs text-ivory/50">{link.whatsapp ?? "Numéro WhatsApp manquant"}</p>
+                </div>
+                {link.url ? (
+                  <a
+                    href={link.url}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex h-9 items-center gap-2 border border-champagne/40 px-3 text-xs text-champagne"
+                  >
+                    <MessageCircle className="size-3.5" />
+                    Ouvrir WhatsApp
+                  </a>
+                ) : (
+                  <a
+                    href={link.ticketUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-xs text-ivory/60 underline"
+                  >
+                    Voir le billet
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      )}
       <form onSubmit={save} className="space-y-10">
+
         <fieldset>
           <legend className="font-display text-2xl">Contact</legend>
           <div className="mt-5 grid gap-4 sm:grid-cols-2">
