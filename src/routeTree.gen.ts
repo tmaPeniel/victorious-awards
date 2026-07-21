@@ -27,6 +27,7 @@ import { Route as BilletterieGererRouteImport } from './routes/billetterie_.gere
 import { Route as AdminTestimonialsRouteImport } from './routes/admin.testimonials'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as AdminGalleryRouteImport } from './routes/admin.gallery'
+import { Route as AdminTirageIndexRouteImport } from './routes/admin.tirage.index'
 import { Route as AdminCategoriesIndexRouteImport } from './routes/admin.categories.index'
 import { Route as AdminBilletterieIndexRouteImport } from './routes/admin.billetterie.index'
 import { Route as AdminApplicationsIndexRouteImport } from './routes/admin.applications.index'
@@ -125,6 +126,11 @@ const AdminGalleryRoute = AdminGalleryRouteImport.update({
   path: '/gallery',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminTirageIndexRoute = AdminTirageIndexRouteImport.update({
+  id: '/tirage/',
+  path: '/tirage/',
+  getParentRoute: () => AdminRoute,
+} as any)
 const AdminCategoriesIndexRoute = AdminCategoriesIndexRouteImport.update({
   id: '/categories/',
   path: '/categories/',
@@ -188,6 +194,7 @@ export interface FileRoutesByFullPath {
   '/admin/applications/': typeof AdminApplicationsIndexRoute
   '/admin/billetterie/': typeof AdminBilletterieIndexRoute
   '/admin/categories/': typeof AdminCategoriesIndexRoute
+  '/admin/tirage/': typeof AdminTirageIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -213,6 +220,7 @@ export interface FileRoutesByTo {
   '/admin/applications': typeof AdminApplicationsIndexRoute
   '/admin/billetterie': typeof AdminBilletterieIndexRoute
   '/admin/categories': typeof AdminCategoriesIndexRoute
+  '/admin/tirage': typeof AdminTirageIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -241,6 +249,7 @@ export interface FileRoutesById {
   '/admin/applications/': typeof AdminApplicationsIndexRoute
   '/admin/billetterie/': typeof AdminBilletterieIndexRoute
   '/admin/categories/': typeof AdminCategoriesIndexRoute
+  '/admin/tirage/': typeof AdminTirageIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -270,6 +279,7 @@ export interface FileRouteTypes {
     | '/admin/applications/'
     | '/admin/billetterie/'
     | '/admin/categories/'
+    | '/admin/tirage/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -295,6 +305,7 @@ export interface FileRouteTypes {
     | '/admin/applications'
     | '/admin/billetterie'
     | '/admin/categories'
+    | '/admin/tirage'
   id:
     | '__root__'
     | '/'
@@ -322,6 +333,7 @@ export interface FileRouteTypes {
     | '/admin/applications/'
     | '/admin/billetterie/'
     | '/admin/categories/'
+    | '/admin/tirage/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -467,6 +479,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminGalleryRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/tirage/': {
+      id: '/admin/tirage/'
+      path: '/tirage'
+      fullPath: '/admin/tirage/'
+      preLoaderRoute: typeof AdminTirageIndexRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/admin/categories/': {
       id: '/admin/categories/'
       path: '/categories'
@@ -531,6 +550,7 @@ interface AdminRouteChildren {
   AdminApplicationsIndexRoute: typeof AdminApplicationsIndexRoute
   AdminBilletterieIndexRoute: typeof AdminBilletterieIndexRoute
   AdminCategoriesIndexRoute: typeof AdminCategoriesIndexRoute
+  AdminTirageIndexRoute: typeof AdminTirageIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
@@ -545,6 +565,7 @@ const AdminRouteChildren: AdminRouteChildren = {
   AdminApplicationsIndexRoute: AdminApplicationsIndexRoute,
   AdminBilletterieIndexRoute: AdminBilletterieIndexRoute,
   AdminCategoriesIndexRoute: AdminCategoriesIndexRoute,
+  AdminTirageIndexRoute: AdminTirageIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
@@ -580,3 +601,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
