@@ -335,6 +335,7 @@ export const createTicketReservation = createServerFn({ method: "POST" })
           contact_last_name: data.contactLastName,
           contact_email: data.contactEmail.toLowerCase(),
           contact_phone: data.contactPhone,
+          contact_whatsapp: data.contactWhatsapp,
           party_size: data.attendees.length,
           status,
           management_token_hash: rpcPayload.p_management_token_hash,
@@ -360,6 +361,9 @@ export const createTicketReservation = createServerFn({ method: "POST" })
     const ticketBundle: TicketBundle = {
       reference: booking.reference,
       status: booking.status,
+      contactFirstName: data.contactFirstName,
+      contactLastName: data.contactLastName,
+      contactWhatsapp: data.contactWhatsapp,
       event: {
         name: `${eventDetails.name} — ${eventDetails.theme}`,
         startsAt: eventDetails.date.toISOString(),
@@ -373,16 +377,11 @@ export const createTicketReservation = createServerFn({ method: "POST" })
               firstName: attendee.firstName,
               lastName: attendee.lastName,
               email: attendee.email,
+              whatsapp: attendee.whatsapp?.trim() ? attendee.whatsapp.trim() : null,
               token: rawTicketTokens[index],
             }))
           : [],
     };
-    try {
-      const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-      await sendReservationTicketEmails(booking.id, { kindSuffix: "reservation" });
-    } catch (emailError) {
-      console.error("ticket email dispatch failed", emailError);
-    }
     return {
       ok: true as const,
       reference: booking.reference,
@@ -391,6 +390,7 @@ export const createTicketReservation = createServerFn({ method: "POST" })
       ticketBundle,
     };
   });
+
 
 export const getTicketBundle = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) => tokenSchema.parse(data))
