@@ -215,6 +215,7 @@ export type Database = {
           reservation_id: string
           status: Database["public"]["Enums"]["ticket_attendee_status"]
           ticket_token_hash: string
+          ticket_version: number
           updated_at: string
         }
         Insert: {
@@ -231,6 +232,7 @@ export type Database = {
           reservation_id: string
           status?: Database["public"]["Enums"]["ticket_attendee_status"]
           ticket_token_hash: string
+          ticket_version?: number
           updated_at?: string
         }
         Update: {
@@ -247,6 +249,7 @@ export type Database = {
           reservation_id?: string
           status?: Database["public"]["Enums"]["ticket_attendee_status"]
           ticket_token_hash?: string
+          ticket_version?: number
           updated_at?: string
         }
         Relationships: [
@@ -510,6 +513,10 @@ export type Database = {
           p_management_token_hash: string
           p_rate_key_hash: string
         }
+        Returns: Json
+      }
+      get_ticketing_availability: {
+        Args: { p_event_slug: string }
         Returns: Json
       }
       has_role: {
