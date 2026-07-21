@@ -143,6 +143,7 @@ type ResendAttachment = { filename: string; content: string };
 async function resendSend(payload: {
   from: string;
   to: string[];
+  cc?: string[];
   subject: string;
   html: string;
   reply_to?: string;
