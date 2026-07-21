@@ -29,10 +29,33 @@ export const Route = createFileRoute("/candidater")({
   component: CandidaturesClosedPage,
 });
 
-const APPLICATIONS_OPEN = false;
+function CandidaturesGate() {
+  const { data, isLoading } = useQuery({
+    queryKey: ["app_settings", "applications_open"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("app_settings" as never)
+        .select("value")
+        .eq("key", "applications_open")
+        .maybeSingle();
+      return (data as { value: unknown } | null)?.value === true;
+    },
+    staleTime: 30_000,
+  });
+  if (isLoading) {
+    return (
+      <section className="bg-obsidian pt-40 pb-24">
+        <div className="mx-auto max-w-5xl px-6 text-center text-xs uppercase tracking-[0.3em] text-champagne/60 lg:px-10">
+          Chargement…
+        </div>
+      </section>
+    );
+  }
+  if (data) return <CandidaterPage />;
+  return <CandidaturesClosedPage />;
+}
 
 function CandidaturesClosedPage() {
-  if (APPLICATIONS_OPEN) return <CandidaterPage />;
   return (
     <>
       <section className="bg-obsidian pt-40 pb-12">
