@@ -616,29 +616,19 @@ export const adminCancelReservation = createServerFn({ method: "POST" })
       p_event_id: reservation.event_id,
     });
     const promotedIds = (promoted ?? []) as string[];
-    if (promotedIds.length) {
-      try {
-        const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-        await Promise.all(
-          promotedIds.map((id) => sendReservationTicketEmails(id, { kindSuffix: "promotion" })),
-        );
-      } catch (emailError) {
-        console.error("promotion email dispatch failed", emailError);
-      }
-    }
     return { ok: true as const, promoted: promotedIds.length };
   });
 
-export const adminResendReservationTickets = createServerFn({ method: "POST" })
+export const adminGetReservationBundle = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
     z.object({ reservationId: z.string().uuid(), accessToken: z.string().min(20) }).parse(data),
   )
   .handler(async ({ data }) => {
     await requireAdmin(data.accessToken);
-    const { sendReservationTicketEmails } = await import("@/lib/ticket-email.server");
-    const result = await sendReservationTicketEmails(data.reservationId, { kindSuffix: "manual" });
-    return { ok: true as const, ...result };
+    const bundle = await buildTicketBundle(data.reservationId);
+    return { ok: true as const, bundle };
   });
+
 
 export const updateTicketEventSettings = createServerFn({ method: "POST" })
   .inputValidator((data: unknown) =>
