@@ -135,6 +135,17 @@ function TicketingPage() {
               Réservez de une à quatre places nominatives, puis téléchargez immédiatement tous vos
               billets et leurs QR codes dans un seul PDF.
             </p>
+            <div className="mt-8">
+              <button
+                type="button"
+                onClick={() => setLookupOpen(true)}
+                className="inline-flex h-11 items-center gap-2 border border-champagne/40 px-5 text-xs uppercase tracking-[0.18em] text-champagne transition-colors hover:border-champagne hover:text-gold"
+              >
+                <KeyRound className="size-4" />
+                Gérer ma réservation
+              </button>
+            </div>
+
           </div>
           <aside className="self-end border-y border-champagne/25 py-7">
             {[
