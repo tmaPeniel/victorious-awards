@@ -436,9 +436,17 @@ export async function sendReservationTicketEmails(
     // Contact recap (always send: acts as a copy for the contact person even if they are also an attendee).
     const contactRecipient = reservation.contact_email.toLowerCase();
     try {
+      const ccList = Array.from(
+        new Set(
+          attendees
+            .map((a) => a.email)
+            .filter((email) => email && email.toLowerCase() !== contactRecipient),
+        ),
+      );
       const result = await resendSend({
         from: SENDER,
         to: [reservation.contact_email],
+        cc: ccList.length > 0 ? ccList : undefined,
         subject: `Récapitulatif Victorious 2026 — ${reservation.reference}`,
         html: contactRecapHtml({
           firstName: reservation.contact_first_name,
