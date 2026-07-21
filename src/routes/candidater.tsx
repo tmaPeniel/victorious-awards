@@ -26,8 +26,50 @@ export const Route = createFileRoute("/candidater")({
       },
     ],
   }),
-  component: CandidaterPage,
+  component: CandidaturesClosedPage,
 });
+
+const APPLICATIONS_OPEN = false;
+
+function CandidaturesClosedPage() {
+  if (APPLICATIONS_OPEN) return <CandidaterPage />;
+  return (
+    <>
+      <section className="bg-obsidian pt-40 pb-12">
+        <div className="mx-auto max-w-5xl px-6 lg:px-10">
+          <div className="flex items-center gap-4 text-[0.7rem] uppercase tracking-[0.4em] text-champagne/70">
+            <span className="h-px w-12 bg-champagne/50" />
+            Candidatures
+          </div>
+          <h1 className="mt-8 font-display text-5xl leading-[0.95] text-ivory sm:text-6xl lg:text-7xl">
+            Les candidatures sont
+            <br />
+            <span className="font-display-italic text-champagne">désormais closes.</span>
+          </h1>
+        </div>
+      </section>
+      <Section contained={false} className="pt-8 pb-24">
+        <div className="mx-auto max-w-3xl px-6 lg:px-10">
+          <p className="text-lg text-ivory/80">
+            Merci à toutes celles et ceux qui ont partagé leur histoire pour cette édition de
+            Victorious. Les candidatures ne sont plus ouvertes. Le comité étudie actuellement
+            les dossiers reçus et reviendra vers les candidat·e·s sélectionné·e·s.
+          </p>
+          <p className="mt-4 text-ivory/70">
+            Rendez-vous très bientôt pour célébrer ensemble les lauréats lors de la Nuit de
+            l'Excellence.
+          </p>
+          <div className="mt-10 flex flex-wrap gap-4">
+            <VLink to="/billetterie">Réserver ma place</VLink>
+            <VLink to="/categories" variant="ghost">
+              Découvrir les catégories
+            </VLink>
+          </div>
+        </div>
+      </Section>
+    </>
+  );
+}
 
 const schema = z
   .object({
