@@ -65,7 +65,7 @@ export function buildRaffleTicketMessage(params: {
   return (
     `Bonjour ${params.firstName} 🎟️\n\n` +
     `Vous êtes inscrit(e) au tirage au sort Victorious !\n` +
-    `Votre numéro de participation : ${ref}\n\n` +
+    `Votre ticket (numéro ${ref}) est en pièce jointe.\n\n` +
     `Le tirage aura lieu le jour J. Bonne chance ! ✨`
   );
 }

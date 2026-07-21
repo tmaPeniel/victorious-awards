@@ -1,11 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState, type FormEvent } from "react";
-import { Download, MessageCircle, Search, Trash2, Undo2 } from "lucide-react";
+import { Download, FileDown, MessageCircle, Search, Trash2, Undo2 } from "lucide-react";
 import { VButton } from "@/components/victorious/VButton";
 import { supabase } from "@/integrations/supabase/client";
 import { exportRaffleParticipantsToExcel } from "@/lib/excel-export";
 import { toE164Whatsapp, buildWaMeLink, buildRaffleTicketMessage } from "@/lib/whatsapp-link";
+import { downloadRaffleTicketPdf } from "@/lib/raffle-ticket-pdf";
 import {
   adminCreateRaffleParticipant,
   adminCancelRaffleParticipant,
@@ -105,7 +106,20 @@ function RaffleAdminPage() {
     }
   };
 
+  const handleDownloadPdf = async (participant: RaffleParticipant) => {
+    await downloadRaffleTicketPdf({
+      firstName: participant.first_name,
+      lastName: participant.last_name,
+      ticketNumber: participant.ticket_number,
+    });
+  };
+
   const handleWhatsapp = async (participant: RaffleParticipant) => {
+    await downloadRaffleTicketPdf({
+      firstName: participant.first_name,
+      lastName: participant.last_name,
+      ticketNumber: participant.ticket_number,
+    });
     const link = buildWaMeLink(
       participant.phone,
       buildRaffleTicketMessage({ firstName: participant.first_name, ticketNumber: participant.ticket_number }),
@@ -161,8 +175,8 @@ function RaffleAdminPage() {
         <p className="text-xs uppercase tracking-[0.25em] text-champagne/65">Victorious 2026</p>
         <h1 className="mt-2 font-display text-4xl text-ivory">Tirage au sort</h1>
         <p className="mt-2 text-sm text-ivory/55">
-          Inscrivez les participants et envoyez-leur leur ticket par WhatsApp. Le tirage se fait
-          manuellement le jour J à partir de la liste exportée.
+          Inscrivez les participants, générez leur ticket en PDF et envoyez-le par WhatsApp. Le
+          tirage se fait manuellement le jour J à partir de la liste exportée.
         </p>
       </header>
 
@@ -263,6 +277,14 @@ function RaffleAdminPage() {
                 </td>
                 <td className="p-4 text-right">
                   <div className="inline-flex items-center gap-4">
+                    <button
+                      type="button"
+                      onClick={() => handleDownloadPdf(participant)}
+                      aria-label={`Télécharger le ticket PDF de ${participant.first_name}`}
+                      className="text-ivory/60 transition-colors hover:text-champagne"
+                    >
+                      <FileDown className="size-4" />
+                    </button>
                     <button
                       type="button"
                       onClick={() => handleWhatsapp(participant)}
