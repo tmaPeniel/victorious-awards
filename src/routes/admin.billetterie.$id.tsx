@@ -125,6 +125,25 @@ function TicketReservationDetail() {
     }
   };
 
+  const resend = async () => {
+    setBusy(true);
+    setMessage(null);
+    try {
+      const result = await adminResendReservationTickets({
+        data: { reservationId: id, accessToken: await accessToken() },
+      });
+      setMessage(
+        result.failed
+          ? `Envoi partiel : ${result.sent} e-mail(s) envoyé(s), ${result.failed} échec(s). ${result.errors[0] ?? ""}`
+          : `${result.sent} e-mail(s) envoyé(s) avec succès.`,
+      );
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Échec de l’envoi des billets.");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (query.isLoading)
     return <div className="text-sm text-ivory/50">Chargement de la réservation…</div>;
   if (!query.data) return <div role="alert">Réservation introuvable.</div>;
