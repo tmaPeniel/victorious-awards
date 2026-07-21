@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { categories } from "@/content/categories";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/admin/")({
   component: AdminDashboard,
