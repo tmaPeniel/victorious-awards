@@ -61,8 +61,17 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
 
   // Column widths
   ws["!cols"] = [
-    { wch: 16 }, { wch: 14 }, { wch: 16 }, { wch: 28 }, { wch: 16 }, { wch: 20 },
-    { wch: 26 }, { wch: 16 }, { wch: 60 }, { wch: 40 }, { wch: 18 },
+    { wch: 16 },
+    { wch: 14 },
+    { wch: 16 },
+    { wch: 28 },
+    { wch: 16 },
+    { wch: 20 },
+    { wch: 26 },
+    { wch: 16 },
+    { wch: 60 },
+    { wch: 40 },
+    { wch: 18 },
     { wch: 50 },
   ];
 
@@ -73,48 +82,18 @@ export async function exportApplicationsToExcel(rows: AppRow[]): Promise<void> {
   XLSX.writeFile(wb, `victorious-candidatures-${stamp}.xlsx`);
 }
 
-export async function exportTicketReservationsToExcel(rows: Array<{
-  reference: string;
-  status: string;
-  contact_first_name: string;
-  contact_last_name: string;
-  contact_email: string;
-  contact_phone: string;
-  created_at: string;
-  attendees: Array<{ first_name: string; last_name: string; email: string; status: string; checked_in_at: string | null }>;
-}>): Promise<void> {
-  const XLSX = await import("xlsx");
-  const statusLabels: Record<string, string> = { confirmed: "Confirmée", waitlisted: "Liste d’attente", cancelled: "Annulée" };
-  const flat = rows.flatMap((reservation) => reservation.attendees.map((attendee) => ({
-    Référence: reservation.reference,
-    "Statut réservation": statusLabels[reservation.status] ?? reservation.status,
-    "Prénom participant": attendee.first_name,
-    "Nom participant": attendee.last_name,
-    "E-mail participant": attendee.email,
-    "Statut billet": attendee.status,
-    "Contrôlé le": attendee.checked_in_at ? new Date(attendee.checked_in_at).toLocaleString("fr-FR") : "",
-    "Contact réservation": `${reservation.contact_first_name} ${reservation.contact_last_name}`,
-    "E-mail contact": reservation.contact_email,
-    Téléphone: reservation.contact_phone,
-    "Réservée le": new Date(reservation.created_at).toLocaleString("fr-FR"),
-  })));
-  const ws = XLSX.utils.json_to_sheet(flat);
-  ws["!cols"] = [{ wch: 16 }, { wch: 20 }, { wch: 20 }, { wch: 22 }, { wch: 30 }, { wch: 18 }, { wch: 22 }, { wch: 28 }, { wch: 30 }, { wch: 18 }, { wch: 22 }];
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Billetterie");
-  XLSX.writeFile(wb, `victorious-billetterie-${new Date().toISOString().slice(0, 10)}.xlsx`);
-}
-
-export async function exportRaffleParticipantsToExcel(rows: Array<{
-  ticket_number: number;
-  first_name: string;
-  last_name: string;
-  phone: string;
-  email: string | null;
-  status: string;
-  whatsapp_sent_at: string | null;
-  created_at: string;
-}>): Promise<void> {
+export async function exportRaffleParticipantsToExcel(
+  rows: Array<{
+    ticket_number: number;
+    first_name: string;
+    last_name: string;
+    phone: string;
+    email: string | null;
+    status: string;
+    whatsapp_sent_at: string | null;
+    created_at: string;
+  }>,
+): Promise<void> {
   const XLSX = await import("xlsx");
   const ws = XLSX.utils.json_to_sheet(
     rows.map((r) => ({
@@ -134,7 +113,14 @@ export async function exportRaffleParticipantsToExcel(rows: Array<{
     })),
   );
   ws["!cols"] = [
-    { wch: 12 }, { wch: 16 }, { wch: 16 }, { wch: 16 }, { wch: 28 }, { wch: 10 }, { wch: 20 }, { wch: 18 },
+    { wch: 12 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 16 },
+    { wch: 28 },
+    { wch: 10 },
+    { wch: 20 },
+    { wch: 18 },
   ];
   const wb = XLSX.utils.book_new();
   XLSX.utils.book_append_sheet(wb, ws, "Tirage au sort");

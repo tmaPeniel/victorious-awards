@@ -37,12 +37,9 @@ function Page() {
           <div>
             <h2 className="font-display text-2xl text-ivory">Données personnelles</h2>
             <p className="mt-3 text-base">
-              Les données collectées via les formulaires de candidature, de contact et de
-              billetterie sont utilisées uniquement pour traiter votre demande, générer les billets
-              PDF, gérer la liste d'attente et contrôler les accès à l'événement. Elles ne sont pas
-              cédées à des tiers et sont supprimées à l'issue de l'événement, conformément au RGPD.
-              Aucun billet n'est envoyé par e-mail dans cette version : le téléchargement s'effectue
-              depuis votre lien sécurisé de gestion.
+              Les données collectées via les formulaires de candidature et de contact sont utilisées
+              uniquement pour traiter votre demande. Elles ne sont pas cédées à des tiers et sont
+              supprimées lorsque leur conservation n'est plus nécessaire, conformément au RGPD.
             </p>
             <p className="mt-3 text-base">
               Pour exercer vos droits d'accès, de rectification ou de suppression : écrivez-nous à

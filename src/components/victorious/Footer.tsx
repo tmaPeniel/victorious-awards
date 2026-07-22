@@ -8,15 +8,13 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-6 lg:px-10">
         <div className="grid gap-12 lg:grid-cols-[2fr_1fr_1fr_1fr]">
           <div>
-            <div className="font-display text-2xl tracking-[0.2em] text-champagne">
-              VICTORIOUS
-            </div>
+            <div className="font-display text-2xl tracking-[0.2em] text-champagne">VICTORIOUS</div>
             <p className="mt-2 text-sm uppercase tracking-[0.25em] text-champagne/60">
               La Nuit de l'Excellence
             </p>
             <p className="mt-6 max-w-md text-sm leading-relaxed text-ivory/65">
-              Une cérémonie organisée par ICC Rouen pour célébrer les parcours
-              de vie marqués par la fidélité de Dieu.
+              Une cérémonie organisée par ICC Rouen pour célébrer les parcours de vie marqués par la
+              fidélité de Dieu.
             </p>
           </div>
 
@@ -25,13 +23,36 @@ export function Footer() {
               Explorer
             </h3>
             <ul className="space-y-3 text-sm text-ivory/70">
-              <li><Link to="/a-propos" className="link-underline">À propos</Link></li>
-              <li><Link to="/categories" className="link-underline">Catégories</Link></li>
-              <li><Link to="/candidater" className="link-underline">Candidater</Link></li>
-              <li><Link to="/billetterie" className="link-underline">Billetterie</Link></li>
-              <li><Link to="/galerie" className="link-underline">Galerie</Link></li>
-              <li><Link to="/temoignages" className="link-underline">Témoignages</Link></li>
-              <li><Link to="/contact" className="link-underline">Contact</Link></li>
+              <li>
+                <Link to="/a-propos" className="link-underline">
+                  À propos
+                </Link>
+              </li>
+              <li>
+                <Link to="/categories" className="link-underline">
+                  Catégories
+                </Link>
+              </li>
+              <li>
+                <Link to="/candidater" className="link-underline">
+                  Candidater
+                </Link>
+              </li>
+              <li>
+                <Link to="/galerie" className="link-underline">
+                  Galerie
+                </Link>
+              </li>
+              <li>
+                <Link to="/temoignages" className="link-underline">
+                  Témoignages
+                </Link>
+              </li>
+              <li>
+                <Link to="/contact" className="link-underline">
+                  Contact
+                </Link>
+              </li>
             </ul>
           </div>
 
@@ -52,13 +73,31 @@ export function Footer() {
               Suivre
             </h3>
             <div className="flex gap-3">
-              <a href={event.social.instagram} target="_blank" rel="noreferrer" aria-label="Instagram" className="grid size-11 place-items-center border border-champagne/30 text-champagne transition-colors hover:bg-champagne hover:text-obsidian">
+              <a
+                href={event.social.instagram}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Instagram"
+                className="grid size-11 place-items-center border border-champagne/30 text-champagne transition-colors hover:bg-champagne hover:text-obsidian"
+              >
                 <Instagram className="size-4" />
               </a>
-              <a href={event.social.facebook} target="_blank" rel="noreferrer" aria-label="Facebook" className="grid size-11 place-items-center border border-champagne/30 text-champagne transition-colors hover:bg-champagne hover:text-obsidian">
+              <a
+                href={event.social.facebook}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook"
+                className="grid size-11 place-items-center border border-champagne/30 text-champagne transition-colors hover:bg-champagne hover:text-obsidian"
+              >
                 <Facebook className="size-4" />
               </a>
-              <a href={event.social.youtube} target="_blank" rel="noreferrer" aria-label="YouTube" className="grid size-11 place-items-center border border-champagne/30 text-champagne transition-colors hover:bg-champagne hover:text-obsidian">
+              <a
+                href={event.social.youtube}
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube"
+                className="grid size-11 place-items-center border border-champagne/30 text-champagne transition-colors hover:bg-champagne hover:text-obsidian"
+              >
                 <Youtube className="size-4" />
               </a>
             </div>

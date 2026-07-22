@@ -1,6 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion } from "motion/react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 import { ArrowRight, Calendar, Clock, MapPin, Sparkles } from "lucide-react";
 import { Hero } from "@/components/victorious/Hero";
 import { Section } from "@/components/victorious/Section";
@@ -75,7 +80,9 @@ function HomePage() {
           <>
             Une plateforme d’actions de grâce pour dire merci à Dieu
             <br />
-            <span className="font-display-italic text-champagne">Et booster la foi de plusieurs. </span>
+            <span className="font-display-italic text-champagne">
+              Et booster la foi de plusieurs.{" "}
+            </span>
           </>
         }
         intro="Chaque trophée représente une histoire. Chaque histoire témoigne de la fidélité de Dieu. Notre objectif n'est pas simplement de remettre des récompenses — c'est de rendre grâce, d'inspirer et de connecter."
@@ -101,14 +108,20 @@ function HomePage() {
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(180deg, transparent 50%, oklch(0.13 0.06 290 / 0.6) 100%)",
+              background:
+                "linear-gradient(180deg, transparent 50%, oklch(0.13 0.06 290 / 0.6) 100%)",
             }}
           />
         </motion.div>
       </div>
 
       {/* Infos événement */}
-      <Section id="infos" numeral="II" eyebrow="L'événement" title="Une nuit. Un lieu. Une atmosphère.">
+      <Section
+        id="infos"
+        numeral="II"
+        eyebrow="L'événement"
+        title="Une nuit. Un lieu. Une atmosphère."
+      >
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {[
             { icon: Calendar, label: "Date", value: event.dateLabel },
@@ -125,22 +138,25 @@ function HomePage() {
               className="border border-champagne/15 bg-velvet/40 p-8"
             >
               <it.icon className="size-6 text-gold" aria-hidden="true" />
-              <div className="mt-6 text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">{it.label}</div>
+              <div className="mt-6 text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">
+                {it.label}
+              </div>
               <div className="mt-2 font-display text-xl text-ivory">{it.value}</div>
             </motion.div>
           ))}
         </div>
         <div className="mt-10 border-l-2 border-gold pl-6">
-          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">Programme</div>
-          <p className="mt-2 font-display-italic text-xl text-ivory/80">{event.program} — annoncé prochainement.</p>
+          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/60">
+            Programme
+          </div>
+          <p className="mt-2 font-display-italic text-xl text-ivory/80">
+            {event.program} — annoncé prochainement.
+          </p>
         </div>
         <div className="mt-10 flex flex-wrap gap-4">
-          <VLink to="/billetterie">
-            Réserver mes places
-            <ArrowRight className="size-4" />
-          </VLink>
-          <VLink to="/candidater" variant="secondary">
+          <VLink to="/candidater">
             Je candidate
+            <ArrowRight className="size-4" />
           </VLink>
         </div>
       </Section>
@@ -170,7 +186,9 @@ function HomePage() {
             }}
           />
           <figcaption className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-6 p-6 lg:p-10">
-            <span className="font-display-italic text-lg text-champagne/90 lg:text-2xl">ICC Rouen — Isneauville</span>
+            <span className="font-display-italic text-lg text-champagne/90 lg:text-2xl">
+              ICC Rouen — Isneauville
+            </span>
             <span className="hidden text-[0.65rem] uppercase tracking-[0.3em] text-ivory/60 sm:block">
               Le théâtre d'une nuit pas comme les autres
             </span>
@@ -186,7 +204,9 @@ function HomePage() {
         title={
           <>
             9 catégories,{" "}
-            <span className="font-display-italic text-champagne">9 séries de témoignages de la fidélité de Dieu.</span>
+            <span className="font-display-italic text-champagne">
+              9 séries de témoignages de la fidélité de Dieu.
+            </span>
           </>
         }
         intro="Chacune a sa lumière. Trouvez celle qui raconte votre parcours."
@@ -283,14 +303,21 @@ function HomePage() {
       </Section>
 
       {/* FAQ */}
-      <Section id="faq" numeral="VI" eyebrow="Vos questions" title="Tout ce qu'on nous demande, doucement.">
+      <Section
+        id="faq"
+        numeral="VI"
+        eyebrow="Vos questions"
+        title="Tout ce qu'on nous demande, doucement."
+      >
         <Accordion type="single" collapsible className="mx-auto max-w-3xl">
           {faq.map((item, i) => (
             <AccordionItem key={item.q} value={`q-${i}`} className="border-champagne/15">
               <AccordionTrigger className="py-6 text-left font-display text-lg text-ivory hover:no-underline hover:text-champagne sm:text-xl">
                 {item.q}
               </AccordionTrigger>
-              <AccordionContent className="text-base leading-relaxed text-ivory/65">{item.a}</AccordionContent>
+              <AccordionContent className="text-base leading-relaxed text-ivory/65">
+                {item.a}
+              </AccordionContent>
             </AccordionItem>
           ))}
         </Accordion>

@@ -27,7 +27,10 @@ function AdminDashboard() {
     mutationFn: async (next: boolean) => {
       const { error } = await supabase
         .from("app_settings" as never)
-        .upsert({ key: "applications_open", value: next, updated_at: new Date().toISOString() } as never, { onConflict: "key" });
+        .upsert(
+          { key: "applications_open", value: next, updated_at: new Date().toISOString() } as never,
+          { onConflict: "key" },
+        );
       if (error) throw error;
     },
     onSuccess: () => {
@@ -45,7 +48,6 @@ function AdminDashboard() {
         { count: accepted },
         { count: rejected },
         { data: latest },
-        { count: ticketed },
       ] = await Promise.all([
         supabase.from("applications").select("id", { count: "exact", head: true }),
         supabase
@@ -65,11 +67,6 @@ function AdminDashboard() {
           .select("id, civility, first_name, last_name, category_slug, created_at, status")
           .order("created_at", { ascending: false })
           .limit(5),
-        supabase
-          .from("ticket_attendees")
-          .select("id, ticket_reservations!inner(status)", { count: "exact", head: true })
-          .neq("status", "cancelled")
-          .eq("ticket_reservations.status", "confirmed"),
       ]);
       return {
         total: total ?? 0,
@@ -77,7 +74,6 @@ function AdminDashboard() {
         accepted: accepted ?? 0,
         rejected: rejected ?? 0,
         latest: latest ?? [],
-        ticketed: ticketed ?? 0,
       };
     },
   });
@@ -88,7 +84,6 @@ function AdminDashboard() {
     { label: "Acceptées", value: data?.accepted ?? "—" },
     { label: "Rejetées", value: data?.rejected ?? "—" },
     { label: "Catégories", value: categories.length },
-    { label: "Places réservées", value: data?.ticketed ?? "—" },
   ];
 
   return (
@@ -103,7 +98,9 @@ function AdminDashboard() {
 
       <section className="flex flex-col gap-4 border border-champagne/15 bg-ivory/[0.02] p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">Candidatures</div>
+          <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">
+            Candidatures
+          </div>
           <div className="mt-2 font-display text-xl text-ivory">
             {settings.isLoading ? "…" : open ? "Ouvertes au public" : "Fermées au public"}
           </div>
@@ -130,12 +127,15 @@ function AdminDashboard() {
               open ? "bg-champagne" : "bg-obsidian",
             )}
           />
-          {toggle.isPending ? "Enregistrement…" : open ? "Fermer les candidatures" : "Ouvrir les candidatures"}
+          {toggle.isPending
+            ? "Enregistrement…"
+            : open
+              ? "Fermer les candidatures"
+              : "Ouvrir les candidatures"}
         </button>
       </section>
 
-
-      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-5">
         {stats.map((s) => (
           <div key={s.label} className="border border-champagne/15 bg-ivory/[0.02] p-6">
             <div className="text-[0.65rem] uppercase tracking-[0.3em] text-champagne/70">
