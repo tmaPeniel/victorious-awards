@@ -10,7 +10,6 @@ const links = [
   { to: "/categories", label: "Catégories" },
   { to: "/galerie", label: "Galerie" },
   { to: "/temoignages", label: "Témoignages" },
-  { to: "/candidater", label: "Candidater" },
   { to: "/contact", label: "Contact" },
 ] as const;
 
@@ -68,8 +67,8 @@ export function Header() {
         </nav>
 
         <div className="hidden xl:block">
-          <VLink to="/billetterie" size="md">
-            Je réserve
+          <VLink to="/candidater" size="md" className="active:scale-[0.96] transition-transform">
+            Candidater
           </VLink>
         </div>
 
@@ -106,8 +105,12 @@ export function Header() {
             ))}
           </nav>
           <div className="mt-8">
-            <VLink to="/billetterie" size="lg" className="w-full">
-              Réserver mes places
+            <VLink
+              to="/candidater"
+              size="lg"
+              className="w-full active:scale-[0.96] transition-transform"
+            >
+              Candidater
             </VLink>
           </div>
         </div>

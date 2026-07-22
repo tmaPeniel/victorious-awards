@@ -76,18 +76,15 @@ function CandidaturesClosedPage() {
         <div className="mx-auto max-w-3xl px-6 lg:px-10">
           <p className="text-lg text-ivory/80">
             Merci à toutes celles et ceux qui ont partagé leur histoire pour cette édition de
-            Victorious. Les candidatures ne sont plus ouvertes. Le comité étudie actuellement
-            les dossiers reçus et reviendra vers les candidat·e·s sélectionné·e·s.
+            Victorious. Les candidatures ne sont plus ouvertes. Le comité étudie actuellement les
+            dossiers reçus et reviendra vers les candidat·e·s sélectionné·e·s.
           </p>
           <p className="mt-4 text-ivory/70">
             Rendez-vous très bientôt pour célébrer ensemble les lauréats lors de la Nuit de
             l'Excellence.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <VLink to="/billetterie">Réserver ma place</VLink>
-            <VLink to="/categories" variant="ghost">
-              Découvrir les catégories
-            </VLink>
+            <VLink to="/categories">Découvrir les catégories</VLink>
           </div>
         </div>
       </Section>
@@ -443,9 +440,7 @@ function CandidaterPage() {
                           id="f-civility"
                           name="civility"
                           value={form.civility}
-                          onChange={(e) =>
-                            setForm((f) => ({ ...f, civility: e.target.value }))
-                          }
+                          onChange={(e) => setForm((f) => ({ ...f, civility: e.target.value }))}
                           className="mt-2 w-full border-b border-champagne/30 bg-obsidian px-0 py-3 font-sans text-base text-ivory outline-none transition-colors focus:border-champagne"
                         >
                           <option value="">Sélectionnez votre civilité</option>

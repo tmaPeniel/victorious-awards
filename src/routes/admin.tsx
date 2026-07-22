@@ -1,6 +1,14 @@
 import { createFileRoute, Outlet, Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { LogOut, Inbox, LayoutDashboard, Image as ImageIcon, Tags, MessageSquareQuote, Ticket, Gift } from "lucide-react";
+import {
+  LogOut,
+  Inbox,
+  LayoutDashboard,
+  Image as ImageIcon,
+  Tags,
+  MessageSquareQuote,
+  Gift,
+} from "lucide-react";
 import { useSession } from "@/lib/use-session";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
@@ -42,9 +50,7 @@ function AdminLayout() {
   if (loading || !session || !isAdmin) {
     return (
       <div className="grid min-h-screen place-items-center bg-obsidian">
-        <div className="text-xs uppercase tracking-[0.3em] text-champagne/60">
-          Vérification…
-        </div>
+        <div className="text-xs uppercase tracking-[0.3em] text-champagne/60">Vérification…</div>
       </div>
     );
   }
@@ -52,7 +58,6 @@ function AdminLayout() {
   const nav = [
     { to: "/admin", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
     { to: "/admin/applications", label: "Candidatures", icon: Inbox, exact: false },
-    { to: "/admin/billetterie", label: "Billetterie", icon: Ticket, exact: false },
     { to: "/admin/tirage", label: "Tirage au sort", icon: Gift, exact: false },
     { to: "/admin/categories", label: "Catégories", icon: Tags, exact: false },
     { to: "/admin/gallery", label: "Galerie", icon: ImageIcon, exact: false },
@@ -70,14 +75,10 @@ function AdminLayout() {
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
           <Link to="/admin" className="flex items-center gap-3">
             <span className="font-display text-xl text-champagne">Victorious</span>
-            <span className="text-[0.65rem] uppercase tracking-[0.3em] text-ivory/50">
-              Admin
-            </span>
+            <span className="text-[0.65rem] uppercase tracking-[0.3em] text-ivory/50">Admin</span>
           </Link>
           <div className="flex items-center gap-6">
-            <span className="hidden text-xs text-ivory/50 sm:block">
-              {session.user.email}
-            </span>
+            <span className="hidden text-xs text-ivory/50 sm:block">{session.user.email}</span>
             <button
               onClick={signOut}
               className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-ivory/70 hover:text-champagne"
@@ -91,9 +92,7 @@ function AdminLayout() {
         <aside className="hidden w-56 shrink-0 lg:block">
           <nav className="space-y-1">
             {nav.map((item) => {
-              const active = item.exact
-                ? pathname === item.to
-                : pathname.startsWith(item.to);
+              const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
               return (
                 <Link
                   key={item.to}

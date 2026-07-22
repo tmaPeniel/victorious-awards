@@ -28,35 +28,6 @@ export function buildWaMeLink(phone: string, message: string): string {
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
 
-export function siteOrigin(): string {
-  if (typeof window !== "undefined" && window.location?.origin) return window.location.origin;
-  return "https://victorious-awards.lovable.app";
-}
-
-export function ticketPublicUrl(token: string): string {
-  return `${siteOrigin()}/billet?token=${encodeURIComponent(token)}`;
-}
-
-export function buildAttendeeMessage(params: {
-  firstName: string;
-  eventName: string;
-  dateLabel: string;
-  timeLabel: string;
-  venue: string;
-  city: string;
-  ticketUrl: string;
-  reference: string;
-}): string {
-  return (
-    `Bonjour ${params.firstName} 🎉\n\n` +
-    `Voici votre billet pour ${params.eventName}\n` +
-    `📅 ${params.dateLabel} · ${params.timeLabel}\n` +
-    `📍 ${params.venue} — ${params.city}\n\n` +
-    `Ouvrez ce lien et présentez le QR code à l'entrée :\n${params.ticketUrl}\n\n` +
-    `Référence : ${params.reference}`
-  );
-}
-
 export function buildRaffleTicketMessage(params: {
   firstName: string;
   ticketNumber: number;
@@ -67,27 +38,5 @@ export function buildRaffleTicketMessage(params: {
     `Vous êtes inscrit(e) au tirage au sort Victorious !\n` +
     `Votre ticket (numéro ${ref}) est en pièce jointe.\n\n` +
     `Le tirage aura lieu le jour J. Bonne chance ! ✨`
-  );
-}
-
-export function buildContactRecapMessage(params: {
-  firstName: string;
-  reference: string;
-  eventName: string;
-  dateLabel: string;
-  timeLabel: string;
-  tickets: Array<{ firstName: string; lastName: string; ticketUrl: string }>;
-}): string {
-  const lines = params.tickets
-    .map(
-      (ticket, index) =>
-        `${index + 1}. ${ticket.firstName} ${ticket.lastName} → ${ticket.ticketUrl}`,
-    )
-    .join("\n");
-  return (
-    `Récapitulatif Victorious 2026 — ${params.reference}\n` +
-    `📅 ${params.dateLabel} · ${params.timeLabel}\n\n` +
-    `Billets nominatifs :\n${lines}\n\n` +
-    `Chaque participant doit présenter son QR code à l'entrée.`
   );
 }

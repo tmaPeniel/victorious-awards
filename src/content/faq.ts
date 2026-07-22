@@ -24,10 +24,6 @@ export const faq = [
     a: "Le dress code de gala (black tie et robes longues) fait partie de l'expérience. Nous vous invitons chaleureusement à le respecter pour vivre la soirée pleinement.",
   },
   {
-    q: "Puis-je inviter quelqu'un même sans candidater ?",
-    a: "Oui, la billetterie ouvrira quelques semaines avant l'événement. Restez connectés via nos réseaux pour ne pas la manquer.",
-  },
-  {
     q: "Comment mes données seront-elles utilisées ?",
     a: "Vos informations servent uniquement au traitement de votre candidature et à vous recontacter avant la cérémonie. Elles sont conservées de façon confidentielle, conformément au RGPD.",
   },
